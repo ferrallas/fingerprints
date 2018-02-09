@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2006
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Applications", "Applications", "{13DD940F-CA5E-41BF-929F-38DC2BC1783C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FR.Core", "FR.Core\FR.Core.csproj", "{87BA1818-BFBF-4DBF-A335-70529989E13E}"
@@ -17,15 +19,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageProcessingTools", "Ima
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FR.Ratha1995", "FR.Ratha1995\FR.Ratha1995.csproj", "{BA8BFCC0-AF7D-47F6-9420-C2706EAE59C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ROC", "ROC\ROC.csproj", "{D02D8BC2-1710-4DD5-AD32-41093E3BFA16}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FR.FeatureDisplay", "FR.FeatureDisplay\FR.FeatureDisplay.csproj", "{27189BAD-B32E-4038-A524-C91080C80191}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FR.FVCExperiments", "FR.FVCExperiments\FR.FVCExperiments.csproj", "{F7475C92-4E88-43ED-B0E6-711F78F5AED5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FR.Sherlock1994", "FR.Sherlock1994\FR.Sherlock1994.csproj", "{0C3F7B97-D32D-449A-8271-2395B011B784}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SHullDelaunayTriangulation", "SHullDelaunayTriangulation\SHullDelaunayTriangulation.csproj", "{97B37874-C001-4CC5-863A-3C506847E73F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FR.Medina2011", "FR.Medina2011\FR.Medina2011.csproj", "{3EDBDB54-C495-451B-9802-63117C75EE6B}"
 EndProject
@@ -113,16 +111,6 @@ Global
 		{BA8BFCC0-AF7D-47F6-9420-C2706EAE59C5}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{BA8BFCC0-AF7D-47F6-9420-C2706EAE59C5}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{BA8BFCC0-AF7D-47F6-9420-C2706EAE59C5}.Release|x86.ActiveCfg = Release|Any CPU
-		{D02D8BC2-1710-4DD5-AD32-41093E3BFA16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D02D8BC2-1710-4DD5-AD32-41093E3BFA16}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D02D8BC2-1710-4DD5-AD32-41093E3BFA16}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{D02D8BC2-1710-4DD5-AD32-41093E3BFA16}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{D02D8BC2-1710-4DD5-AD32-41093E3BFA16}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{D02D8BC2-1710-4DD5-AD32-41093E3BFA16}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D02D8BC2-1710-4DD5-AD32-41093E3BFA16}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D02D8BC2-1710-4DD5-AD32-41093E3BFA16}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{D02D8BC2-1710-4DD5-AD32-41093E3BFA16}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{D02D8BC2-1710-4DD5-AD32-41093E3BFA16}.Release|x86.ActiveCfg = Release|Any CPU
 		{27189BAD-B32E-4038-A524-C91080C80191}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{27189BAD-B32E-4038-A524-C91080C80191}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27189BAD-B32E-4038-A524-C91080C80191}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -153,16 +141,6 @@ Global
 		{0C3F7B97-D32D-449A-8271-2395B011B784}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{0C3F7B97-D32D-449A-8271-2395B011B784}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{0C3F7B97-D32D-449A-8271-2395B011B784}.Release|x86.ActiveCfg = Release|Any CPU
-		{97B37874-C001-4CC5-863A-3C506847E73F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{97B37874-C001-4CC5-863A-3C506847E73F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{97B37874-C001-4CC5-863A-3C506847E73F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{97B37874-C001-4CC5-863A-3C506847E73F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{97B37874-C001-4CC5-863A-3C506847E73F}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{97B37874-C001-4CC5-863A-3C506847E73F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{97B37874-C001-4CC5-863A-3C506847E73F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{97B37874-C001-4CC5-863A-3C506847E73F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{97B37874-C001-4CC5-863A-3C506847E73F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{97B37874-C001-4CC5-863A-3C506847E73F}.Release|x86.ActiveCfg = Release|Any CPU
 		{3EDBDB54-C495-451B-9802-63117C75EE6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3EDBDB54-C495-451B-9802-63117C75EE6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3EDBDB54-C495-451B-9802-63117C75EE6B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -200,5 +178,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{27189BAD-B32E-4038-A524-C91080C80191} = {13DD940F-CA5E-41BF-929F-38DC2BC1783C}
 		{705DAC9E-2754-4C90-B07F-78630506D96D} = {13DD940F-CA5E-41BF-929F-38DC2BC1783C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {672873E4-0948-440E-9511-0D4F613DB400}
 	EndGlobalSection
 EndGlobal

@@ -70,6 +70,11 @@
     <Compile Include="ISimilarity.cs" />
     <Compile Include="MinutiaMapper.cs" />
     <Compile Include="SHullDelaunay.cs" />
+    <Compile Include="SHullDelaunayTriangulation\Hull.cs" />
+    <Compile Include="SHullDelaunayTriangulation\Set.cs" />
+    <Compile Include="SHullDelaunayTriangulation\Triad.cs" />
+    <Compile Include="SHullDelaunayTriangulation\Triangulator.cs" />
+    <Compile Include="SHullDelaunayTriangulation\Vertex.cs" />
     <Compile Include="SkeletonImageSerializer.cs" />
     <Compile Include="FingerprintImageProvider.cs" />
     <Compile Include="IResourceProvider.cs" />
@@ -121,12 +126,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SHullDelaunayTriangulation\SHullDelaunayTriangulation.csproj">
-      <Project>{97B37874-C001-4CC5-863A-3C506847E73F}</Project>
-      <Name>SHullDelaunayTriangulation</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
