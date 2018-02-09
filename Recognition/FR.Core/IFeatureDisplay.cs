@@ -72,7 +72,7 @@ namespace PatternRecognition.FingerprintRecognition.Core
             if (features.GetType() != typeof(FeatureType))
             {
                 string msg = "Unable to display features: Invalid features type!";
-                throw new ArgumentOutOfRangeException("features", features, msg);
+                throw new ArgumentOutOfRangeException(nameof(features), features, msg);
             }
             Show((FeatureType)features, g);
         }

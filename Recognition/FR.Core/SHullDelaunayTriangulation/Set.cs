@@ -20,7 +20,7 @@ using System.Collections.Generic;
   
  */
 
-namespace DelaunayTriangulator
+namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulation
 {
     class Set<T> : IEnumerable<T>
     {

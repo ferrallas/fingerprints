@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 
-namespace PatternRecognition.ROC
+namespace PatternRecognition.FingerprintRecognition.Experiments.ROC.ROCBuilders
 {
     /// <summary>
     ///     Builds ROC curve of type True Positive Rate versus False Positive Rate ROC Builder.

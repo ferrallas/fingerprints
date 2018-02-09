@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 
-namespace PatternRecognition.ROC
+namespace PatternRecognition.FingerprintRecognition.Experiments.ROC
 {
     /// <summary>
     ///     Represents a point in the ROC curve.

@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
-using PatternRecognition.FingerprintRecognition.Applications;
+using PatternRecognition.FingerprintRecognition.Core;
+using PatternRecognition.FingerprintRecognition.Core.Medina2012;
+using PatternRecognition.FingerprintRecognition.Core.Ratha1995;
 
-namespace VerificationExperimenter
+namespace PatternRecognition.FingerprintRecognition.Applications
 {
     static class Program
     {
@@ -14,7 +18,29 @@ namespace VerificationExperimenter
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FMExperimenterForm());
+
+
+            var mtiaListProvider = new MinutiaListProvider(new Ratha1995MinutiaeExtractor());
+            var orImgProvider = new OrientationImageProvider(new Ratha1995OrImgExtractor());
+            var matcher = new M3gl();
+
+            var provider = new MtpsFeatureProvider(mtiaListProvider);
+            var repository = new ResourceRepository(@"D:\IMPRONTE");
+
+            var qFeatures = provider.GetResource(Path.GetFileNameWithoutExtension("101_1.tif"), repository);
+
+            foreach (var path in Directory.GetFiles(@"D:\IMPRONTE","*.tif"))
+            {
+                var shortFileName = Path.GetFileNameWithoutExtension(path);
+                var tFeatures = provider.GetResource(shortFileName, repository);
+
+                var score = matcher.Match(qFeatures, tFeatures, out List<MinutiaPair> matchingMtiae);
+
+                if (Math.Abs(score) < double.Epsilon || matchingMtiae == null) continue;
+
+                if(matchingMtiae.Count > 10) 
+                    Console.WriteLine($"{shortFileName} confidence:{score*100}%");
+            }
         }
     }
 }

@@ -6,9 +6,8 @@
 
 using System;
 using System.Drawing;
-using PatternRecognition.FingerprintRecognition.Core;
 
-namespace PatternRecognition.FingerprintRecognition.ResourceProviders
+namespace PatternRecognition.FingerprintRecognition.Core
 {
     /// <summary>
     ///     Allows retrieving skeleton image from a <see cref="ResourceRepository"/>.
@@ -45,7 +44,7 @@ namespace PatternRecognition.FingerprintRecognition.ResourceProviders
         {
             bool isPersistent = IsResourcePersistent();
             string resourceName =
-                string.Format("{0}.{1}", fingerprint, GetSignature());
+                $"{fingerprint}.{GetSignature()}";
             if (isPersistent && repository.ResourceExists(resourceName))
                 return SkeletonImageSerializer.FromByteArray(repository.RetrieveResource(resourceName));
 
@@ -64,7 +63,7 @@ namespace PatternRecognition.FingerprintRecognition.ResourceProviders
         /// <returns>It returns a string formed by the name of the property <see cref="SkeletonImageExtractor"/> concatenated with ".ski".</returns>
         public string GetSignature()
         {
-            return string.Format("{0}.ski", SkeletonImageExtractor.GetType().Name);
+            return $"{SkeletonImageExtractor.GetType().Name}.ski";
         }
 
         /// <summary>
@@ -82,7 +81,7 @@ namespace PatternRecognition.FingerprintRecognition.ResourceProviders
         {
             Bitmap image = imageProvider.GetResource(fingerprintLabel, repository);
             if (image == null)
-                throw new ArgumentOutOfRangeException("fingerprintLabel", "Unable to extract SkeletonImage: Invalid fingerprint!");
+                throw new ArgumentOutOfRangeException(nameof(fingerprintLabel), "Unable to extract SkeletonImage: Invalid fingerprint!");
             if (SkeletonImageExtractor == null)
                 throw new InvalidOperationException("Unable to extract SkeletonImage: Unassigned skeleton image extractor!");
             return SkeletonImageExtractor.ExtractFeatures(image);

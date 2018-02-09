@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 /*
   copyright s-hull.org 2011
@@ -24,7 +22,7 @@ using System.Text;
   
   contributors: Phil Atkin, Dr Sinclair.
 */
-namespace DelaunayTriangulator
+namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulation
 {
     /// <summary>
     /// Vertices belonging to the convex hull need to maintain a point and triad index

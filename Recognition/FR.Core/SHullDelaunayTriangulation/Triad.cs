@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 
 /*
@@ -25,7 +23,7 @@ using System.Diagnostics;
   
   contributors: Phil Atkin, Dr Sinclair.
 */
-namespace DelaunayTriangulator
+namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulation
 {
     public class Triad
     {
@@ -215,7 +213,7 @@ namespace DelaunayTriangulator
 
         public override string ToString()
         {
-            return string.Format("Triad vertices {0} {1} {2} ; edges {3} {4} {5}", a, b, c, ab, ac, bc);
+            return $"Triad vertices {a} {b} {c} ; edges {ab} {ac} {bc}";
         }
     }
 }

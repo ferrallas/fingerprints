@@ -47,7 +47,7 @@ namespace PatternRecognition.FingerprintRecognition.Core
         public static List<Minutia> FromByteArray(byte[] bytes)
         {
             if (bytes.Length % 4 != 0)
-                throw new ArgumentOutOfRangeException("bytes", bytes, "Invalid bytes count: A correct bytes count can be divided by 4.");
+                throw new ArgumentOutOfRangeException(nameof(bytes), bytes, "Invalid bytes count: A correct bytes count can be divided by 4.");
             int mtiaCount = bytes.Length / 4;
             List<Minutia> mtiae = new List<Minutia>(mtiaCount);
             for (int i = 0; i < mtiaCount; i++)

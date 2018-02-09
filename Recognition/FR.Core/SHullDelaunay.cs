@@ -5,7 +5,7 @@
  */
 
 using System.Collections.Generic;
-using DelaunayTriangulator;
+using PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulation;
 
 namespace PatternRecognition.FingerprintRecognition.Core
 {

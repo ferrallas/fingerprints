@@ -10,7 +10,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using PatternRecognition.FingerprintRecognition.Core;
-using PatternRecognition.ROC;
 
 namespace PatternRecognition.FingerprintRecognition.Experiments
 {

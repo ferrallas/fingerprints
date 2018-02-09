@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 
-namespace PatternRecognition.ROC
+namespace PatternRecognition.FingerprintRecognition.Experiments.ROC.ROCBuilders
 {
     /// <summary>
     ///     Builds ROC curve of type False Not Matching Rate versus False Matching Rate.

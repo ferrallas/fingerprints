@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace PatternRecognition.ROC
+namespace PatternRecognition.FingerprintRecognition.Experiments.ROC
 {
     /// <summary>
     ///     A utility class used to serialize and deserialize ROC curves.
@@ -40,7 +40,7 @@ namespace PatternRecognition.ROC
                 fs.WriteLine("Matcher:;" + matcherName);
                 fs.WriteLine(xLabel + ";" + yLabel);
                 foreach (ROCPoint rocPoint in roc)
-                    fs.WriteLine(string.Format("{0:f4};{1:f4}", rocPoint.x, rocPoint.y));
+                    fs.WriteLine($"{rocPoint.x:f4};{rocPoint.y:f4}");
                 fs.Close();
             }
         }
@@ -68,7 +68,7 @@ namespace PatternRecognition.ROC
                 fs.WriteLine("Matcher:;" + matcherName);
                 fs.WriteLine(xLabel + ";" + yLabel + ";Threshold");
                 foreach (ROCPoint rocPoint in roc)
-                    fs.WriteLine(string.Format("{0:f4};{1:f4};{2:f4}", rocPoint.x, rocPoint.y, rocPoint.matchingValue));
+                    fs.WriteLine($"{rocPoint.x:f4};{rocPoint.y:f4};{rocPoint.matchingValue:f4}");
                 fs.Close();
         }
 

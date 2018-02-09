@@ -10,7 +10,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using PatternRecognition.FingerprintRecognition.Core;
-using PatternRecognition.ROC;
+using PatternRecognition.FingerprintRecognition.Experiments.ROC;
+using PatternRecognition.FingerprintRecognition.Experiments.ROC.ROCBuilders;
 
 namespace PatternRecognition.FingerprintRecognition.Experiments
 {
@@ -92,13 +93,13 @@ namespace PatternRecognition.FingerprintRecognition.Experiments
                 out falseMatches);
 
             // Saving data
-            Directory.CreateDirectory(string.Format(@"{0}\Results\", ResourcePath));
-            var fileName = string.Format(@"{0}\Results\{1}.falseNotMatches.csv", ResourcePath, Matcher.GetType().Name);
+            Directory.CreateDirectory($@"{ResourcePath}\Results\");
+            var fileName = $@"{ResourcePath}\Results\{Matcher.GetType().Name}.falseNotMatches.csv";
             SaveBadMatches(fileName, falseNotMatches);
-            fileName = string.Format(@"{0}\Results\{1}.falseMatches.csv", ResourcePath, Matcher.GetType().Name);
+            fileName = $@"{ResourcePath}\Results\{Matcher.GetType().Name}.falseMatches.csv";
             SaveBadMatches(fileName, falseMatches);
 
-            fileName = string.Format(@"{0}\Results\{1}.Summary.csv", ResourcePath, Matcher.GetType().Name);
+            fileName = $@"{ResourcePath}\Results\{Matcher.GetType().Name}.Summary.csv";
             var fs = new StreamWriter(fileName, false);
             fs.WriteLine("Features:; {0}", ResourceProvider.GetSignature());
             fs.WriteLine("Average match time(ms):; {0:f5}", speed);
@@ -245,7 +246,7 @@ namespace PatternRecognition.FingerprintRecognition.Experiments
             for (var i = 1; i <= 10; i++)
             for (var j = 1; j <= 8; j++)
             {
-                var label = string.Format("{0}_{1}", 100 + i, j);
+                var label = $"{100 + i}_{j}";
                 imgCaptions.Add(label);
                 var currFeat = ResourceProvider.GetResource(label, repository);
                 features.Add(currFeat);

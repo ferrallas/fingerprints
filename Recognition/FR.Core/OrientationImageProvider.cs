@@ -6,15 +6,26 @@
 
 using System;
 using System.Drawing;
-using PatternRecognition.FingerprintRecognition.Core;
 
-namespace PatternRecognition.FingerprintRecognition.ResourceProviders
+namespace PatternRecognition.FingerprintRecognition.Core
 {
     /// <summary>
     ///     Allows retrieving orientation image from a <see cref="ResourceRepository"/>.
     /// </summary>
     public class OrientationImageProvider : IResourceProvider<OrientationImage>
     {
+
+        /// <summary>
+        ///     Used to extract orientation image in case that the resource have not being saved.
+        /// </summary>
+        private readonly IFeatureExtractor<OrientationImage> _orientationImageExtractor;
+
+
+        public OrientationImageProvider(IFeatureExtractor<OrientationImage> provider)
+        {
+            this._orientationImageExtractor = provider;
+        }
+
         /// <summary>
         ///     Gets orientation image from the specified fingerprint and <see cref="ResourceRepository"/>.
         /// </summary>
@@ -40,7 +51,7 @@ namespace PatternRecognition.FingerprintRecognition.ResourceProviders
         {
             bool isPersistent = IsResourcePersistent();
             string resourceName =
-                string.Format("{0}.{1}", fingerprint, GetSignature());
+                $"{fingerprint}.{GetSignature()}";
             if (isPersistent && repository.ResourceExists(resourceName))
                 return OrientationImageSerializer.FromByteArray(repository.RetrieveResource(resourceName));
 
@@ -54,17 +65,12 @@ namespace PatternRecognition.FingerprintRecognition.ResourceProviders
         }
 
         /// <summary>
-        ///     Used to extract orientation image in case that the resource have not being saved.
-        /// </summary>
-        public IFeatureExtractor<OrientationImage> OrientationImageExtractor { set; get; }
-
-        /// <summary>
         ///     Gets the signature of the <see cref="OrientationImageProvider"/>.
         /// </summary>
-        /// <returns>It returns a string formed by the name of the property <see cref="OrientationImageExtractor"/> concatenated with ".ori".</returns>
+        /// <returns>It returns a string formed by the name of the property <see cref="_orientationImageExtractor"/> concatenated with ".ori".</returns>
         public string GetSignature()
         {
-            return string.Format("{0}.ori", OrientationImageExtractor.GetType().Name);   
+            return $"{_orientationImageExtractor.GetType().Name}.ori";   
         }
 
         /// <summary>
@@ -80,15 +86,15 @@ namespace PatternRecognition.FingerprintRecognition.ResourceProviders
 
         private OrientationImage Extract(string fingerprintLabel, ResourceRepository repository)
         {
-            Bitmap image = imageProvider.GetResource(fingerprintLabel, repository);
+            Bitmap image = _imageProvider.GetResource(fingerprintLabel, repository);
             if (image == null)
-                throw new ArgumentOutOfRangeException("fingerprintLabel", "Unable to extract OrientationImage: Invalid fingerprint!");
-            if (OrientationImageExtractor == null)
+                throw new ArgumentOutOfRangeException(nameof(fingerprintLabel), "Unable to extract OrientationImage: Invalid fingerprint!");
+            if (_orientationImageExtractor == null)
                 throw new InvalidOperationException("Unable to extract OrientationImage: Unassigned orientation image extractor!");
-            return OrientationImageExtractor.ExtractFeatures(image);
+            return _orientationImageExtractor.ExtractFeatures(image);
         }
 
-        private readonly FingerprintImageProvider imageProvider = new FingerprintImageProvider();
+        private readonly FingerprintImageProvider _imageProvider = new FingerprintImageProvider();
 
         #endregion
     }

@@ -4,7 +4,7 @@
  * Comments by: Miguel Angel Medina Pérez (migue.cu@gmail.com)
  */
 
-namespace PatternRecognition.Core
+namespace PatternRecognition.FingerprintRecognition.Core
 {
     /// <summary>
     ///     Represents a boolean similarity comparison function.

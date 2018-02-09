@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
 
 /*
@@ -25,7 +24,7 @@ using System.Diagnostics;
   
   contributors: Phil Atkin, Dr Sinclair.
 */
-namespace DelaunayTriangulator
+namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulation
 {
     public class SHullTriangulator
     {
@@ -684,10 +683,7 @@ namespace DelaunayTriangulator
                 for (int i = 0; i < triangles.Count; i++)
                 {
                     Triad t = triangles[i];
-                    writer.WriteLine(string.Format("{0}: {1} {2} {3} - {4} {5} {6}",
-                        i + 1,
-                        t.a, t.b, t.c,
-                        t.ab + 1, t.bc + 1, t.ac + 1));
+                    writer.WriteLine($"{i + 1}: {t.a} {t.b} {t.c} - {t.ab + 1} {t.bc + 1} {t.ac + 1}");
                 }
             }
         }

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 /*
   copyright s-hull.org 2011
@@ -24,7 +22,7 @@ using System.Text;
   
   contributors: Phil Atkin, Dr Sinclair.
 */
-namespace DelaunayTriangulator
+namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulation
 {
     public class Vertex
     {
@@ -51,7 +49,7 @@ namespace DelaunayTriangulator
 
         public override string ToString()
         {
-            return string.Format("({0},{1})", x, y);
+            return $"({x},{y})";
         }
     }
 

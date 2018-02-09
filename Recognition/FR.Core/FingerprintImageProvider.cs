@@ -56,7 +56,7 @@ namespace PatternRecognition.FingerprintRecognition.Core
             byte[] rawImage = null;
             foreach (string ext in new[] { "tif", "bmp", "jpg" })
             {
-                string resourceName = string.Format("{0}.{1}", fingerprint, ext);
+                string resourceName = $"{fingerprint}.{ext}";
                 rawImage = repository.RetrieveResource(resourceName);
                 if (rawImage != null)
                     break;

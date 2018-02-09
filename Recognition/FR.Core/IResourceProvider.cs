@@ -98,7 +98,7 @@ namespace PatternRecognition.FingerprintRecognition.Core
         {
             bool isPersistent = IsResourcePersistent();
             string resourceName =
-                string.Format("{0}.{1}", fingerprint, GetSignature());
+                $"{fingerprint}.{GetSignature()}";
             if (isPersistent && repository.ResourceExists(resourceName))
                 return repository.RetrieveObjectResource(resourceName) as ResourceType;
 

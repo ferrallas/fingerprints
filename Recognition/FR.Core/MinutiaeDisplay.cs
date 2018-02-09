@@ -7,9 +7,8 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using PatternRecognition.FingerprintRecognition.Core;
 
-namespace PatternRecognition.FingerprintRecognition.FeatureDisplay
+namespace PatternRecognition.FingerprintRecognition.Core
 {
     /// <summary>
     ///     Used to paint minutiae.

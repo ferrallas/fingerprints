@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
-using PatternRecognition.FingerprintRecognition.Applications;
 
-namespace FR.FeaturesDisplay
+namespace PatternRecognition.FingerprintRecognition.Applications
 {
     static class Program
     {
