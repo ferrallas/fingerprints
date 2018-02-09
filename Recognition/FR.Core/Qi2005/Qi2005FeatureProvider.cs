@@ -16,12 +16,12 @@ namespace PatternRecognition.FingerprintRecognition.Core.Qi2005
 
         public OrientationImageProvider OrImgProvider { get; set; }
 
-        public Qi2005Features Extract(string fingerprint, ResourceRepository repository)
+        public Qi2005Features Extract(byte[] image)
         {
             try
             {
-                var mtiae = MtiaListProvider.Extract(fingerprint, repository);
-                var dirImg = OrImgProvider.GetResource(fingerprint, repository);
+                var mtiae = MtiaListProvider.Extract(image);
+                var dirImg = OrImgProvider.Extract(image);
 
                 return featureExtractor.ExtractFeatures(mtiae, dirImg);
             }

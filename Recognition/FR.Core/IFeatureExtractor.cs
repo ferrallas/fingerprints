@@ -8,15 +8,10 @@ using System.Drawing;
 
 namespace PatternRecognition.FingerprintRecognition.Core
 {
-    public interface IFeatureExtractor
-    {
-        object ExtractFeatures(Bitmap image);
-    }
 
-
-    public interface IFeatureExtractor<FeatureType> : IFeatureExtractor
+    public interface IFeatureExtractor<FeatureType> 
     {
-        new FeatureType ExtractFeatures(Bitmap image);
+        FeatureType ExtractFeatures(Bitmap image);
     }
 
 
@@ -25,15 +20,6 @@ namespace PatternRecognition.FingerprintRecognition.Core
         #region IFeatureExtractor<FeatureType> Members
 
         public abstract FeatureType ExtractFeatures(Bitmap image);
-
-        #endregion
-
-        #region IFeatureExtractor Members
-
-        object IFeatureExtractor.ExtractFeatures(Bitmap image)
-        {
-            return ExtractFeatures(image);
-        }
 
         #endregion
     }

@@ -13,7 +13,7 @@ using System.Drawing.Drawing2D;
 
 namespace PatternRecognition.FingerprintRecognition.Core.Tico2003
 {
-    public class TK
+    public class TKMatcher
     {
         #region public
 
@@ -29,27 +29,17 @@ namespace PatternRecognition.FingerprintRecognition.Core.Tico2003
             set => gAngThr = value * Math.PI / 180;
         }
 
-
-        public double Match(Tico2003Features query, Tico2003Features template)
+        public double Match(Tico2003Features query, Tico2003Features template, out List<MinutiaPair> matchingMtiae)
         {
-            List<MinutiaPair> matchingMtiae;
-            return Match(query, template, out matchingMtiae);
-        }
-
-
-        public double Match(object query, object template, out List<MinutiaPair> matchingMtiae)
-        {
-            var qTico2003Features = query as Tico2003Features;
-            var tTico2003Features = template as Tico2003Features;
             try
             {
                 matchingMtiae = null;
-                var localMatchingMtiae = GetLocalMatchingMtiae(qTico2003Features, tTico2003Features);
+                var localMatchingMtiae = GetLocalMatchingMtiae(query, template);
                 if (localMatchingMtiae.Count == 0)
                     return 0;
                 matchingMtiae = GetGlobalMatchingMtiae(localMatchingMtiae, localMatchingMtiae[0]);
 
-                return Eval(qTico2003Features, tTico2003Features, matchingMtiae);
+                return Eval(query, template, matchingMtiae);
             }
             catch (Exception e)
             {

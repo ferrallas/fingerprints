@@ -98,43 +98,17 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2012
             }
         }
 
-        private class DoubleComparer : IComparer<double>
-        {
-            public int Compare(double x, double y)
-            {
-                return x > y ? 1 : -1;
-            }
-        }
-
         #endregion
 
         #region Generating hashes
 
-        private int DiscretizeAngle(double d)
+        private static int DiscretizeAngle(double d)
         {
             var code = Convert.ToInt32(d * 180 / Math.PI / 45);
             return code != 8 ? code : 0;
         }
 
-        private int[] GetAllRotationsHashes(MTriplet mtp)
-        {
-            // Computing hash for alpha angles
-            var alphaCodes = GetAlphaCodes(mtp);
-
-            // Generating all possible hashes
-            var hashes = new int[3];
-            var i = 0;
-            foreach (var order in MTriplet.Orders)
-            {
-                var a0 = alphaCodes[order[0]];
-                var a1 = alphaCodes[order[1]];
-                var a2 = alphaCodes[order[2]];
-                hashes[i++] = MergeHashes(a0, a1, a2);
-            }
-            return hashes;
-        }
-
-        private int[] GetAlphaCodes(MTriplet mtp)
+        private static int[] GetAlphaCodes(MTriplet mtp)
         {
             var alpha = new int[3];
             for (var i = 0; i < 3; i++)
@@ -157,7 +131,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2012
             return alpha;
         }
 
-        private int MergeHashes(int a0, int a1, int a2)
+        private static int MergeHashes(int a0, int a1, int a2)
         {
             var block2 = a2;
             // Storing d1 in the next 4 bits.

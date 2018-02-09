@@ -23,14 +23,14 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
         }
 
 
-        protected JYFeatures Extract(string fingerprint, ResourceRepository repository)
+        protected JYFeatures Extract(byte[] image)
         {
             try
             {
-                var mtiae = _mtiaListProvider.Extract(fingerprint, repository);
-                var skeletonImg = SkeletonImgProvider.GetResource(fingerprint, repository);
+                var mtiae = _mtiaListProvider.Extract(image);
+                var skeletonImg = SkeletonImgProvider.Extract(image);
 
-                return featureExtractor.ExtractFeatures(mtiae, skeletonImg);
+                return JYFeatureExtractor.ExtractFeatures(mtiae, skeletonImg);
             }
             catch (Exception)
             {

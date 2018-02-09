@@ -15,8 +15,6 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
 
         private double gAngThr = Math.PI / 6;
 
-        #region public
-
         public int GlobalDistThr { get; set; } = 8;
 
 
@@ -26,47 +24,23 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
             set => gAngThr = value * Math.PI / 180;
         }
 
-
-        public double Match(JYFeatures query, JYFeatures template)
-        {
-            List<MinutiaPair> matchingMtiae;
-            return Match(query, template, out matchingMtiae);
-        }
-
-
         public double Match(JYFeatures query, JYFeatures template, out List<MinutiaPair> matchingMtiae)
         {
-            try
-            {
-                matchingMtiae = null;
-                var localMatchingMtiae = GetLocalMatchingMtiae(query, template);
-                if (localMatchingMtiae.Count == 0)
-                    return 0;
-                matchingMtiae = GetGlobalMatchingMtiae(localMatchingMtiae, localMatchingMtiae[0]);
+            matchingMtiae = null;
+            var localMatchingMtiae = GetLocalMatchingMtiae(query, template);
+            if (localMatchingMtiae.Count == 0)
+                return 0;
+            matchingMtiae = GetGlobalMatchingMtiae(localMatchingMtiae, localMatchingMtiae[0]);
 
-                if (matchingMtiae.Count < 6)
-                    return 0;
+            if (matchingMtiae.Count < 6)
+                return 0;
 
-                double sum = 0;
-                foreach (var mtiaPair in matchingMtiae)
-                    sum += 0.5 + 0.5 * mtiaPair.MatchingValue;
+            double sum = 0;
+            foreach (var mtiaPair in matchingMtiae)
+                sum += 0.5 + 0.5 * mtiaPair.MatchingValue;
 
-                return 100.0 * sum / Math.Max(query.Minutiae.Count, template.Minutiae.Count);
-            }
-            catch (Exception e)
-            {
-                if (query.GetType() != typeof(JYFeatures) || template.GetType() != typeof(JYFeatures))
-                {
-                    var msg = "Unable to match fingerprints: Invalid features type!";
-                    throw new ArgumentOutOfRangeException(msg, e);
-                }
-                throw e;
-            }
+            return 100.0 * sum / Math.Max(query.Minutiae.Count, template.Minutiae.Count);
         }
-
-        #endregion
-
-        #region private
 
         private class JyTriplet
         {
@@ -76,7 +50,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
             public double MatchingValue { set; get; }
         }
 
-        private IList<MinutiaPair> GetLocalMatchingMtiae(JYFeatures query, JYFeatures template)
+        private static IList<MinutiaPair> GetLocalMatchingMtiae(JYFeatures query, JYFeatures template)
         {
             var triplets = new List<JyTriplet>(query.Minutiae.Count * template.Minutiae.Count);
             for (var i = 0; i < query.Minutiae.Count; i++)
@@ -198,7 +172,5 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
                 return x == y ? 0 : x.MatchingValue < y.MatchingValue ? 1 : -1;
             }
         }
-
-        #endregion
     }
 }

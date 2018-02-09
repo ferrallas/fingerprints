@@ -4,7 +4,7 @@
  * Comments by: Miguel Angel Medina Pérez (miguel.medina.perez@gmail.com)
  */
 
-using System;
+using PatternRecognition.FingerprintRecognition.Core.Ratha1995;
 
 namespace PatternRecognition.FingerprintRecognition.Core.Medina2012
 {
@@ -14,9 +14,9 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2012
         private readonly MTripletsExtractor mTripletsCalculator = new MTripletsExtractor();
 
 
-        public MtpsFeatureProvider(MinutiaListProvider mtiaListProvider)
+        public MtpsFeatureProvider()
         {
-            _mtiaListProvider = mtiaListProvider;
+            _mtiaListProvider = new MinutiaListProvider(new Ratha1995MinutiaeExtractor());
         }
 
         public byte NeighborsCount
@@ -25,20 +25,10 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2012
             get => mTripletsCalculator.NeighborsCount;
         }
 
-        public MtripletsFeature Extract(string fingerprint, ResourceRepository repository)
+        public MtripletsFeature Extract(byte[] imageRaw)
         {
-            try
-            {
-                var mtiae = _mtiaListProvider.Extract(fingerprint, repository);
-                return mTripletsCalculator.ExtractFeatures(mtiae);
-            }
-            catch (Exception e)
-            {
-                if (_mtiaListProvider == null)
-                    throw new InvalidOperationException(
-                        "Unable to extract PNFeatures: Unassigned minutia list provider!", e);
-                throw;
-            }
+            var mtiae = _mtiaListProvider.Extract(imageRaw);
+            return mTripletsCalculator.ExtractFeatures(mtiae);
         }
     }
 }

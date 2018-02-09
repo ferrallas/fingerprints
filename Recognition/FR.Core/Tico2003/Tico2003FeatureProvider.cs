@@ -17,12 +17,12 @@ namespace PatternRecognition.FingerprintRecognition.Core.Tico2003
 
         public OrientationImageProvider OrImgProvider { get; set; }
 
-        public Tico2003Features Extract(string fingerprint, ResourceRepository repository)
+        public Tico2003Features Extract(byte[] image)
         {
             try
             {
-                var mtiae = MtiaListProvider.Extract(fingerprint, repository);
-                var dirImg = OrImgProvider.GetResource(fingerprint, repository);
+                var mtiae = MtiaListProvider.Extract(image);
+                var dirImg = OrImgProvider.Extract(image);
 
                 return featureExtractor.ExtractFeatures(mtiae, dirImg);
             }

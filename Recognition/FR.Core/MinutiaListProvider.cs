@@ -11,7 +11,6 @@ namespace PatternRecognition.FingerprintRecognition.Core
 {
     public class MinutiaListProvider
     {
-        private readonly FingerprintImageProvider _imageProvider = new FingerprintImageProvider();
         private readonly IFeatureExtractor<List<Minutia>> _minutiaListExtractor;
 
         public MinutiaListProvider(IFeatureExtractor<List<Minutia>> extractor)
@@ -19,15 +18,9 @@ namespace PatternRecognition.FingerprintRecognition.Core
             _minutiaListExtractor = extractor;
         }
 
-        public List<Minutia> Extract(string fingerprintLabel, ResourceRepository repository)
+        public List<Minutia> Extract(byte[] imageRaw)
         {
-            var image = _imageProvider.GetResource(fingerprintLabel, repository);
-            if (image == null)
-                throw new ArgumentOutOfRangeException(fingerprintLabel,
-                    "Unable to extract minutia list: Invalid fingerprint!");
-            if (_minutiaListExtractor == null)
-                throw new InvalidOperationException(
-                    "Unable to extract minutia list: Unassigned minutia list extractor!");
+            var image = ImageProvider.GetResource(imageRaw);
             return _minutiaListExtractor.ExtractFeatures(image);
         }
     }

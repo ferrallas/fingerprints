@@ -42,54 +42,39 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2012
             return Match(query, template, out matchingMtiae);
         }
 
-        public double Match(object query, object template, out List<MinutiaPair> matchingMtiae)
+        public double Match(MtripletsFeature query, MtripletsFeature template, out List<MinutiaPair> matchingMtiae)
         {
-            try
+            matchingMtiae = new List<MinutiaPair>();
+            if (query.Minutiae.Count < MtiaCountThr || template.Minutiae.Count < MtiaCountThr)
+                return 0;
+            IList<MtripletPair> matchingTriplets = GetMatchingTriplets(query, template);
+            if (matchingTriplets.Count == 0)
+                return 0;
+            var localMatchingMtiae = GetLocalMatchingMtiae(query, template, matchingTriplets);
+            if (localMatchingMtiae.Count < MtiaCountThr)
+                return 0;
+
+            var max = 0;
+            var notMatchingCount = int.MaxValue;
+            for (var i = 0; i < localMatchingMtiae.Count; i++)
             {
-                var qMtp = query as MtripletsFeature;
-                var tMtp = template as MtripletsFeature;
-
-                matchingMtiae = new List<MinutiaPair>();
-                if (qMtp.Minutiae.Count < MtiaCountThr || tMtp.Minutiae.Count < MtiaCountThr)
-                    return 0;
-                IList<MtripletPair> matchingTriplets = GetMatchingTriplets(qMtp, tMtp);
-                if (matchingTriplets.Count == 0)
-                    return 0;
-                var localMatchingMtiae = GetLocalMatchingMtiae(qMtp, tMtp, matchingTriplets);
-                if (localMatchingMtiae.Count < MtiaCountThr)
-                    return 0;
-
-                var max = 0;
-                var notMatchingCount = int.MaxValue;
-                for (var i = 0; i < localMatchingMtiae.Count; i++)
+                var currMatchingMtiae =
+                    GetGlobalMatchingMtiae(localMatchingMtiae, localMatchingMtiae[i], ref notMatchingCount);
+                if (currMatchingMtiae != null && currMatchingMtiae.Count > max)
                 {
-                    var currMatchingMtiae =
-                        GetGlobalMatchingMtiae(localMatchingMtiae, localMatchingMtiae[i], ref notMatchingCount);
-                    if (currMatchingMtiae != null && currMatchingMtiae.Count > max)
-                    {
-                        max = currMatchingMtiae.Count;
-                        matchingMtiae = currMatchingMtiae;
-                    }
+                    max = currMatchingMtiae.Count;
+                    matchingMtiae = currMatchingMtiae;
                 }
+            }
 
-                return 1.0 * max * max / (qMtp.Minutiae.Count * tMtp.Minutiae.Count);
-            }
-            catch (Exception e)
-            {
-                if (query.GetType() != typeof(MtripletsFeature) || template.GetType() != typeof(MtripletsFeature))
-                {
-                    var msg = "Unable to match fingerprints: Invalid features type!";
-                    throw new ArgumentOutOfRangeException(msg, e);
-                }
-                throw e;
-            }
+            return 1.0 * max * max / (query.Minutiae.Count * template.Minutiae.Count);
         }
 
         #endregion
 
         #region private
 
-        private List<MtripletPair> GetMatchingTriplets(MtripletsFeature t1, MtripletsFeature t2)
+        private static List<MtripletPair> GetMatchingTriplets(MtripletsFeature t1, MtripletsFeature t2)
         {
             var mostSimilar = new List<MtripletPair>();
             foreach (var queryTriplet in t1.MTriplets)

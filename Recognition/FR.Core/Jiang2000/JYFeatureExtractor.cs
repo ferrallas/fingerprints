@@ -39,35 +39,34 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
         }
 
 
-        public JYFeatures ExtractFeatures(List<Minutia> minutiae, SkeletonImage skeletonImg)
+        public static JYFeatures ExtractFeatures(List<Minutia> minutiae, SkeletonImage skeletonImg)
         {
             var descriptorsList = new List<JYMtiaDescriptor>();
 
-            if (minutiae.Count > 3)
+            if (minutiae.Count <= 3) return new JYFeatures(descriptorsList);
+
+            var mtiaIdx = new Dictionary<Minutia, int>();
+            for (var i = 0; i < minutiae.Count; i++)
+                mtiaIdx.Add(minutiae[i], i);
+            for (short idx = 0; idx < minutiae.Count; idx++)
             {
-                var mtiaIdx = new Dictionary<Minutia, int>();
-                for (var i = 0; i < minutiae.Count; i++)
-                    mtiaIdx.Add(minutiae[i], i);
-                for (short idx = 0; idx < minutiae.Count; idx++)
+                var query = minutiae[idx];
+                var nearest = GetNearest(minutiae, query);
+                for (var i = 0; i < nearest.Length - 1; i++)
+                for (var j = i + 1; j < nearest.Length; j++)
                 {
-                    var query = minutiae[idx];
-                    var nearest = GetNearest(minutiae, query);
-                    for (var i = 0; i < nearest.Length - 1; i++)
-                    for (var j = i + 1; j < nearest.Length; j++)
-                    {
-                        var newMTriplet = new JYMtiaDescriptor(skeletonImg, minutiae, idx, nearest[i],
-                            nearest[j]);
-                        descriptorsList.Add(newMTriplet);
-                    }
+                    var newMTriplet = new JYMtiaDescriptor(skeletonImg, minutiae, idx, nearest[i],
+                        nearest[j]);
+                    descriptorsList.Add(newMTriplet);
                 }
-                descriptorsList.TrimExcess();
             }
+            descriptorsList.TrimExcess();
             return new JYFeatures(descriptorsList);
         }
 
         #region private
 
-        private short[] GetNearest(List<Minutia> minutiae, Minutia query)
+        private static short[] GetNearest(List<Minutia> minutiae, Minutia query)
         {
             var distances = new double[neighborsCount];
             var nearestM = new short[neighborsCount];

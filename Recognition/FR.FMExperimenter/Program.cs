@@ -16,30 +16,24 @@ namespace PatternRecognition.FingerprintRecognition.Applications
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            var candidate = File.ReadAllBytes(@"D:\IMPRONTE\101_1.tif");
 
-
-            var mtiaListProvider = new MinutiaListProvider(new Ratha1995MinutiaeExtractor());
-            var orImgProvider = new OrientationImageProvider(new Ratha1995OrImgExtractor());
             var matcher = new M3gl();
+            var provider = new MtpsFeatureProvider();
 
-            var provider = new MtpsFeatureProvider(mtiaListProvider);
-            var repository = new ResourceRepository(@"D:\IMPRONTE");
-
-            var qFeatures = provider.Extract(Path.GetFileNameWithoutExtension("101_1.tif"), repository);
+            var qFeatures = provider.Extract(candidate);
 
             foreach (var path in Directory.GetFiles(@"D:\IMPRONTE","*.tif"))
             {
-                var shortFileName = Path.GetFileNameWithoutExtension(path);
-                var tFeatures = provider.Extract(shortFileName, repository);
+                var tFeatures = provider.Extract(File.ReadAllBytes(path));
 
                 var score = matcher.Match(qFeatures, tFeatures, out List<MinutiaPair> matchingMtiae);
 
-                if (Math.Abs(score) < double.Epsilon || matchingMtiae == null) continue;
+                if (Math.Abs(score) < double.Epsilon || matchingMtiae == null)
+                    continue;
 
                 if(matchingMtiae.Count > 10) 
-                    Console.WriteLine($"{shortFileName} confidence:{score*100}% {matchingMtiae.Count}");
+                    Console.WriteLine($"{Path.GetFileName(path)} confidence:{score*100}% {matchingMtiae.Count}");
             }
         }
     }

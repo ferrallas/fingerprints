@@ -12,24 +12,13 @@ namespace PatternRecognition.FingerprintRecognition.Core.Parziale2004
     {
         private readonly PNFeatureExtractor mTripletsCalculator = new PNFeatureExtractor();
 
-
         public MinutiaListProvider MtiaListProvider { get; set; }
 
-
-        public  PNFeatures Extract(string fingerprint, ResourceRepository repository)
+        public  PNFeatures Extract(byte[] image)
         {
             try
             {
-                var mtiae = MtiaListProvider.Extract(fingerprint, repository);
-
-                //using (StreamWriter sw = new StreamWriter("d:\\Points.txt"))
-                //{
-                //    foreach (var minutia in mtiae)
-                //        sw.WriteLine("(" + minutia.X + "," + minutia.Y + ")");
-                //    sw.Close();
-                //}
-
-
+                var mtiae = MtiaListProvider.Extract(image);
                 return mTripletsCalculator.ExtractFeatures(mtiae);
             }
             catch (Exception)

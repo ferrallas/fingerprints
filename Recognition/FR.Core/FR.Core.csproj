@@ -113,15 +113,13 @@
     <Compile Include="SHullDelaunayTriangulation\Triangulator.cs" />
     <Compile Include="SHullDelaunayTriangulation\Vertex.cs" />
     <Compile Include="SkeletonImageSerializer.cs" />
-    <Compile Include="FingerprintImageProvider.cs" />
-    <Compile Include="IMatcher.cs" />
+    <Compile Include="ImageProvider.cs" />
     <Compile Include="ISOMinutiaeSerializer.cs" />
     <Compile Include="Delaunay2D.cs" />
     <Compile Include="MinutiaeSerializer.cs" />
     <Compile Include="MinutiaListProvider.cs" />
     <Compile Include="OrientationImage.cs" />
     <Compile Include="OrientationImageDisplay.cs" />
-    <Compile Include="ImageLoader.cs" />
     <Compile Include="IFeatureDisplay.cs" />
     <Compile Include="IFeatureExtractor.cs" />
     <Compile Include="Minutia.cs" />
@@ -130,16 +128,15 @@
     <Compile Include="OrientationImageProvider.cs" />
     <Compile Include="OrientationImageSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ResourceRepository.cs" />
     <Compile Include="SkeletonImage.cs" />
     <Compile Include="SkeletonImageDisplay.cs" />
     <Compile Include="SkeletonImageProvider.cs" />
-    <Compile Include="Tico2003\MTK.cs" />
+    <Compile Include="Tico2003\TicoMatcher.cs" />
     <Compile Include="Tico2003\OBMtiaDescriptor.cs" />
     <Compile Include="Tico2003\Tico2003FeatureProvider.cs" />
     <Compile Include="Tico2003\Tico2003Features.cs" />
     <Compile Include="Tico2003\Tico2003FeaturesExtractor.cs" />
-    <Compile Include="Tico2003\TK.cs" />
+    <Compile Include="Tico2003\TKMatcher.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

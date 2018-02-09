@@ -11,12 +11,13 @@ using System.Drawing.Drawing2D;
 
 namespace PatternRecognition.FingerprintRecognition.Core.Tico2003
 {
-    public class Mtk
+    public class TicoMatcher
     {
-        #region public
+        private double gAngThr = Math.PI / 6;
+
+        private readonly MtiaEuclideanDistance dist = new MtiaEuclideanDistance();
 
         public int MtiaCountThr { get; set; } = 6;
-
 
         public int GlobalDistThr { get; set; } = 12;
 
@@ -27,56 +28,33 @@ namespace PatternRecognition.FingerprintRecognition.Core.Tico2003
             set => gAngThr = value * Math.PI / 180;
         }
 
-
-        public double Match(Tico2003Features query, Tico2003Features template)
+        public double Match(Tico2003Features query, Tico2003Features template, out List<MinutiaPair> matchingMtiae)
         {
-            List<MinutiaPair> matchingMtiae;
-            return Match(query, template, out matchingMtiae);
+            matchingMtiae = null;
+            var localMatchingMtiae = GetLocalMatchingMtiae(query, template);
+            if (localMatchingMtiae.Count == 0)
+                return 0;
+            var max = 0;
+            var notMatchingCount = int.MaxValue;
+
+            for (var i = 0; i < localMatchingMtiae.Count; i++)
+            {
+                var currMatchingMtiae =
+                    GetGlobalMatchingMtiae(localMatchingMtiae, localMatchingMtiae[i], ref notMatchingCount);
+                if (currMatchingMtiae != null && currMatchingMtiae.Count > max)
+                {
+                    max = currMatchingMtiae.Count;
+                    matchingMtiae = currMatchingMtiae;
+                }
+            }
+
+            return Eval(query, template, matchingMtiae);
         }
 
-
-        public double Match(object query, object template, out List<MinutiaPair> matchingMtiae)
-        {
-            var qTico2003Features = query as Tico2003Features;
-            var tTico2003Features = template as Tico2003Features;
-            try
-            {
-                matchingMtiae = null;
-                var localMatchingMtiae = GetLocalMatchingMtiae(qTico2003Features, tTico2003Features);
-                if (localMatchingMtiae.Count == 0)
-                    return 0;
-                var max = 0;
-                var notMatchingCount = int.MaxValue;
-
-                for (var i = 0; i < localMatchingMtiae.Count; i++)
-                {
-                    var currMatchingMtiae =
-                        GetGlobalMatchingMtiae(localMatchingMtiae, localMatchingMtiae[i], ref notMatchingCount);
-                    if (currMatchingMtiae != null && currMatchingMtiae.Count > max)
-                    {
-                        max = currMatchingMtiae.Count;
-                        matchingMtiae = currMatchingMtiae;
-                    }
-                }
-
-                return Eval(qTico2003Features, tTico2003Features, matchingMtiae);
-            }
-            catch (Exception e)
-            {
-                if (query.GetType() != typeof(Tico2003Features) || template.GetType() != typeof(Tico2003Features))
-                {
-                    var msg = "Unable to match fingerprints: Invalid features type!";
-                    throw new ArgumentOutOfRangeException(msg, e);
-                }
-                throw e;
-            }
-        }
-
-        #endregion
 
         #region private
 
-        private List<MinutiaPair> GetLocalMatchingMtiae(Tico2003Features query, Tico2003Features template)
+        private static List<MinutiaPair> GetLocalMatchingMtiae(Tico2003Features query, Tico2003Features template)
         {
             var qIndex = new Dictionary<Minutia, int>(query.Minutiae.Count);
             var tIndex = new Dictionary<Minutia, int>(template.Minutiae.Count);
@@ -324,11 +302,6 @@ namespace PatternRecognition.FingerprintRecognition.Core.Tico2003
                 return newPolygon;
             }
         }
-
-        private double gAngThr = Math.PI / 6;
-
-        private readonly MtiaEuclideanDistance dist = new MtiaEuclideanDistance();
-
         #endregion
     }
 }

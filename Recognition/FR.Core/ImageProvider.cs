@@ -10,20 +10,10 @@ using System.IO;
 
 namespace PatternRecognition.FingerprintRecognition.Core
 {
-    public class FingerprintImageProvider
+    public static class ImageProvider
     {
-        public Bitmap GetResource(string fingerprint, ResourceRepository repository)
+        public static Bitmap GetResource(byte[] rawImage)
         {
-            byte[] rawImage = null;
-            foreach (var ext in new[] {"tif", "bmp", "jpg"})
-            {
-                var resourceName = $"{fingerprint}.{ext}";
-                rawImage = repository.RetrieveResource(resourceName);
-                if (rawImage != null)
-                    break;
-            }
-            if (rawImage == null)
-                return null;
             var srcBitmap = Image.FromStream(new MemoryStream(rawImage)) as Bitmap;
             if (srcBitmap == null)
                 return null;

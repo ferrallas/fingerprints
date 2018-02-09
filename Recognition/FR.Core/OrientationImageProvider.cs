@@ -4,14 +4,12 @@
  * Comments by: Miguel Angel Medina Pérez (miguel.medina.perez@gmail.com)
  */
 
-using System;
 
 namespace PatternRecognition.FingerprintRecognition.Core
 {
     public class OrientationImageProvider
     {
         private readonly IFeatureExtractor<OrientationImage> _orientationImageExtractor;
-        private readonly FingerprintImageProvider _imageProvider = new FingerprintImageProvider();
 
         public OrientationImageProvider(IFeatureExtractor<OrientationImage> provider)
         {
@@ -19,9 +17,9 @@ namespace PatternRecognition.FingerprintRecognition.Core
         }
 
 
-        public OrientationImage GetResource(string fingerprint, ResourceRepository repository)
+        public OrientationImage Extract(byte[] rawImage)
         {
-            var image = _imageProvider.GetResource(fingerprint, repository);
+            var image = ImageProvider.GetResource(rawImage);
             return _orientationImageExtractor.ExtractFeatures(image);
         }
     }
