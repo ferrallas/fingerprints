@@ -66,7 +66,6 @@
     <Compile Include="BinarySerializer.cs" />
     <Compile Include="IBooleanSimilarity.cs" />
     <Compile Include="IDissimilarity.cs" />
-    <Compile Include="IExperiment.cs" />
     <Compile Include="ImageProcessingTools\ConvolutionFilter.cs" />
     <Compile Include="ImageProcessingTools\ConvolutionFilters\GaussianBlur.cs" />
     <Compile Include="ImageProcessingTools\ConvolutionFilters\SobelHorizontalFilter.cs" />
@@ -115,7 +114,6 @@
     <Compile Include="SHullDelaunayTriangulation\Vertex.cs" />
     <Compile Include="SkeletonImageSerializer.cs" />
     <Compile Include="FingerprintImageProvider.cs" />
-    <Compile Include="IResourceProvider.cs" />
     <Compile Include="IMatcher.cs" />
     <Compile Include="ISOMinutiaeSerializer.cs" />
     <Compile Include="Delaunay2D.cs" />
@@ -142,7 +140,6 @@
     <Compile Include="Tico2003\Tico2003Features.cs" />
     <Compile Include="Tico2003\Tico2003FeaturesExtractor.cs" />
     <Compile Include="Tico2003\TK.cs" />
-    <Compile Include="XMLMinutiaeSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

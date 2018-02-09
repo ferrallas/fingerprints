@@ -9,44 +9,10 @@ using System.Collections.Generic;
 
 namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
 {
-    /// <summary>
-    ///     This algorithm, proposed by Medina-P&eacute;rez et al. in 2012, is an improved version of <see cref="JY"/>. 
-    /// </summary>
-    /// <remarks>
-    ///     <para>
-    ///         This algorithm was proposed by Medina-P&eacute;rez et al. in [1]. 
-    ///     </para>
-    ///     <para>
-    ///         Take into account that this algorithm is created to work with fingerprint images at 500 dpi. Proper modifications have to be made for different image resolutions.
-    ///     </para>
-    ///     <para>
-    ///         References:
-    ///     </para>
-    ///     <para>
-    ///         <list type="number">
-    ///             <item>
-    ///                M. A. Medina-P&eacute;rez, M. Garc&iacute;a-Borroto, A. E. Gutierrez-Rodriguez, L. Altamirano-Robles, "Improving the multiple alignments strategy for fingerprint verification," Lecture Notes in Computer Science, vol. 7329, 2012.
-    ///             </item>
-    ///         </list>
-    ///     </para>
-    /// </remarks>
     public class MJY
     {
-
         #region Miembros de ISimilarity<JYFeatures>
 
-        /// <summary>
-        ///     Matches the specified fingerprint features.
-        /// </summary>
-        /// <param name="query">
-        ///     The query fingerprint features.
-        /// </param>
-        /// <param name="template">
-        ///     The template fingerprint features.
-        /// </param>
-        /// <returns>
-        ///     The fingerprint similarity value.
-        /// </returns>
         public double Match(JYFeatures query, JYFeatures template)
         {
             List<MinutiaPair> matchingMtiae;
@@ -57,24 +23,9 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
 
         #region public
 
-        /// <summary>
-        ///     Distance threshold for the global minutia matching step.
-        /// </summary>
-        /// <remarks>
-        ///     This threshold is used to compare minutia distances in the global minutia matching step. For more information refer to the original paper.
-        /// </remarks>
-        public int GlobalDistThr
-        {
-            get => gDistThr;
-            set => gDistThr = value;
-        }
+        public int GlobalDistThr { get; set; } = 8;
 
-        /// <summary>
-        ///     Angle threshold for the global minutia matching step.
-        /// </summary>
-        /// <remarks>
-        ///     This threshold is used to compare angles in the global minutia matching step. For more information refer to the original paper.
-        /// </remarks>
+
         public double GlobalAngleThr
         {
             get => gAngThr * 180 / Math.PI;
@@ -83,8 +34,8 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
 
         public double Match(object query, object template, out List<MinutiaPair> matchingMtiae)
         {
-            JYFeatures qJYFeatures = query as JYFeatures;
-            JYFeatures tJYFeatures = template as JYFeatures;
+            var qJYFeatures = query as JYFeatures;
+            var tJYFeatures = template as JYFeatures;
             try
             {
                 matchingMtiae = null;
@@ -92,11 +43,11 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
                 if (localMatchingMtiae.Count == 0)
                     return 0;
                 double max = 0;
-                int notMatchingCount = int.MaxValue;
+                var notMatchingCount = int.MaxValue;
 
-                for (int i = 0; i < localMatchingMtiae.Count; i++)
+                for (var i = 0; i < localMatchingMtiae.Count; i++)
                 {
-                    List<MinutiaPair> currMatchingMtiae =
+                    var currMatchingMtiae =
                         GetGlobalMatchingMtiae(localMatchingMtiae, localMatchingMtiae[i], ref notMatchingCount);
                     if (currMatchingMtiae != null && currMatchingMtiae.Count > max)
                     {
@@ -104,15 +55,13 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
                         matchingMtiae = currMatchingMtiae;
                     }
                 }
-                
+
                 if (matchingMtiae == null)
                     return 0;
 
                 double sum = 0;
                 foreach (var mtiaPair in matchingMtiae)
-                {
                     sum += 0.5 + 0.5 * mtiaPair.MatchingValue;
-                }
 
                 return 100.0 * max / Math.Max(qJYFeatures.Minutiae.Count, tJYFeatures.Minutiae.Count);
             }
@@ -120,7 +69,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
             {
                 if (query.GetType() != typeof(JYFeatures) || template.GetType() != typeof(JYFeatures))
                 {
-                    string msg = "Unable to match fingerprints: Invalid features type!";
+                    var msg = "Unable to match fingerprints: Invalid features type!";
                     throw new ArgumentOutOfRangeException(msg, e);
                 }
                 throw e;
@@ -142,17 +91,17 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
         private static IList<MinutiaPair> GetLocalMatchingMtiae(JYFeatures query, JYFeatures template)
         {
             var triplets = new List<JYTriplet>(query.Minutiae.Count * template.Minutiae.Count);
-            for (int i = 0; i < query.Minutiae.Count; i++)
+            for (var i = 0; i < query.Minutiae.Count; i++)
             {
                 var qMtia = query.Minutiae[i];
-                for (int j = 0; j < template.Minutiae.Count; j++)
+                for (var j = 0; j < template.Minutiae.Count; j++)
                 {
                     var tMtia = template.Minutiae[j];
-                    double currSim = qMtia.RotationInvariantMatch(tMtia);
+                    var currSim = qMtia.RotationInvariantMatch(tMtia);
 
                     if (currSim != 0)
                     {
-                        JYTriplet currTriplet = new JYTriplet();
+                        var currTriplet = new JYTriplet();
                         var currMtiaPair = new MinutiaPair
                         {
                             QueryMtia = qMtia.MainMinutia,
@@ -194,7 +143,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
             var qMatches = new Dictionary<Minutia, Minutia>(60);
             var tMatches = new Dictionary<Minutia, Minutia>(60);
             var matchingPairs = new List<MinutiaPair>(60);
-            for (int i = 0; i < mtiaPairs.Count; i++)
+            for (var i = 0; i < mtiaPairs.Count; i++)
             {
                 var pair = mtiaPairs[i];
                 if (!qMatches.ContainsKey(pair.QueryMtia) || !tMatches.ContainsKey(pair.TemplateMtia))
@@ -210,7 +159,8 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
             return matchingPairs;
         }
 
-        private List<MinutiaPair> GetGlobalMatchingMtiae(IList<MinutiaPair> localMatchingPairs, MinutiaPair refMtiaPair, ref int notMatchingCount)
+        private List<MinutiaPair> GetGlobalMatchingMtiae(IList<MinutiaPair> localMatchingPairs, MinutiaPair refMtiaPair,
+            ref int notMatchingCount)
         {
             var globalMatchingMtiae = new List<MinutiaPair>(localMatchingPairs.Count);
             var qMatches = new Dictionary<Minutia, Minutia>(localMatchingPairs.Count);
@@ -218,26 +168,29 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
             qMatches.Add(refMtiaPair.QueryMtia, refMtiaPair.TemplateMtia);
             tMatches.Add(refMtiaPair.TemplateMtia, refMtiaPair.QueryMtia);
 
-            MtiaMapper mm = new MtiaMapper(refMtiaPair.QueryMtia, refMtiaPair.TemplateMtia);
-            Minutia refQuery = mm.Map(refMtiaPair.QueryMtia);
-            Minutia refTemplate = refMtiaPair.TemplateMtia;
-            int currNotMatchingMtiaCount = 0;
+            var mm = new MtiaMapper(refMtiaPair.QueryMtia, refMtiaPair.TemplateMtia);
+            var refQuery = mm.Map(refMtiaPair.QueryMtia);
+            var refTemplate = refMtiaPair.TemplateMtia;
+            var currNotMatchingMtiaCount = 0;
             int i;
             for (i = 0; i < localMatchingPairs.Count; i++)
             {
-                MinutiaPair mtiaPair = localMatchingPairs[i];
+                var mtiaPair = localMatchingPairs[i];
                 if (!qMatches.ContainsKey(mtiaPair.QueryMtia) && !tMatches.ContainsKey(mtiaPair.TemplateMtia))
                 {
-                    Minutia query = mm.Map(mtiaPair.QueryMtia);
-                    Minutia template = mtiaPair.TemplateMtia;
-                    if (MatchDistance(refQuery, refTemplate, query, template) && MatchDirections(query, template) && MatchPosition(refQuery, refTemplate, query, template))
+                    var query = mm.Map(mtiaPair.QueryMtia);
+                    var template = mtiaPair.TemplateMtia;
+                    if (MatchDistance(refQuery, refTemplate, query, template) && MatchDirections(query, template) &&
+                        MatchPosition(refQuery, refTemplate, query, template))
                     {
                         globalMatchingMtiae.Add(mtiaPair);
                         qMatches.Add(mtiaPair.QueryMtia, mtiaPair.TemplateMtia);
                         tMatches.Add(mtiaPair.TemplateMtia, mtiaPair.QueryMtia);
                     }
                     else
+                    {
                         currNotMatchingMtiaCount++;
+                    }
                 }
                 if (currNotMatchingMtiaCount >= notMatchingCount)
                     break;
@@ -255,6 +208,10 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
 
         private class MtiaMapper
         {
+            private readonly double dAngle;
+            private readonly Minutia query;
+            private readonly Minutia template;
+
             public MtiaMapper(Minutia query, Minutia template)
             {
                 dAngle = template.Angle - query.Angle;
@@ -267,36 +224,34 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
                 return new Minutia
                 {
                     Angle = m.Angle + dAngle,
-                    X = Convert.ToInt16(Math.Round((m.X - query.X) * Math.Cos(dAngle) - (m.Y - query.Y) * Math.Sin(dAngle) + template.X)),
-                    Y = Convert.ToInt16(Math.Round((m.X - query.X) * Math.Sin(dAngle) + (m.Y - query.Y) * Math.Cos(dAngle) + template.Y))
+                    X = Convert.ToInt16(Math.Round((m.X - query.X) * Math.Cos(dAngle) -
+                                                   (m.Y - query.Y) * Math.Sin(dAngle) + template.X)),
+                    Y = Convert.ToInt16(Math.Round((m.X - query.X) * Math.Sin(dAngle) +
+                                                   (m.Y - query.Y) * Math.Cos(dAngle) + template.Y))
                 };
             }
-
-            private double dAngle;
-            private Minutia template;
-            private Minutia query;
         }
 
         private bool MatchDistance(Minutia refQuery, Minutia refTemplate, Minutia query, Minutia template)
         {
-            double d0 = dist.Compare(refQuery, query);
-            double d1 = dist.Compare(refTemplate, template);
-            return Math.Abs(d0 - d1) <= gDistThr;
+            var d0 = dist.Compare(refQuery, query);
+            var d1 = dist.Compare(refTemplate, template);
+            return Math.Abs(d0 - d1) <= GlobalDistThr;
         }
 
         private bool MatchPosition(Minutia refQuery, Minutia refTemplate, Minutia query, Minutia template)
         {
-            Minutia qMtiai = refQuery;
-            Minutia qMtiaj = query;
+            var qMtiai = refQuery;
+            var qMtiaj = query;
             double x = qMtiai.X - qMtiaj.X;
             double y = qMtiai.Y - qMtiaj.Y;
-            double qAngle = Angle.ComputeAngle(x, y);
+            var qAngle = Angle.ComputeAngle(x, y);
 
-            Minutia tMtiai = refTemplate;
-            Minutia tMtiaj = template;
+            var tMtiai = refTemplate;
+            var tMtiaj = template;
             x = tMtiai.X - tMtiaj.X;
             y = tMtiai.Y - tMtiaj.Y;
-            double tAngle = Angle.ComputeAngle(x, y);
+            var tAngle = Angle.ComputeAngle(x, y);
 
             return Angle.DifferencePi(qAngle, tAngle) <= gAngThr;
         }
@@ -310,11 +265,9 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
         {
             public int Compare(JYTriplet x, JYTriplet y)
             {
-                return (x == y) ? 0 : (x.MatchingValue < y.MatchingValue) ? 1 : -1;
+                return x == y ? 0 : x.MatchingValue < y.MatchingValue ? 1 : -1;
             }
         }
-
-        private int gDistThr = 8;
 
         private double gAngThr = Math.PI / 6;
 

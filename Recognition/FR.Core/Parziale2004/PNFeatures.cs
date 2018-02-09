@@ -15,12 +15,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Parziale2004
         public MtiaTriplet templateMTp;
     }
 
-    /// <summary>
-    ///     The features used by <see cref="PN"/> to match fingerprints.
-    /// </summary>
-    /// <remarks>
-    ///     The constructor of this class is internal. You must use <see cref="PNFeatureExtractor"/> in order to extract these features from fingerprints.
-    /// </remarks>
+
     [Serializable]
     public class PNFeatures
     {
@@ -35,25 +30,25 @@ namespace PatternRecognition.FingerprintRecognition.Core.Parziale2004
         internal List<MtiaeTripletPair> FindAllSimilar(MtiaTriplet queryMTp)
         {
             var result = new List<MtiaeTripletPair>();
-            for (int j = 0; j < MTriplets.Count; j++)
+            for (var j = 0; j < MTriplets.Count; j++)
             {
-                MtiaTriplet currMTp = MTriplets[j];
+                var currMTp = MTriplets[j];
                 if (queryMTp.Match(currMTp))
                     result.Add(new MtiaeTripletPair
-                                   {
-                                       queryMTp = queryMTp,
-                                       templateMTp = currMTp,
-                                   }
-                        );
+                        {
+                            queryMTp = queryMTp,
+                            templateMTp = currMTp
+                        }
+                    );
             }
             if (result.Count > 0)
                 return result;
             return null;
         }
 
-        internal List<MtiaTriplet> MTriplets { get; private set; }
+        internal List<MtiaTriplet> MTriplets { get; }
 
-        internal List<Minutia> Minutiae { get; private set; }
+        internal List<Minutia> Minutiae { get; }
 
         #endregion
     }

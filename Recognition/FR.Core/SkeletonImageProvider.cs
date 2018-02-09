@@ -5,50 +5,22 @@
  */
 
 using System;
-using System.Drawing;
 
 namespace PatternRecognition.FingerprintRecognition.Core
 {
-    /// <summary>
-    ///     Allows retrieving skeleton image from a <see cref="ResourceRepository"/>.
-    /// </summary>
-    public class SkeletonImageProvider : IResourceProvider<SkeletonImage>
+    public class SkeletonImageProvider
     {
-        /// <summary>
-        ///     Used to extract skeleton image in case that the resource have not being saved.
-        /// </summary>
         public IFeatureExtractor<SkeletonImage> SkeletonImageExtractor { set; get; }
 
-        /// <summary>
-        ///     Gets skeleton image from the specified fingerprint and <see cref="ResourceRepository"/>.
-        /// </summary>
-        /// <param name="fingerprint">The fingerprint which skeleton image is being retrieved.</param>
-        /// <param name="repository">The object used to store and retrieve resources.</param>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when the fingerprint is invalid.</exception>
-        /// <exception cref="InvalidOperationException">Thrown when the skeleton image extractor is not assigned.</exception>
-        /// <returns>The retrieved skeleton image.</returns>
-        object IResourceProvider.GetResource(string fingerprint, ResourceRepository repository)
-        {
-            return GetResource(fingerprint, repository);
-        }
-
-        /// <summary>
-        ///     Gets skeleton image from the specified fingerprint and <see cref="ResourceRepository"/>.
-        /// </summary>
-        /// <param name="fingerprint">The fingerprint which skeleton image are being retrieved.</param>
-        /// <param name="repository">The object used to store and retrieve resources.</param>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when the fingerprint is invalid.</exception>
-        /// <exception cref="InvalidOperationException">Thrown when the skeleton image extractor is not assigned.</exception>
-        /// <returns>The retrieved skeleton image.</returns>
         public SkeletonImage GetResource(string fingerprint, ResourceRepository repository)
         {
-            bool isPersistent = IsResourcePersistent();
-            string resourceName =
+            var isPersistent = IsResourcePersistent();
+            var resourceName =
                 $"{fingerprint}.{GetSignature()}";
             if (isPersistent && repository.ResourceExists(resourceName))
                 return SkeletonImageSerializer.FromByteArray(repository.RetrieveResource(resourceName));
 
-            SkeletonImage resource = Extract(fingerprint, repository);
+            var resource = Extract(fingerprint, repository);
             if (resource == null)
                 return null;
 
@@ -57,19 +29,13 @@ namespace PatternRecognition.FingerprintRecognition.Core
             return resource;
         }
 
-        /// <summary>
-        ///     Gets the signature of the <see cref="SkeletonImageProvider"/>.
-        /// </summary>
-        /// <returns>It returns a string formed by the name of the property <see cref="SkeletonImageExtractor"/> concatenated with ".ski".</returns>
+
         public string GetSignature()
         {
             return $"{SkeletonImageExtractor.GetType().Name}.ski";
         }
 
-        /// <summary>
-        ///     Determines whether the provided <see cref="SkeletonImage"/> is persistent.
-        /// </summary>
-        /// <returns>Always returns true.</returns>
+
         public bool IsResourcePersistent()
         {
             return true;
@@ -79,11 +45,13 @@ namespace PatternRecognition.FingerprintRecognition.Core
 
         private SkeletonImage Extract(string fingerprintLabel, ResourceRepository repository)
         {
-            Bitmap image = imageProvider.GetResource(fingerprintLabel, repository);
+            var image = imageProvider.GetResource(fingerprintLabel, repository);
             if (image == null)
-                throw new ArgumentOutOfRangeException(nameof(fingerprintLabel), "Unable to extract SkeletonImage: Invalid fingerprint!");
+                throw new ArgumentOutOfRangeException(nameof(fingerprintLabel),
+                    "Unable to extract SkeletonImage: Invalid fingerprint!");
             if (SkeletonImageExtractor == null)
-                throw new InvalidOperationException("Unable to extract SkeletonImage: Unassigned skeleton image extractor!");
+                throw new InvalidOperationException(
+                    "Unable to extract SkeletonImage: Unassigned skeleton image extractor!");
             return SkeletonImageExtractor.ExtractFeatures(image);
         }
 

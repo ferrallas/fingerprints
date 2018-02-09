@@ -11,12 +11,6 @@ using System.Collections.Generic;
 
 namespace PatternRecognition.FingerprintRecognition.Core.Tico2003
 {
-    /// <summary>
-    ///     The features used by <see cref="TK"/> and <see cref="MTK"/> to match fingerprints.
-    /// </summary>
-    /// <remarks>
-    ///     The constructor of this class is internal. You must use <see cref="Tico2003FeatureExtractor"/> in order to extract these features from fingerprints.
-    /// </remarks>
     [Serializable]
     public class Tico2003Features
     {
@@ -27,10 +21,9 @@ namespace PatternRecognition.FingerprintRecognition.Core.Tico2003
             Minutiae = new List<OBMtiaDescriptor>(minutiae.Count);
             for (short i = 0; i < minutiae.Count; i++)
             {
-                OBMtiaDescriptor mtiaDescriptor = new OBMtiaDescriptor(minutiae[i], dImg);
+                var mtiaDescriptor = new OBMtiaDescriptor(minutiae[i], dImg);
                 Minutiae.Add(mtiaDescriptor);
             }
         }
-
     }
 }

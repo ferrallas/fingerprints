@@ -4,12 +4,16 @@ namespace PatternRecognition.FingerprintRecognition.Core
 {
     public class MinutiaMapper
     {
+        private readonly double dAngle;
+        private readonly Minutia query;
+        private readonly Minutia template;
+
         public MinutiaMapper(Minutia minutia)
         {
-            Minutia t = new Minutia(0, 0, 0);
+            var t = new Minutia(0, 0, 0);
             dAngle = t.Angle - minutia.Angle;
-            this.template = t;
-            this.query = minutia;
+            template = t;
+            query = minutia;
         }
 
         public MinutiaMapper(Minutia query, Minutia template)
@@ -24,13 +28,11 @@ namespace PatternRecognition.FingerprintRecognition.Core
             return new Minutia
             {
                 Angle = m.Angle + dAngle,
-                X = Convert.ToInt16(Math.Round((m.X - query.X) * Math.Cos(dAngle) - (m.Y - query.Y) * Math.Sin(dAngle) + template.X)),
-                Y = Convert.ToInt16(Math.Round((m.X - query.X) * Math.Sin(dAngle) + (m.Y - query.Y) * Math.Cos(dAngle) + template.Y))
+                X = Convert.ToInt16(Math.Round((m.X - query.X) * Math.Cos(dAngle) - (m.Y - query.Y) * Math.Sin(dAngle) +
+                                               template.X)),
+                Y = Convert.ToInt16(Math.Round((m.X - query.X) * Math.Sin(dAngle) + (m.Y - query.Y) * Math.Cos(dAngle) +
+                                               template.Y))
             };
         }
-
-        private double dAngle;
-        private Minutia template;
-        private Minutia query;
     }
 }

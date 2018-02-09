@@ -11,41 +11,16 @@ using PatternRecognition.FingerprintRecognition.Core.ImageProcessingTools;
 
 namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
 {
-    /// <summary>
-    ///     An implementation of the <see cref="Minutia"/> list extractor proposed by Ratha et al. in 1995.
-    /// </summary>
-    /// <remarks>
-    ///     <para>
-    ///         This is an implementation of the <see cref="Minutia"/> list extractor proposed by Ratha et al. [1] in 1995.
-    ///     </para>
-    ///     <para>
-    ///         Take into account that this algorithm is created to work with fingerprint images at 500 dpi. Proper modifications have to be made for different image resolutions.
-    ///     </para>
-    ///     <para>
-    ///         References:
-    ///     </para>
-    ///     <para>
-    ///         <list type="number">
-    ///             <item>
-    ///                Ratha N.K., Chen S.Y. and Jain A.K., "Adaptive flow orientation-based feature extraction in fingerprint images," Pattern Recognition, vol. 28, no. 11, pp. 1657–1672, 1995.
-    ///             </item>             
-    ///         </list>
-    ///     </para>
-    /// </remarks>
     public class Ratha1995MinutiaeExtractor : FeatureExtractor<List<Minutia>>
     {
         private readonly Ratha1995SkeImgExtractor skeImgExtractor = new Ratha1995SkeImgExtractor();
 
-        /// <summary>
-        ///     Extract a minutia list from the specified bitmap image.
-        /// </summary>
-        /// <param name="image">The source bitmap image to extract features from.</param>
-        /// <returns>The features extracted from the specified bitmap image.</returns>
+
         public override List<Minutia> ExtractFeatures(Bitmap image)
         {
-            Ratha1995OrImgExtractor orImgExtractor = new Ratha1995OrImgExtractor();
-            OrientationImage orientationImage = orImgExtractor.ExtractFeatures(image);
-            ImageMatrix matrix = skeImgExtractor.ExtractSkeletonImage(image, orientationImage);
+            var orImgExtractor = new Ratha1995OrImgExtractor();
+            var orientationImage = orImgExtractor.ExtractFeatures(image);
+            var matrix = skeImgExtractor.ExtractSkeletonImage(image, orientationImage);
 
             return GetMinutiaes(matrix, orientationImage);
         }
@@ -54,84 +29,80 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
 
         private List<Minutia> GetMinutiaes(ImageMatrix matrix, OrientationImage orientationImage)
         {
-            List<Minutia> minutiaes = new List<Minutia>();
+            var minutiaes = new List<Minutia>();
 
-            for (int row = 0; row < orientationImage.Height; row++)
-                for (int col = 0; col < orientationImage.Width; col++)
-                    if (!orientationImage.IsNullBlock(row, col))
-                    {
+            for (var row = 0; row < orientationImage.Height; row++)
+            for (var col = 0; col < orientationImage.Width; col++)
+                if (!orientationImage.IsNullBlock(row, col))
+                {
+                    int x, y;
+                    orientationImage.GetPixelCoordFromBlock(row, col, out x, out y);
 
-                        int x, y;
-                        orientationImage.GetPixelCoordFromBlock(row, col, out x, out y);
+                    var maxLength = orientationImage.WindowSize / 2;
 
-                        int maxLength = orientationImage.WindowSize / 2;
-
-                        for (int xi = x - maxLength; xi < x + maxLength; xi++)
-                            for (int yi = y - maxLength; yi < y + maxLength; yi++)
-                                if (xi > 0 && xi < matrix.Width - 1 && yi > 0 && yi < matrix.Height - 1)
+                    for (var xi = x - maxLength; xi < x + maxLength; xi++)
+                    for (var yi = y - maxLength; yi < y + maxLength; yi++)
+                        if (xi > 0 && xi < matrix.Width - 1 && yi > 0 && yi < matrix.Height - 1)
+                            if (matrix[yi, xi] == 0)
+                            {
+                                var values = new List<int>
                                 {
-                                    if (matrix[yi, xi] == 0)
-                                    {
-                                        List<int> values = new List<int>
-                                                               {
-                                                                   matrix[yi, xi + 1] == 255 ? 0 : 1,
-                                                                   matrix[yi - 1, xi + 1] == 255 ? 0 : 1,
-                                                                   matrix[yi - 1, xi] == 255 ? 0 : 1,
-                                                                   matrix[yi - 1, xi - 1] == 255 ? 0 : 1,
-                                                                   matrix[yi, xi - 1] == 255 ? 0 : 1,
-                                                                   matrix[yi + 1, xi - 1] == 255 ? 0 : 1,
-                                                                   matrix[yi + 1, xi] == 255 ? 0 : 1,
-                                                                   matrix[yi + 1, xi + 1] == 255 ? 0 : 1,
+                                    matrix[yi, xi + 1] == 255 ? 0 : 1,
+                                    matrix[yi - 1, xi + 1] == 255 ? 0 : 1,
+                                    matrix[yi - 1, xi] == 255 ? 0 : 1,
+                                    matrix[yi - 1, xi - 1] == 255 ? 0 : 1,
+                                    matrix[yi, xi - 1] == 255 ? 0 : 1,
+                                    matrix[yi + 1, xi - 1] == 255 ? 0 : 1,
+                                    matrix[yi + 1, xi] == 255 ? 0 : 1,
+                                    matrix[yi + 1, xi + 1] == 255 ? 0 : 1
+                                };
 
-                                                               };
-
-                                        int cn = 0;
-                                        for (int i = 0; i < values.Count; i++)
-                                        {
-                                            int idx = i;
-                                            if (i == 7)
-                                                idx = -1;
-                                            cn += Math.Abs(values[i] - values[idx + 1]);
-                                        }
-                                        cn = (int)(cn * 0.5);
-
-
-                                        double angleminu;
-                                        // end minutiae
-                                        if (cn == 1)
-                                        {
-                                            angleminu = GetMinutiaeAngle(matrix, xi, yi, MinutiaType.End);
-                                            if (angleminu != -1)
-                                                minutiaes.Add(new Minutia
-                                                {
-                                                    Angle = (float)angleminu,
-                                                    X = (short)xi,
-                                                    Y = (short)yi,
-                                                    MinutiaType = MinutiaType.End
-                                                }
-                                                    );
-                                        }
-                                        //bifurcation minutiae
-                                        if (cn == 3)
-                                        {
-                                            angleminu = GetMinutiaeAngle(matrix, xi, yi, MinutiaType.Bifurcation);
-                                            if (!double.IsNaN(angleminu) && angleminu != -1)
-                                                minutiaes.Add(new Minutia
-                                                {
-                                                    Angle = (float)angleminu,
-                                                    X = (short)xi,
-                                                    Y = (short)yi,
-                                                    MinutiaType = MinutiaType.Bifurcation
-                                                }
-                                                    );
-                                        }
-                                    }
+                                var cn = 0;
+                                for (var i = 0; i < values.Count; i++)
+                                {
+                                    var idx = i;
+                                    if (i == 7)
+                                        idx = -1;
+                                    cn += Math.Abs(values[i] - values[idx + 1]);
                                 }
-                    }
+                                cn = (int) (cn * 0.5);
 
-            List<Minutia> noInTheBorder = new List<Minutia>();
 
-            for (int i = 0; i < minutiaes.Count; i++)
+                                double angleminu;
+                                // end minutiae
+                                if (cn == 1)
+                                {
+                                    angleminu = GetMinutiaeAngle(matrix, xi, yi, MinutiaType.End);
+                                    if (angleminu != -1)
+                                        minutiaes.Add(new Minutia
+                                            {
+                                                Angle = (float) angleminu,
+                                                X = (short) xi,
+                                                Y = (short) yi,
+                                                MinutiaType = MinutiaType.End
+                                            }
+                                        );
+                                }
+                                //bifurcation minutiae
+                                if (cn == 3)
+                                {
+                                    angleminu = GetMinutiaeAngle(matrix, xi, yi, MinutiaType.Bifurcation);
+                                    if (!double.IsNaN(angleminu) && angleminu != -1)
+                                        minutiaes.Add(new Minutia
+                                            {
+                                                Angle = (float) angleminu,
+                                                X = (short) xi,
+                                                Y = (short) yi,
+                                                MinutiaType = MinutiaType.Bifurcation
+                                            }
+                                        );
+                                }
+                            }
+                }
+
+            var noInTheBorder = new List<Minutia>();
+
+            for (var i = 0; i < minutiaes.Count; i++)
             {
                 // boundary Effects (foreground areas)
                 int row, col;
@@ -143,29 +114,27 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
                          orientationImage.IsNullBlock(row, col - 1) ||
                          orientationImage.IsNullBlock(row, col + 1) //||
                         )
-                        )
+                    )
                         noInTheBorder.Add(minutiaes[i]);
-
             }
 
-            MtiaEuclideanDistance miEuclideanDistance = new MtiaEuclideanDistance();
+            var miEuclideanDistance = new MtiaEuclideanDistance();
 
-            bool[] toErase = new bool[noInTheBorder.Count];
-            for (int i = 0; i < noInTheBorder.Count; i++)
+            var toErase = new bool[noInTheBorder.Count];
+            for (var i = 0; i < noInTheBorder.Count; i++)
             {
-                Minutia mA = noInTheBorder[i];
-                for (int j = 0; j < noInTheBorder.Count; j++)
-                {
+                var mA = noInTheBorder[i];
+                for (var j = 0; j < noInTheBorder.Count; j++)
                     if (i != j)
                     {
-                        Minutia mB = noInTheBorder[j];
+                        var mB = noInTheBorder[j];
                         // different to orientation image
                         int row, col;
                         orientationImage.GetBlockCoordFromPixel(mA.X, mA.Y, out row, out col);
-                        double angleOI = orientationImage.AngleInRadians(row, col);
+                        var angleOI = orientationImage.AngleInRadians(row, col);
                         if (mA.MinutiaType == MinutiaType.End &&
                             Math.Min(Angle.DifferencePi(mA.Angle, angleOI),
-                                     Angle.DifferencePi(mA.Angle, angleOI + Math.PI)) > Math.PI / 6)
+                                Angle.DifferencePi(mA.Angle, angleOI + Math.PI)) > Math.PI / 6)
                             toErase[i] = true;
 
                         //  near minutiaes elimination
@@ -194,17 +163,14 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
                             if (RemoveSpikeOnMinutiae(matrix, mA, mB))
                                 toErase[i] = true;
                     }
-
-                }
             }
 
-            List<Minutia> result = new List<Minutia>();
-            for (int i = 0; i < noInTheBorder.Count; i++)
+            var result = new List<Minutia>();
+            for (var i = 0; i < noInTheBorder.Count; i++)
                 if (!toErase[i])
                     result.Add(noInTheBorder[i]);
 
             return result;
-
         }
 
         private double GetMinutiaeAngle(ImageMatrix matrix, int x, int y, MinutiaType type)
@@ -213,10 +179,10 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
 
             if (type == MinutiaType.End)
             {
-                List<Point> points = new List<Point> { new Point(x, y) };
-                for (int i = 0; i < 10; i++)
+                var points = new List<Point> {new Point(x, y)};
+                for (var i = 0; i < 10; i++)
                 {
-                    List<Point> neighbors = GetNeighboors(matrix, points[points.Count - 1].X, points[points.Count - 1].Y);
+                    var neighbors = GetNeighboors(matrix, points[points.Count - 1].X, points[points.Count - 1].Y);
                     foreach (var neighbor in neighbors)
                         if (!points.Contains(neighbor))
                             points.Add(neighbor);
@@ -224,33 +190,33 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
                 if (points.Count < 10)
                     return -1;
                 angle = Angle.ComputeAngle(points[points.Count - 1].X - points[0].X,
-                                           points[points.Count - 1].Y - points[0].Y);
+                    points[points.Count - 1].Y - points[0].Y);
             }
 
             if (type == MinutiaType.Bifurcation)
             {
-                List<Point> treeNeighboors = GetNeighboors(matrix, x, y);
+                var treeNeighboors = GetNeighboors(matrix, x, y);
 
                 if (treeNeighboors.Count < 3)
                     return double.NaN;
 
-                List<Point> n1 = new List<Point>() { new Point(x, y), treeNeighboors[0] };
-                List<Point> n2 = new List<Point>() { new Point(x, y), treeNeighboors[1] };
-                List<Point> n3 = new List<Point>() { new Point(x, y), treeNeighboors[2] };
+                var n1 = new List<Point> {new Point(x, y), treeNeighboors[0]};
+                var n2 = new List<Point> {new Point(x, y), treeNeighboors[1]};
+                var n3 = new List<Point> {new Point(x, y), treeNeighboors[2]};
 
-                for (int i = 0; i < 10; i++)
+                for (var i = 0; i < 10; i++)
                 {
-                    List<Point> neighboors1 = GetNeighboors(matrix, n1[n1.Count - 1].X, n1[n1.Count - 1].Y);
+                    var neighboors1 = GetNeighboors(matrix, n1[n1.Count - 1].X, n1[n1.Count - 1].Y);
                     foreach (var neighbor in neighboors1)
                         if (!n1.Contains(neighbor) && !treeNeighboors.Contains(neighbor))
                             n1.Add(neighbor);
 
-                    List<Point> neighboors2 = GetNeighboors(matrix, n2[n2.Count - 1].X, n2[n2.Count - 1].Y);
+                    var neighboors2 = GetNeighboors(matrix, n2[n2.Count - 1].X, n2[n2.Count - 1].Y);
                     foreach (var neighbor in neighboors2)
                         if (!n2.Contains(neighbor) && !treeNeighboors.Contains(neighbor))
                             n2.Add(neighbor);
 
-                    List<Point> neighboors3 = GetNeighboors(matrix, n3[n3.Count - 1].X, n3[n3.Count - 1].Y);
+                    var neighboors3 = GetNeighboors(matrix, n3[n3.Count - 1].X, n3[n3.Count - 1].Y);
                     foreach (var neighbor in neighboors3)
                         if (!n3.Contains(neighbor) && !treeNeighboors.Contains(neighbor))
                             n3.Add(neighbor);
@@ -259,13 +225,13 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
                 if (n1.Count < 10 || n2.Count < 10 || n3.Count < 10)
                     return -1;
 
-                double angleNeighboors1 = Angle.ComputeAngle(n1[n1.Count - 1].X - n1[0].X, n1[n1.Count - 1].Y - n1[0].Y);
-                double angleNeighboors2 = Angle.ComputeAngle(n2[n2.Count - 1].X - n2[0].X, n2[n2.Count - 1].Y - n2[0].Y);
-                double angleNeighboors3 = Angle.ComputeAngle(n3[n3.Count - 1].X - n3[0].X, n3[n3.Count - 1].Y - n3[0].Y);
+                var angleNeighboors1 = Angle.ComputeAngle(n1[n1.Count - 1].X - n1[0].X, n1[n1.Count - 1].Y - n1[0].Y);
+                var angleNeighboors2 = Angle.ComputeAngle(n2[n2.Count - 1].X - n2[0].X, n2[n2.Count - 1].Y - n2[0].Y);
+                var angleNeighboors3 = Angle.ComputeAngle(n3[n3.Count - 1].X - n3[0].X, n3[n3.Count - 1].Y - n3[0].Y);
 
-                double diff1 = Angle.DifferencePi(angleNeighboors1, angleNeighboors2);
-                double diff2 = Angle.DifferencePi(angleNeighboors1, angleNeighboors3);
-                double diff3 = Angle.DifferencePi(angleNeighboors2, angleNeighboors3);
+                var diff1 = Angle.DifferencePi(angleNeighboors1, angleNeighboors2);
+                var diff2 = Angle.DifferencePi(angleNeighboors1, angleNeighboors3);
+                var diff3 = Angle.DifferencePi(angleNeighboors2, angleNeighboors3);
 
                 if (diff1 <= diff2 && diff1 <= diff3)
                 {
@@ -292,7 +258,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
 
         private List<Point> GetNeighboors(ImageMatrix matrix, int x, int y)
         {
-            List<Point> result = new List<Point>();
+            var result = new List<Point>();
 
             if (matrix[y, x + 1] == 0)
                 result.Add(new Point(x + 1, y));
@@ -321,21 +287,21 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
                 int xBifur = bifurcation.X;
                 int yBifur = bifurcation.Y;
 
-                List<Point> treeNeighboors = GetNeighboors(matrix, xBifur, yBifur);
+                var treeNeighboors = GetNeighboors(matrix, xBifur, yBifur);
 
                 if (treeNeighboors.Count < 3)
                     return false;
 
-                List<Point> n1 = new List<Point> { new Point(xBifur, yBifur), treeNeighboors[0] };
-                List<Point> n2 = new List<Point> { new Point(xBifur, yBifur), treeNeighboors[1] };
-                List<Point> n3 = new List<Point> { new Point(xBifur, yBifur), treeNeighboors[2] };
+                var n1 = new List<Point> {new Point(xBifur, yBifur), treeNeighboors[0]};
+                var n2 = new List<Point> {new Point(xBifur, yBifur), treeNeighboors[1]};
+                var n3 = new List<Point> {new Point(xBifur, yBifur), treeNeighboors[2]};
 
                 int xEnd = end.X;
                 int yEnd = end.Y;
 
-                for (int i = 0; i < 15; i++)
+                for (var i = 0; i < 15; i++)
                 {
-                    List<Point> neighboors1 = GetNeighboors(matrix, n1[n1.Count - 1].X, n1[n1.Count - 1].Y);
+                    var neighboors1 = GetNeighboors(matrix, n1[n1.Count - 1].X, n1[n1.Count - 1].Y);
                     foreach (var neighbor in neighboors1)
                         if (!n1.Contains(neighbor) && !treeNeighboors.Contains(neighbor))
                             if (neighbor.X == xEnd &&
@@ -344,7 +310,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
                             else
                                 n1.Add(neighbor);
 
-                    List<Point> neighboors2 = GetNeighboors(matrix, n2[n2.Count - 1].X, n2[n2.Count - 1].Y);
+                    var neighboors2 = GetNeighboors(matrix, n2[n2.Count - 1].X, n2[n2.Count - 1].Y);
                     foreach (var neighbor in neighboors2)
                         if (!n2.Contains(neighbor) && !treeNeighboors.Contains(neighbor))
                             if (neighbor.X == xEnd &&
@@ -353,7 +319,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
                             else
                                 n2.Add(neighbor);
 
-                    List<Point> neighboors3 = GetNeighboors(matrix, n3[n3.Count - 1].X, n3[n3.Count - 1].Y);
+                    var neighboors3 = GetNeighboors(matrix, n3[n3.Count - 1].X, n3[n3.Count - 1].Y);
                     foreach (var neighbor in neighboors3)
                         if (!n3.Contains(neighbor) && !treeNeighboors.Contains(neighbor))
                             if (neighbor.X == xEnd &&
@@ -365,7 +331,6 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
             }
             return false;
         }
-
 
         #endregion
     }

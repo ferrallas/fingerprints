@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using PatternRecognition.FingerprintRecognition.Core;
 
 namespace PatternRecognition.FingerprintRecognition.Core
 {
@@ -20,25 +19,25 @@ namespace PatternRecognition.FingerprintRecognition.Core
                 sumAngleY += Math.Sin(mtia.Angle);
             }
 
-            int n = mtiaCollection.Count;
-            return new Minutia()
-                       {
-                           Angle = Angle.ComputeAngle(sumAngleX / n, sumAngleY / n),
-                           X = Convert.ToInt16(Math.Round(sumX / n)),
-                           Y = Convert.ToInt16(Math.Round(sumY / n))
-                       };
+            var n = mtiaCollection.Count;
+            return new Minutia
+            {
+                Angle = Angle.ComputeAngle(sumAngleX / n, sumAngleY / n),
+                X = Convert.ToInt16(Math.Round(sumX / n)),
+                Y = Convert.ToInt16(Math.Round(sumY / n))
+            };
         }
 
         public static MinutiaPair Compute(List<MinutiaPair> pairs)
         {
             double qX = 0,
-                   tX = 0,
-                   qY = 0,
-                   tY = 0,
-                   qAngleX = 0,
-                   tAngleX = 0,
-                   qAngleY = 0,
-                   tAngleY = 0;
+                tX = 0,
+                qY = 0,
+                tY = 0,
+                qAngleX = 0,
+                tAngleX = 0,
+                qAngleY = 0,
+                tAngleY = 0;
             foreach (var pair in pairs)
             {
                 qX += pair.QueryMtia.X;
@@ -51,20 +50,20 @@ namespace PatternRecognition.FingerprintRecognition.Core
                 tAngleX += Math.Cos(pair.TemplateMtia.Angle);
                 tAngleY += Math.Sin(pair.TemplateMtia.Angle);
             }
-            int n = pairs.Count;
-            Minutia qMtia = new Minutia()
+            var n = pairs.Count;
+            var qMtia = new Minutia
             {
                 Angle = Angle.ComputeAngle(qAngleX / n, qAngleY / n),
                 X = Convert.ToInt16(Math.Round(qX / n)),
                 Y = Convert.ToInt16(Math.Round(qY / n))
             };
-            Minutia tMtia = new Minutia()
+            var tMtia = new Minutia
             {
                 Angle = Angle.ComputeAngle(tAngleX / n, tAngleY / n),
                 X = Convert.ToInt16(Math.Round(tX / n)),
                 Y = Convert.ToInt16(Math.Round(tY / n))
             };
-            return new MinutiaPair()
+            return new MinutiaPair
             {
                 QueryMtia = qMtia,
                 TemplateMtia = tMtia

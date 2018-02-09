@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 
 /*
   copyright s-hull.org 2011
@@ -28,25 +29,23 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
 {
     public class SHullTriangulator
     {
+        public float fraction = 0.3f;
         private List<Vertex> points;
 
-        public SHullTriangulator()
-        {
-        }
-
-        private void Analyse(List<Vertex> suppliedPoints, Hull hull, List<Triad> triads, bool rejectDuplicatePoints, bool hullOnly)
+        private void Analyse(List<Vertex> suppliedPoints, Hull hull, List<Triad> triads, bool rejectDuplicatePoints,
+            bool hullOnly)
         {
             if (suppliedPoints.Count < 3)
                 throw new ArgumentException("Number of points supplied must be >= 3");
 
-            this.points = suppliedPoints;
-            int nump = points.Count;
+            points = suppliedPoints;
+            var nump = points.Count;
 
-            float[] distance2ToCentre = new float[nump];
-            int[] sortedIndices = new int[nump];
+            var distance2ToCentre = new float[nump];
+            var sortedIndices = new int[nump];
 
             // Choose first point as the seed
-            for (int k = 0; k < nump; k++)
+            for (var k = 0; k < nump; k++)
             {
                 distance2ToCentre[k] = points[0].distance2To(points[k]);
                 sortedIndices[k] = k;
@@ -57,34 +56,29 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
 
             // Duplicates are more efficiently rejected now we have sorted the vertices
             if (rejectDuplicatePoints)
-            {
-                // Search backwards so each removal is independent of any other
-                for (int k = nump - 2; k >= 0; k--)
-                {
+                for (var k = nump - 2; k >= 0; k--)
                     // If the points are identical then their distances will be the same,
                     // so they will be adjacent in the sorted list
-                    if ((points[sortedIndices[k]].x == points[sortedIndices[k + 1]].x) &&
-                        (points[sortedIndices[k]].y == points[sortedIndices[k + 1]].y))
+                    if (points[sortedIndices[k]].x == points[sortedIndices[k + 1]].x &&
+                        points[sortedIndices[k]].y == points[sortedIndices[k + 1]].y)
                     {
                         // Duplicates are expected to be rare, so this is not particularly efficient
                         Array.Copy(sortedIndices, k + 2, sortedIndices, k + 1, nump - k - 2);
                         Array.Copy(distance2ToCentre, k + 2, distance2ToCentre, k + 1, nump - k - 2);
                         nump--;
                     }
-                }
-            }
 
-            Debug.WriteLine((points.Count - nump).ToString() + " duplicate points rejected");
+            Debug.WriteLine(points.Count - nump + " duplicate points rejected");
 
             if (nump < 3)
                 throw new ArgumentException("Number of unique points supplied must be >= 3");
 
-            int mid = -1;
+            var mid = -1;
             float romin2 = float.MaxValue, circumCentreX = 0, circumCentreY = 0;
 
             // Find the point which, with the first two points, creates the triangle with the smallest circumcircle
-            Triad tri = new Triad(sortedIndices[0], sortedIndices[1], 2);
-            for (int kc = 2; kc < nump; kc++)
+            var tri = new Triad(sortedIndices[0], sortedIndices[1], 2);
+            for (var kc = 2; kc < nump; kc++)
             {
                 tri.c = sortedIndices[kc];
                 if (tri.FindCircumcirclePrecisely(points) && tri.circumcircleR2 < romin2)
@@ -96,14 +90,16 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
                     circumCentreY = tri.circumcircleY;
                 }
                 else if (romin2 * 4 < distance2ToCentre[kc])
+                {
                     break;
+                }
             }
 
             // Change the indices, if necessary, to make the 2th point produce the smallest circumcircle with the 0th and 1th
             if (mid != 2)
             {
-                int indexMid = sortedIndices[mid];
-                float distance2Mid = distance2ToCentre[mid];
+                var indexMid = sortedIndices[mid];
+                var distance2Mid = distance2ToCentre[mid];
 
                 Array.Copy(sortedIndices, 2, sortedIndices, 3, mid - 2);
                 Array.Copy(distance2ToCentre, 2, distance2ToCentre, 3, mid - 2);
@@ -124,8 +120,8 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
 
             // Sort the remainder according to their distance from its centroid
             // Re-measure the points' distances from the centre of the circumcircle
-            Vertex centre = new Vertex(circumCentreX, circumCentreY);
-            for (int k = 3; k < nump; k++)
+            var centre = new Vertex(circumCentreX, circumCentreY);
+            for (var k = 3; k < nump; k++)
                 distance2ToCentre[k] = points[sortedIndices[k]].distance2To(centre);
 
             // Sort the _other_ points in order of distance to circumcentre
@@ -133,22 +129,22 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
 
             // Add new points into hull (removing obscured ones from the chain)
             // and creating triangles....
-            int numt = 0;
-            for (int k = 3; k < nump; k++)
+            var numt = 0;
+            for (var k = 3; k < nump; k++)
             {
-                int pointsIndex = sortedIndices[k];
-                HullVertex ptx = new HullVertex(points, pointsIndex);
+                var pointsIndex = sortedIndices[k];
+                var ptx = new HullVertex(points, pointsIndex);
 
-                float dx = ptx.x - hull[0].x, dy = ptx.y - hull[0].y;  // outwards pointing from hull[0] to pt.
+                float dx = ptx.x - hull[0].x, dy = ptx.y - hull[0].y; // outwards pointing from hull[0] to pt.
 
                 int numh = hull.Count, numh_old = numh;
                 List<int> pidx = new List<int>(), tridx = new List<int>();
-                int hidx;  // new hull point location within hull.....
+                int hidx; // new hull point location within hull.....
 
                 if (hull.EdgeVisibleFrom(0, dx, dy))
                 {
                     // starting with a visible hull facet !!!
-                    int e2 = numh;
+                    var e2 = numh;
                     hidx = 0;
 
                     // check to see if segment numh is also visible
@@ -158,7 +154,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
                         pidx.Add(hull[numh - 1].pointsIndex);
                         tridx.Add(hull[numh - 1].triadIndex);
 
-                        for (int h = 0; h < numh - 1; h++)
+                        for (var h = 0; h < numh - 1; h++)
                         {
                             // if segment h is visible delete h
                             pidx.Add(hull[h].pointsIndex);
@@ -178,32 +174,33 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
                             }
                         }
                         // look backwards through the hull structure
-                        for (int h = numh - 2; h > 0; h--)
-                        {
+                        for (var h = numh - 2; h > 0; h--)
                             // if segment h is visible delete h + 1
                             if (hull.EdgeVisibleFrom(h, ptx))
                             {
                                 pidx.Insert(0, hull[h].pointsIndex);
                                 tridx.Insert(0, hull[h].triadIndex);
-                                hull.RemoveAt(h + 1);  // erase end of chain
+                                hull.RemoveAt(h + 1); // erase end of chain
                             }
                             else
+                            {
                                 break; // quit on invisibility
-                        }
+                            }
                     }
                     else
                     {
-                        hidx = 1;  // keep pt hull[0]
+                        hidx = 1; // keep pt hull[0]
                         tridx.Add(hull[0].triadIndex);
                         pidx.Add(hull[0].pointsIndex);
 
-                        for (int h = 1; h < numh; h++)
+                        for (var h = 1; h < numh; h++)
                         {
                             // if segment h is visible delete h  
                             pidx.Add(hull[h].pointsIndex);
                             tridx.Add(hull[h].triadIndex);
                             if (hull.EdgeVisibleFrom(h, ptx))
-                            {                     // visible
+                            {
+                                // visible
                                 hull.RemoveAt(h);
                                 h--;
                                 numh--;
@@ -220,12 +217,11 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
                 else
                 {
                     int e1 = -1, e2 = numh;
-                    for (int h = 1; h < numh; h++)
-                    {
+                    for (var h = 1; h < numh; h++)
                         if (hull.EdgeVisibleFrom(h, ptx))
                         {
                             if (e1 < 0)
-                                e1 = h;  // first visible
+                                e1 = h; // first visible
                         }
                         else
                         {
@@ -236,12 +232,11 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
                                 break;
                             }
                         }
-                    }
 
                     // triangle pidx starts at e1 and ends at e2 (inclusive).	
                     if (e2 < numh)
                     {
-                        for (int e = e1; e <= e2; e++)
+                        for (var e = e1; e <= e2; e++)
                         {
                             pidx.Add(hull[e].pointsIndex);
                             tridx.Add(hull[e].triadIndex);
@@ -249,10 +244,10 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
                     }
                     else
                     {
-                        for (int e = e1; e < e2; e++)
+                        for (var e = e1; e < e2; e++)
                         {
                             pidx.Add(hull[e].pointsIndex);
-                            tridx.Add(hull[e].triadIndex);   // there are only n-1 triangles from n hull pts.
+                            tridx.Add(hull[e].triadIndex); // there are only n-1 triangles from n hull pts.
                         }
                         pidx.Add(hull[0].pointsIndex);
                     }
@@ -272,13 +267,13 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
 
                 int a = pointsIndex, T0;
 
-                int npx = pidx.Count - 1;
+                var npx = pidx.Count - 1;
                 numt = triads.Count;
                 T0 = numt;
 
-                for (int p = 0; p < npx; p++)
+                for (var p = 0; p < npx; p++)
                 {
-                    Triad trx = new Triad(a, pidx[p], pidx[p + 1]);
+                    var trx = new Triad(a, pidx[p], pidx[p + 1]);
                     trx.FindCircumcirclePrecisely(points);
 
                     trx.bc = tridx[p];
@@ -287,7 +282,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
                     trx.ac = numt + 1;
 
                     // index back into the triads.
-                    Triad txx = triads[tridx[p]];
+                    var txx = triads[tridx[p]];
                     if ((trx.b == txx.a && trx.c == txx.b) | (trx.b == txx.b && trx.c == txx.a))
                         txx.ab = numt;
                     else if ((trx.b == txx.a && trx.c == txx.c) | (trx.b == txx.c && trx.c == txx.a))
@@ -303,7 +298,9 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
 
                 hull[hidx].triadIndex = numt - 1;
                 if (hidx > 0)
+                {
                     hull[hidx - 1].triadIndex = T0;
+                }
                 else
                 {
                     numh = hull.Count;
@@ -312,78 +309,56 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
             }
         }
 
-        /// <summary>
-        /// Return the convex hull of the supplied points,
-        /// Don't check for duplicate points
-        /// </summary>
-        /// <param name="points">List of 2D vertices</param>
-        /// <returns></returns>
+
         public List<Vertex> ConvexHull(List<Vertex> points)
         {
             return ConvexHull(points, false);
         }
-        
-        /// <summary>
-        /// Return the convex hull of the supplied points,
-        /// Optionally check for duplicate points
-        /// </summary>
-        /// <param name="points">List of 2D vertices</param>
-        /// <param name="rejectDuplicatePoints">Whether to omit duplicated points</param>
-        /// <returns></returns>
+
+
         public List<Vertex> ConvexHull(List<Vertex> points, bool rejectDuplicatePoints)
         {
-            Hull hull = new Hull();
-            List<Triad> triads = new List<Triad>();
+            var hull = new Hull();
+            var triads = new List<Triad>();
 
             Analyse(points, hull, triads, rejectDuplicatePoints, true);
 
-            List<Vertex> hullVertices = new List<Vertex>();
-            foreach (HullVertex hv in hull)
+            var hullVertices = new List<Vertex>();
+            foreach (var hv in hull)
                 hullVertices.Add(new Vertex(hv.x, hv.y));
 
             return hullVertices;
         }
 
-        /// <summary>
-        /// Return the Delaunay triangulation of the supplied points
-        /// Don't check for duplicate points
-        /// </summary>
-        /// <param name="points">List of 2D vertices</param>
-        /// <returns>Triads specifying the triangulation</returns>
+
         public List<Triad> Triangulation(List<Vertex> points)
         {
             return Triangulation(points, false);
         }
 
-        /// <summary>
-        /// Return the Delaunay triangulation of the supplied points
-        /// Optionally check for duplicate points
-        /// </summary>
-        /// <param name="points">List of 2D vertices</param>
-        /// <param name="rejectDuplicatePoints">Whether to omit duplicated points</param>
-        /// <returns></returns>
+
         public List<Triad> Triangulation(List<Vertex> points, bool rejectDuplicatePoints)
         {
-            List<Triad> triads = new List<Triad>();
-            Hull hull = new Hull();
+            var triads = new List<Triad>();
+            var hull = new Hull();
 
             Analyse(points, hull, triads, rejectDuplicatePoints, false);
 
             // Now, need to flip any pairs of adjacent triangles not satisfying
             // the Delaunay criterion
-            int numt = triads.Count;
-            bool[] idsA = new bool[numt];
-            bool[] idsB = new bool[numt];
+            var numt = triads.Count;
+            var idsA = new bool[numt];
+            var idsB = new bool[numt];
 
             // We maintain a "list" of the triangles we've flipped in order to propogate any
             // consequent changes
             // When the number of changes is large, this is best maintained as a vector of bools
             // When the number becomes small, it's best maintained as a set
             // We switch between these regimes as the number flipped decreases
-            int flipped = FlipTriangles(triads, idsA);
+            var flipped = FlipTriangles(triads, idsA);
 
-            int iterations = 1;
-            while (flipped > (int)(fraction * (float)numt))
+            var iterations = 1;
+            while (flipped > (int) (fraction * numt))
             {
                 if ((iterations & 1) == 1)
                     flipped = FlipTriangles(triads, idsA, idsB);
@@ -395,7 +370,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
 
             Set<int> idSetA = new Set<int>(), idSetB = new Set<int>();
             flipped = FlipTriangles(triads,
-                ((iterations & 1) == 1) ? idsA : idsB, idSetA);
+                (iterations & 1) == 1 ? idsA : idsB, idSetA);
 
             iterations = 1;
             while (flipped > 0)
@@ -411,32 +386,24 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
             return triads;
         }
 
-        public float fraction = 0.3f;
 
-        /// <summary>
-        /// Test the triad against its 3 neighbours and flip it with any neighbour whose opposite point
-        /// is inside the circumcircle of the triad
-        /// </summary>
-        /// <param name="triads">The triads</param>
-        /// <param name="triadIndexToTest">The index of the triad to test</param>
-        /// <param name="triadIndexFlipped">Index of adjacent triangle it was flipped with (if any)</param>
-        /// <returns>true iff the triad was flipped with any of its neighbours</returns>
-        bool FlipTriangle(List<Triad> triads, int triadIndexToTest, out int triadIndexFlipped)
+        private bool FlipTriangle(List<Triad> triads, int triadIndexToTest, out int triadIndexFlipped)
         {
             int oppositeVertex = 0, edge1, edge2, edge3 = 0, edge4 = 0;
             triadIndexFlipped = 0;
 
-            Triad tri = triads[triadIndexToTest];
+            var tri = triads[triadIndexToTest];
             // test all 3 neighbours of tri 
 
             if (tri.bc >= 0)
             {
                 triadIndexFlipped = tri.bc;
-                Triad t2 = triads[triadIndexFlipped];
+                var t2 = triads[triadIndexFlipped];
                 // find relative orientation (shared limb).
                 t2.FindAdjacency(tri.b, triadIndexToTest, out oppositeVertex, out edge3, out edge4);
                 if (tri.InsideCircumcircle(points[oppositeVertex]))
-                {  // not valid in the Delaunay sense.
+                {
+                    // not valid in the Delaunay sense.
                     edge1 = tri.ab;
                     edge2 = tri.ac;
                     if (edge1 != edge3 && edge2 != edge4)
@@ -459,11 +426,12 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
             if (tri.ab >= 0)
             {
                 triadIndexFlipped = tri.ab;
-                Triad t2 = triads[triadIndexFlipped];
+                var t2 = triads[triadIndexFlipped];
                 // find relative orientation (shared limb).
                 t2.FindAdjacency(tri.a, triadIndexToTest, out oppositeVertex, out edge3, out edge4);
                 if (tri.InsideCircumcircle(points[oppositeVertex]))
-                {  // not valid in the Delaunay sense.
+                {
+                    // not valid in the Delaunay sense.
                     edge1 = tri.ac;
                     edge2 = tri.bc;
                     if (edge1 != edge3 && edge2 != edge4)
@@ -485,12 +453,13 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
             if (tri.ac >= 0)
             {
                 triadIndexFlipped = tri.ac;
-                Triad t2 = triads[triadIndexFlipped];
+                var t2 = triads[triadIndexFlipped];
                 // find relative orientation (shared limb).
                 t2.FindAdjacency(tri.a, triadIndexToTest, out oppositeVertex, out edge3, out edge4);
                 if (tri.InsideCircumcircle(points[oppositeVertex]))
-                {  // not valid in the Delaunay sense.
-                    edge1 = tri.ab;   // .ac shared limb
+                {
+                    // not valid in the Delaunay sense.
+                    edge1 = tri.ab; // .ac shared limb
                     edge2 = tri.bc;
                     if (edge1 != edge3 && edge2 != edge4)
                     {
@@ -510,17 +479,15 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
 
             return false;
         }
-         
-        /// <summary>
-        /// Flip triangles that do not satisfy the Delaunay condition
-        /// </summary>
+
+
         private int FlipTriangles(List<Triad> triads, bool[] idsFlipped)
         {
-            int numt = (int)triads.Count;
+            var numt = triads.Count;
             Array.Clear(idsFlipped, 0, numt);
 
-            int flipped = 0;
-            for (int t = 0; t < numt; t++)
+            var flipped = 0;
+            for (var t = 0; t < numt; t++)
             {
                 int t2;
                 if (FlipTriangle(triads, t, out t2))
@@ -528,21 +495,19 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
                     flipped += 2;
                     idsFlipped[t] = true;
                     idsFlipped[t2] = true;
-
                 }
             }
 
             return flipped;
         }
-         
+
         private int FlipTriangles(List<Triad> triads, bool[] idsToTest, bool[] idsFlipped)
         {
-            int numt = (int)triads.Count;
+            var numt = triads.Count;
             Array.Clear(idsFlipped, 0, numt);
 
-            int flipped = 0;
-            for (int t = 0; t < numt; t++)
-            {
+            var flipped = 0;
+            for (var t = 0; t < numt; t++)
                 if (idsToTest[t])
                 {
                     int t2;
@@ -553,19 +518,17 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
                         idsFlipped[t2] = true;
                     }
                 }
-            }
 
             return flipped;
         }
 
         private int FlipTriangles(List<Triad> triads, bool[] idsToTest, Set<int> idsFlipped)
         {
-            int numt = (int)triads.Count;
+            var numt = triads.Count;
             idsFlipped.Clear();
 
-            int flipped = 0;
-            for (int t = 0; t < numt; t++)
-            {
+            var flipped = 0;
+            for (var t = 0; t < numt; t++)
                 if (idsToTest[t])
                 {
                     int t2;
@@ -576,17 +539,16 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
                         idsFlipped.Add(t2);
                     }
                 }
-            }
 
             return flipped;
         }
 
         private int FlipTriangles(List<Triad> triads, Set<int> idsToTest, Set<int> idsFlipped)
         {
-            int flipped = 0;
+            var flipped = 0;
             idsFlipped.Clear();
 
-            foreach (int t in idsToTest)
+            foreach (var t in idsToTest)
             {
                 int t2;
                 if (FlipTriangle(triads, t, out t2))
@@ -601,16 +563,16 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
         }
 
         #region Debug verification routines: verify that triad adjacency and indeces are set correctly
+
 #if DEBUG
         private void VerifyHullContains(Hull hull, int idA, int idB)
         {
             if (
-                ((hull[0].pointsIndex == idA) && (hull[hull.Count - 1].pointsIndex == idB)) ||
-                ((hull[0].pointsIndex == idB) && (hull[hull.Count - 1].pointsIndex == idA)))
+                hull[0].pointsIndex == idA && hull[hull.Count - 1].pointsIndex == idB ||
+                hull[0].pointsIndex == idB && hull[hull.Count - 1].pointsIndex == idA)
                 return;
 
-            for (int h = 0; h < hull.Count - 1; h++)
-            {
+            for (var h = 0; h < hull.Count - 1; h++)
                 if (hull[h].pointsIndex == idA)
                 {
                     Debug.Assert(hull[h + 1].pointsIndex == idB);
@@ -621,42 +583,34 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
                     Debug.Assert(hull[h + 1].pointsIndex == idA);
                     return;
                 }
-            }
-
         }
 
         private void VerifyTriadContains(Triad tri, int nbourTriad, int idA, int idB)
         {
             if (tri.ab == nbourTriad)
-            {
                 Debug.Assert(
-                    ((tri.a == idA) && (tri.b == idB)) ||
-                    ((tri.b == idA) && (tri.a == idB)));
-            }
+                    tri.a == idA && tri.b == idB ||
+                    tri.b == idA && tri.a == idB);
             else if (tri.ac == nbourTriad)
-            {
                 Debug.Assert(
-                    ((tri.a == idA) && (tri.c == idB)) ||
-                    ((tri.c == idA) && (tri.a == idB)));
-            }
+                    tri.a == idA && tri.c == idB ||
+                    tri.c == idA && tri.a == idB);
             else if (tri.bc == nbourTriad)
-            {
                 Debug.Assert(
-                    ((tri.c == idA) && (tri.b == idB)) ||
-                    ((tri.b == idA) && (tri.c == idB)));
-            }
+                    tri.c == idA && tri.b == idB ||
+                    tri.b == idA && tri.c == idB);
             else
                 Debug.Assert(false);
         }
 
         private void VerifyTriads(List<Triad> triads, Hull hull)
         {
-            for (int t = 0; t < triads.Count; t++)
+            for (var t = 0; t < triads.Count; t++)
             {
                 if (t == 17840)
                     t = t + 0;
 
-                Triad tri = triads[t];
+                var tri = triads[t];
                 if (tri.ac == -1)
                     VerifyHullContains(hull, tri.a, tri.c);
                 else
@@ -671,18 +625,17 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
                     VerifyHullContains(hull, tri.b, tri.c);
                 else
                     VerifyTriadContains(triads[tri.bc], t, tri.b, tri.c);
-
             }
         }
 
         private void WriteTriangles(List<Triad> triangles, string name)
         {
-            using (System.IO.StreamWriter writer = new System.IO.StreamWriter(name + ".dtt"))
+            using (var writer = new StreamWriter(name + ".dtt"))
             {
                 writer.WriteLine(triangles.Count.ToString());
-                for (int i = 0; i < triangles.Count; i++)
+                for (var i = 0; i < triangles.Count; i++)
                 {
-                    Triad t = triangles[i];
+                    var t = triangles[i];
                     writer.WriteLine($"{i + 1}: {t.a} {t.b} {t.c} - {t.ab + 1} {t.bc + 1} {t.ac + 1}");
                 }
             }
@@ -692,5 +645,4 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
 
         #endregion
     }
-
 }

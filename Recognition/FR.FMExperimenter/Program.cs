@@ -27,19 +27,19 @@ namespace PatternRecognition.FingerprintRecognition.Applications
             var provider = new MtpsFeatureProvider(mtiaListProvider);
             var repository = new ResourceRepository(@"D:\IMPRONTE");
 
-            var qFeatures = provider.GetResource(Path.GetFileNameWithoutExtension("101_1.tif"), repository);
+            var qFeatures = provider.Extract(Path.GetFileNameWithoutExtension("101_1.tif"), repository);
 
             foreach (var path in Directory.GetFiles(@"D:\IMPRONTE","*.tif"))
             {
                 var shortFileName = Path.GetFileNameWithoutExtension(path);
-                var tFeatures = provider.GetResource(shortFileName, repository);
+                var tFeatures = provider.Extract(shortFileName, repository);
 
                 var score = matcher.Match(qFeatures, tFeatures, out List<MinutiaPair> matchingMtiae);
 
                 if (Math.Abs(score) < double.Epsilon || matchingMtiae == null) continue;
 
                 if(matchingMtiae.Count > 10) 
-                    Console.WriteLine($"{shortFileName} confidence:{score*100}%");
+                    Console.WriteLine($"{shortFileName} confidence:{score*100}% {matchingMtiae.Count}");
             }
         }
     }

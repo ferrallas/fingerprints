@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 /*
@@ -22,14 +23,31 @@ using System.Collections.Generic;
 
 namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulation
 {
-    class Set<T> : IEnumerable<T>
+    internal class Set<T> : IEnumerable<T>
     {
-        SortedList<T, int> list;
+        private readonly SortedList<T, int> list;
 
         public Set()
         {
             list = new SortedList<T, int>();
         }
+
+        public int Count => list.Count;
+
+        IEnumerator<T> IEnumerable<T>.GetEnumerator()
+        {
+            return list.Keys.GetEnumerator();
+        }
+
+
+        #region IEnumerable Members
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
 
         public void Add(T k)
         {
@@ -37,36 +55,16 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
                 list.Add(k, 0);
         }
 
-        public int Count
-        {
-            get { return list.Count; }
-        }
-
         public void DeepCopy(Set<T> other)
         {
             list.Clear();
-            foreach(T k in other.list.Keys)
+            foreach (var k in other.list.Keys)
                 Add(k);
-        }
-
-        IEnumerator<T> IEnumerable<T>.GetEnumerator()
-        {
-            return list.Keys.GetEnumerator();
         }
 
         public void Clear()
         {
             list.Clear();
         }
-
-
-        #region IEnumerable Members
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
     }
 }

@@ -14,15 +14,15 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2012
     {
         public override void Show(List<Minutia> features, Graphics g)
         {
-            var mtpFeatureExtractor = new MTripletsExtractor(){NeighborsCount = 2};
-            MtripletsFeature mtriplets = mtpFeatureExtractor.ExtractFeatures(features);
+            var mtpFeatureExtractor = new MTripletsExtractor {NeighborsCount = 2};
+            var mtriplets = mtpFeatureExtractor.ExtractFeatures(features);
 
-            foreach (MTriplet mt in mtriplets.MTriplets)
+            foreach (var mt in mtriplets.MTriplets)
             {
-                Pen pen = new Pen(Color.Blue) { Width = 2 };
-                Point[] points = new Point[3];
-                for (int i = 0; i < 3; i++)
-                    points[i] = new Point()
+                var pen = new Pen(Color.Blue) {Width = 2};
+                var points = new Point[3];
+                for (var i = 0; i < 3; i++)
+                    points[i] = new Point
                     {
                         X = Convert.ToInt32(mt[i].X),
                         Y = Convert.ToInt32(mt[i].Y)
@@ -34,6 +34,5 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2012
             var mtiaDisplay = new MinutiaeDisplay();
             mtiaDisplay.Show(mtriplets.Minutiae, g);
         }
-
     }
 }

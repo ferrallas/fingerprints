@@ -14,21 +14,22 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
     {
         #region internal
 
-        internal JYMtiaDescriptor(SkeletonImage skeletonImage, List<Minutia> minutiae, short mainMtiaIdx, short mtiaIdx0, short mtiaIdx1)
+        internal JYMtiaDescriptor(SkeletonImage skeletonImage, List<Minutia> minutiae, short mainMtiaIdx,
+            short mtiaIdx0, short mtiaIdx1)
         {
             this.minutiae = minutiae;
             this.mainMtiaIdx = mainMtiaIdx;
             nearestMtiaIdx = mtiaIdx0;
             farthestMtiaIdx = mtiaIdx1;
 
-            MtiaEuclideanDistance dist = new MtiaEuclideanDistance();
+            var dist = new MtiaEuclideanDistance();
             dist0 = dist.Compare(MainMinutia, NearestMtia);
             dist1 = dist.Compare(MainMinutia, FarthestMtia);
             if (dist1 < dist0)
             {
                 nearestMtiaIdx = mtiaIdx1;
                 farthestMtiaIdx = mtiaIdx0;
-                double temp = dist0;
+                var temp = dist0;
                 dist0 = dist1;
                 dist1 = temp;
             }
@@ -78,28 +79,28 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
 
         internal double RotationInvariantMatch(JYMtiaDescriptor target)
         {
-            double distDiff = MatchDistances(target);
-            double alphaDiff = MatchAlphaAngles(target);
-            double betaDiff = MatchBetaAngles(target);
-            double ridgeCountDiff = MatchRidgeCounts(target);
-            double mtiaTypeDiff = MatchByType(target);
+            var distDiff = MatchDistances(target);
+            var alphaDiff = MatchAlphaAngles(target);
+            var betaDiff = MatchBetaAngles(target);
+            var ridgeCountDiff = MatchRidgeCounts(target);
+            var mtiaTypeDiff = MatchByType(target);
 
-            double dist = Math.Sqrt(distDiff + alphaDiff + betaDiff + ridgeCountDiff + mtiaTypeDiff);
+            var dist = Math.Sqrt(distDiff + alphaDiff + betaDiff + ridgeCountDiff + mtiaTypeDiff);
 
-            return dist < 66 ? (66 - dist)/66 : 0;
+            return dist < 66 ? (66 - dist) / 66 : 0;
         }
 
         internal double NoRotateMatch(JYMtiaDescriptor target)
         {
             if (!MatchMtiaDirections(target))
                 return 0;
-            double distDiff = MatchDistances(target);
-            double alphaDiff = MatchAlphaAngles(target);
-            double betaDiff = MatchBetaAngles(target);
-            double ridgeCountDiff = MatchRidgeCounts(target);
-            double mtiaTypeDiff = MatchByType(target);
+            var distDiff = MatchDistances(target);
+            var alphaDiff = MatchAlphaAngles(target);
+            var betaDiff = MatchBetaAngles(target);
+            var ridgeCountDiff = MatchRidgeCounts(target);
+            var mtiaTypeDiff = MatchByType(target);
 
-            double dist = Math.Sqrt(distDiff + alphaDiff + betaDiff + ridgeCountDiff + mtiaTypeDiff);
+            var dist = Math.Sqrt(distDiff + alphaDiff + betaDiff + ridgeCountDiff + mtiaTypeDiff);
 
             return dist < 66 ? (66 - dist) / 66 : 0;
         }
@@ -127,15 +128,15 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
 
         private double MatchDistances(JYMtiaDescriptor target)
         {
-            double diff0 = Math.Abs(target.dist0 - dist0);
-            double diff1 = Math.Abs(target.dist1 - dist1);
+            var diff0 = Math.Abs(target.dist0 - dist0);
+            var diff1 = Math.Abs(target.dist1 - dist1);
 
             return diff0 + diff1;
         }
 
         private bool MatchMtiaDirections(JYMtiaDescriptor target)
         {
-            double diff = Angle.DifferencePi(target.MainMinutia.Angle, MainMinutia.Angle);
+            var diff = Angle.DifferencePi(target.MainMinutia.Angle, MainMinutia.Angle);
             if (diff >= Math.PI / 4)
                 return false;
             diff = Angle.DifferencePi(target.NearestMtia.Angle, NearestMtia.Angle);
@@ -158,25 +159,25 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
 
         private double MatchAlphaAngles(JYMtiaDescriptor target)
         {
-            double diff0 = Angle.DifferencePi(target.alpha0, alpha0);
-            double diff1 = Angle.DifferencePi(target.alpha1, alpha1);
+            var diff0 = Angle.DifferencePi(target.alpha0, alpha0);
+            var diff1 = Angle.DifferencePi(target.alpha1, alpha1);
 
             return 54 * (Math.Pow(diff0, 2) + Math.Pow(diff1, 2)) / Math.PI;
         }
 
         private double MatchBetaAngles(JYMtiaDescriptor target)
         {
-            double diff0 = Angle.DifferencePi(target.beta0, beta0);
-            double diff1 = Angle.DifferencePi(target.beta1, beta1);
+            var diff0 = Angle.DifferencePi(target.beta0, beta0);
+            var diff1 = Angle.DifferencePi(target.beta1, beta1);
 
             return 54 * (Math.Pow(diff0, 2) + Math.Pow(diff1, 2)) / Math.PI;
         }
 
         private double MatchByType(JYMtiaDescriptor target)
         {
-            int diff0 = target.MainMinutia.MinutiaType == MainMinutia.MinutiaType ? 0 : 1;
-            int diff1 = target.NearestMtia.MinutiaType == NearestMtia.MinutiaType ? 0 : 1;
-            int diff2 = target.FarthestMtia.MinutiaType == FarthestMtia.MinutiaType ? 0 : 1;
+            var diff0 = target.MainMinutia.MinutiaType == MainMinutia.MinutiaType ? 0 : 1;
+            var diff1 = target.NearestMtia.MinutiaType == NearestMtia.MinutiaType ? 0 : 1;
+            var diff2 = target.FarthestMtia.MinutiaType == FarthestMtia.MinutiaType ? 0 : 1;
             return 3 * (diff0 + diff1 + diff2);
         }
 
@@ -195,11 +196,9 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
 
         private readonly List<Minutia> minutiae;
 
-        [NonSerialized]
-        private static double aThr = Math.PI / 6;
+        [NonSerialized] private static double aThr = Math.PI / 6;
 
-        [NonSerialized]
-        private static double dThr = 12;
+        [NonSerialized] private static double dThr = 12;
 
         #endregion
     }

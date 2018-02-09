@@ -12,18 +12,13 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2011
 {
     internal class MtripletPair
     {
-        public MTriplet queryMTp;
-        public MTriplet templateMTp;
         public double matchingValue;
+        public MTriplet queryMTp;
         public byte[] templateMtiaOrder;
+        public MTriplet templateMTp;
     }
 
-    /// <summary>
-    ///     The features used by <see cref="MPN"/> to match fingerprints.
-    /// </summary>
-    /// <remarks>
-    ///     The constructor of this class is internal. You must use <see cref="DalaunayMTpsExtractor"/> in order to extract these features from fingerprints.
-    /// </remarks>
+
     [Serializable]
     public class MtripletsFeature
     {
@@ -37,35 +32,35 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2011
             mtList.TrimExcess();
             MTriplets = mtList;
         }
-        
+
         internal List<MtripletPair> FindSimilarMTriplets(MTriplet queryMTp)
         {
             var result = new List<MtripletPair>();
-            for (int j = 0; j < MTriplets.Count; j++)
+            for (var j = 0; j < MTriplets.Count; j++)
             {
-                MTriplet currMTp = MTriplets[j];
+                var currMTp = MTriplets[j];
                 byte[] currOrder;
 
-                double currSim = queryMTp.Match(currMTp, out currOrder);
+                var currSim = queryMTp.Match(currMTp, out currOrder);
 
                 if (currSim > 0)
                     result.Add(new MtripletPair
-                    {
-                        queryMTp = queryMTp,
-                        templateMTp = currMTp,
-                        matchingValue = currSim,
-                        templateMtiaOrder = currOrder
-                    }
-                        );
+                        {
+                            queryMTp = queryMTp,
+                            templateMTp = currMTp,
+                            matchingValue = currSim,
+                            templateMtiaOrder = currOrder
+                        }
+                    );
             }
             if (result.Count > 0)
                 return result;
             return null;
         }
 
-        internal List<MTriplet> MTriplets { get; private set; }
+        internal List<MTriplet> MTriplets { get; }
 
-        public List<Minutia> Minutiae { get; private set; }
+        public List<Minutia> Minutiae { get; }
 
         #endregion
     }

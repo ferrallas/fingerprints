@@ -12,50 +12,28 @@ using System.Drawing;
 
 namespace PatternRecognition.FingerprintRecognition.Core
 {
-    /// <summary>
-    ///     Represents a triangle of the Delaunay triangulation.
-    /// </summary>
     public struct IntegerTriangle
     {
-        /// <summary>
-        ///     The index of the first minutia.
-        /// </summary>
         public int A;
 
-        /// <summary>
-        ///     The index of the second minutia.
-        /// </summary>
+
         public int B;
 
-        /// <summary>
-        ///     The index of the third minutia.
-        /// </summary>
+
         public int C;
     }
 
-    /// <summary>
-    ///     Performs Delaunay triangulation over a collection of <see cref="Minutia"/>.
-    /// </summary>
-    /// <remarks>
-    ///     This class is based on the implementation of Salvatore Previti (http://www.salvatorepreviti.it - info@salvatorepreviti.it).
-    /// </remarks>
+
     public static class Delaunay2D
     {
         #region Triangulate
 
-        /// <summary>
-        ///     Performs Delaunay triangulation over the specified collection of <see cref="Minutia"/>.
-        /// </summary>
-        /// <param name="minutiae">The collection of <see cref="Minutia"/> to triangulate.</param>
-        /// <returns>The Delaunay triangles.</returns>
         public static IntegerTriangle[] Triangulate(ICollection<Minutia> minutiae)
         {
             ICollection<PointF> pointsCollection = new List<PointF>(minutiae.Count);
             foreach (var minutia in minutiae)
-            {
                 pointsCollection.Add(new PointF(minutia.X, minutia.Y));
-            }
-            DelaunayTriangulator edges = new DelaunayTriangulator();
+            var edges = new DelaunayTriangulator();
             if (edges.Initialize(pointsCollection, 0.00001f))
                 edges.Process();
 
@@ -66,9 +44,6 @@ namespace PatternRecognition.FingerprintRecognition.Core
 
         #region Private types
 
-        /// <summary>
-        /// A specialized very fast table of edges for triangulation.
-        /// </summary>
         private struct DelaunayTriangulator
         {
             #region Structures
@@ -94,17 +69,17 @@ namespace PatternRecognition.FingerprintRecognition.Core
                 internal IntegerTriangle ToIntegerTriangle()
                 {
                     IntegerTriangle result;
-                    result.A = this.A;
-                    result.B = this.B;
-                    result.C = this.C;
+                    result.A = A;
+                    result.B = B;
+                    result.C = C;
                     return result;
                 }
 
                 internal void ToIntegerTriangle(ref IntegerTriangle destination)
                 {
-                    destination.A = this.A;
-                    destination.B = this.B;
-                    destination.C = this.C;
+                    destination.A = A;
+                    destination.B = B;
+                    destination.C = C;
                 }
 
                 #endregion
@@ -164,30 +139,30 @@ namespace PatternRecognition.FingerprintRecognition.Core
 
             internal bool Initialize(ICollection<PointF> pointsCollection, float tolerance)
             {
-                this.points = null;
-                this.pointsIndices = null;
-                this.edgesBuckets = null;
-                this.edgesEntries = null;
-                this.Triangles = null;
-                this.Triangles = null;
+                points = null;
+                pointsIndices = null;
+                edgesBuckets = null;
+                edgesEntries = null;
+                Triangles = null;
+                Triangles = null;
 
                 // Initialize triangle table
 
-                this.TrianglesFirst = -1;
-                this.TrianglesLast = -1;
-                this.TrianglesCount = 0;
+                TrianglesFirst = -1;
+                TrianglesLast = -1;
+                TrianglesCount = 0;
 
-                this.firstNonCompletedTriangle = -1;
-                this.lastNonCompletedTriangle = -1;
+                firstNonCompletedTriangle = -1;
+                lastNonCompletedTriangle = -1;
 
                 // Initialize edge table
 
-                this.edgesGeneration = 1;
-                this.edgesCount = 0;
+                edgesGeneration = 1;
+                edgesCount = 0;
 
                 this.tolerance = tolerance > 0 ? tolerance : float.Epsilon; // Ensure tolerance is valid
 
-                this.pointsCount = pointsCollection == null ? 0 : pointsCollection.Count;
+                pointsCount = pointsCollection == null ? 0 : pointsCollection.Count;
 
                 if (pointsCollection.Count < 3)
                     return false; // We need a non null collection with at least 3 vertices!
@@ -195,63 +170,63 @@ namespace PatternRecognition.FingerprintRecognition.Core
                 // Create the array of points.
                 // We need 3 more items to add supertriangle vertices
 
-                this.points = new PointF[this.pointsCount + 3];
+                points = new PointF[pointsCount + 3];
                 pointsCollection.CopyTo(points, 0);
 
                 // Create an array of indices to points sorted by Y (firstly), X (secondly) and insertion order (thirdly)
-                this.pointsIndices = DelaunayTriangulator.GetSortedPointIndices(points, this.pointsCount, tolerance);
+                pointsIndices = GetSortedPointIndices(points, pointsCount, tolerance);
 
                 // Calculate min and max X and Y coomponents of points
 
                 PointF pointsMin, pointsMax;
-                PointF d = new PointF();
+                var d = new PointF();
 
-                DelaunayTriangulator.GetMinMaxPointCoordinates(points, this.pointsCount, out pointsMin, out pointsMax);
+                GetMinMaxPointCoordinates(points, pointsCount, out pointsMin, out pointsMax);
 
                 // Create supertriangle vertices
                 d.X = pointsMax.X - pointsMin.X;
                 d.Y = pointsMax.Y - pointsMin.Y;
 
-                float dmax = (d.X > d.Y) ? d.X : d.Y;
-                PointF mid = new PointF();
+                var dmax = d.X > d.Y ? d.X : d.Y;
+                var mid = new PointF();
                 mid.X = (pointsMax.X + pointsMin.X) * 0.5f;
                 mid.Y = (pointsMax.Y + pointsMin.Y) * 0.5f;
 
-                points[this.pointsCount] = new PointF(mid.X - 2 * dmax, mid.Y - dmax);
-                points[this.pointsCount + 1] = new PointF(mid.X, mid.Y + 2 * dmax);
-                points[this.pointsCount + 2] = new PointF(mid.X + 2 * dmax, mid.Y - dmax);
+                points[pointsCount] = new PointF(mid.X - 2 * dmax, mid.Y - dmax);
+                points[pointsCount + 1] = new PointF(mid.X, mid.Y + 2 * dmax);
+                points[pointsCount + 2] = new PointF(mid.X + 2 * dmax, mid.Y - dmax);
 
                 // Initialize triangle array
 
-                this.Triangles = new Triangle[this.pointsCount * 4 + 1];
+                Triangles = new Triangle[pointsCount * 4 + 1];
 
-                Triangle triangleEntry = new Triangle();
+                var triangleEntry = new Triangle();
                 triangleEntry.prevNonCompleted = -1;
                 triangleEntry.nextNonCompleted = -1;
 
                 // Initialized free triangles
 
-                this.Triangles = new Triangle[this.Triangles.Length];
+                Triangles = new Triangle[Triangles.Length];
 
-                this.firstFreeTriangle = 0;
-                for (int i = 0; i < this.Triangles.Length; ++i)
+                firstFreeTriangle = 0;
+                for (var i = 0; i < Triangles.Length; ++i)
                 {
                     triangleEntry.Previous = i - 1;
                     triangleEntry.Next = i + 1;
 
-                    this.Triangles[i] = triangleEntry;
+                    Triangles[i] = triangleEntry;
                 }
-                this.Triangles[this.Triangles.Length - 1].Next = -1;
+                Triangles[Triangles.Length - 1].Next = -1;
 
                 // Initialize edge table
 
-                int size = SPMath.GetPrime(this.Triangles.Length * 3 + 1);
-                this.edgesBuckets = new EdgeBucketEntry[size];
-                this.edgesEntries = new EdgeEntry[size];
+                var size = SPMath.GetPrime(Triangles.Length * 3 + 1);
+                edgesBuckets = new EdgeBucketEntry[size];
+                edgesEntries = new EdgeEntry[size];
 
                 // Add supertriangle
 
-                this.AddTriangle(this.pointsCount, this.pointsCount + 1, this.pointsCount + 2);
+                AddTriangle(pointsCount, pointsCount + 1, pointsCount + 2);
 
                 return true;
             }
@@ -271,14 +246,15 @@ namespace PatternRecognition.FingerprintRecognition.Core
                 float pointX = 0, pointY = 0;
                 float pointYplusTolerance;
 
-                PointF point = this.points[this.pointsIndices[this.pointsIndices.Length - 1]];
-                for (int sortedIndex = 0; sortedIndex < this.pointsIndices.Length; ++sortedIndex)
+                var point = points[pointsIndices[pointsIndices.Length - 1]];
+                for (var sortedIndex = 0; sortedIndex < pointsIndices.Length; ++sortedIndex)
                 {
-                    int pointIndex = this.pointsIndices[sortedIndex];
+                    var pointIndex = pointsIndices[sortedIndex];
 
-                    point = this.points[pointIndex];
+                    point = points[pointIndex];
 
-                    if (sortedIndex != 0 && Math.Abs(point.X - pointX) < tolerance && Math.Abs(point.Y - pointY) < tolerance)
+                    if (sortedIndex != 0 && Math.Abs(point.X - pointX) < tolerance &&
+                        Math.Abs(point.Y - pointY) < tolerance)
                         continue; // Ignore current point if equals to previous point. We check equality using tolerance.
 
                     pointX = point.X;
@@ -287,87 +263,67 @@ namespace PatternRecognition.FingerprintRecognition.Core
 
                     // Check if triangle contains current point in its circumcenter.
                     // If yes, add triangle edges to edges table and remove triangle.
-                    for (int nextNonCompleted, triangleIndex = this.firstNonCompletedTriangle; triangleIndex >= 0; triangleIndex = nextNonCompleted)
+                    for (int nextNonCompleted, triangleIndex = firstNonCompletedTriangle;
+                        triangleIndex >= 0;
+                        triangleIndex = nextNonCompleted)
                     {
                         // Calculate distance between triancle circumcircle center and current point
                         // Compare that distance with radius of triangle circumcircle
                         // If is less, it means that the point is inside of circumcircle, else, it means it is outside.
 
-                        circumCirclecenterX = this.Triangles[triangleIndex].circumCirclecenterX;
-                        circumCirclecenterY = this.Triangles[triangleIndex].circumCirclecenterY;
-                        circumCircleRadius = this.Triangles[triangleIndex].circumCircleRadius;
-                        nextNonCompleted = this.Triangles[triangleIndex].nextNonCompleted;
+                        circumCirclecenterX = Triangles[triangleIndex].circumCirclecenterX;
+                        circumCirclecenterY = Triangles[triangleIndex].circumCirclecenterY;
+                        circumCircleRadius = Triangles[triangleIndex].circumCircleRadius;
+                        nextNonCompleted = Triangles[triangleIndex].nextNonCompleted;
 
                         dx = pointX - circumCirclecenterX;
                         dy = pointY - circumCirclecenterY;
 
-                        if ((dx * dx + dy * dy) <= circumCircleRadius)
-                        {
-                            // Point is inside triangle circumcircle.
-                            // Add triangle edges to edge table and remove the triangle
-
-                            this.ReplaceTriangleWithEdges(triangleIndex, ref this.Triangles[triangleIndex]);
-                        }
-                        else if ((circumCirclecenterY < pointYplusTolerance) && (dy > circumCircleRadius + tolerance))
-                        {
-                            // Triangle not need to be checked anymore.
-                            // Remove it from linked list of non completed triangles.
-
-                            this.MarkAsComplete(ref this.Triangles[triangleIndex]);
-                        }
+                        if (dx * dx + dy * dy <= circumCircleRadius)
+                            ReplaceTriangleWithEdges(triangleIndex, ref Triangles[triangleIndex]);
+                        else if (circumCirclecenterY < pointYplusTolerance && dy > circumCircleRadius + tolerance)
+                            MarkAsComplete(ref Triangles[triangleIndex]);
                     }
 
                     // Form new triangles for the current point
                     // Edges used more than once will be skipped
                     // Triangle vertices are arranged in clockwise order
 
-                    for (int j = 0; j < this.edgesCount; ++j)
+                    for (var j = 0; j < edgesCount; ++j)
                     {
-                        DelaunayTriangulator.EdgeEntry edge = this.edgesEntries[j];
-                        if (this.edgesEntries[j].count == 1)
-                        {
-                            // If edge was used only one time, add a new triangle built from current edge.
-
-                            this.AddTriangle(edge.A, edge.B, pointIndex);
-                        }
+                        var edge = edgesEntries[j];
+                        if (edgesEntries[j].count == 1)
+                            AddTriangle(edge.A, edge.B, pointIndex);
                     }
 
                     // Clear edges table
 
-                    ++this.edgesGeneration;
-                    this.edgesCount = 0;
+                    ++edgesGeneration;
+                    edgesCount = 0;
                 }
 
-                this.firstNonCompletedTriangle = -1;
+                firstNonCompletedTriangle = -1;
 
                 // Count valid triangles (triangles that don't share vertices with supertriangle) and find the last triangle.
 
-                this.TrianglesLast = this.TrianglesFirst;
-                this.TrianglesCount = 0;
-                if (this.TrianglesLast != -1)
-                {
-                    for (; ; )
+                TrianglesLast = TrianglesFirst;
+                TrianglesCount = 0;
+                if (TrianglesLast != -1)
+                    for (;;)
                     {
-                        DelaunayTriangulator.Triangle triangle = this.Triangles[this.TrianglesLast];
+                        var triangle = Triangles[TrianglesLast];
 
-                        if (triangle.A < this.pointsCount && triangle.B < this.pointsCount && triangle.C < this.pointsCount)
-                        {
-                            // Valid triangle found. Increment count.
-                            ++this.TrianglesCount;
-                        }
+                        if (triangle.A < pointsCount && triangle.B < pointsCount && triangle.C < pointsCount)
+                            ++TrianglesCount;
                         else
-                        {
-                            // Current triangle is invalid. Mark it as invalid
-                            this.Triangles[this.TrianglesLast].A = -1;
-                        }
+                            Triangles[TrianglesLast].A = -1;
 
-                        int next = this.Triangles[this.TrianglesLast].Next;
+                        var next = Triangles[TrianglesLast].Next;
                         if (next == -1)
                             break;
 
-                        this.TrianglesLast = next;
+                        TrianglesLast = next;
                     }
-                }
             }
 
             #endregion
@@ -376,15 +332,17 @@ namespace PatternRecognition.FingerprintRecognition.Core
 
             private void CopyTo(IntegerTriangle[] array, int arrayIndex)
             {
-                for (int triangleIndex = this.TrianglesLast; triangleIndex >= 0; triangleIndex = this.Triangles[triangleIndex].Previous)
-                    if (this.Triangles[triangleIndex].A >= 0)
-                        this.Triangles[triangleIndex].ToIntegerTriangle(ref array[arrayIndex++]);
+                for (var triangleIndex = TrianglesLast;
+                    triangleIndex >= 0;
+                    triangleIndex = Triangles[triangleIndex].Previous)
+                    if (Triangles[triangleIndex].A >= 0)
+                        Triangles[triangleIndex].ToIntegerTriangle(ref array[arrayIndex++]);
             }
 
             internal IntegerTriangle[] ToArray()
             {
-                IntegerTriangle[] result = new IntegerTriangle[this.TrianglesCount];
-                this.CopyTo(result, 0);
+                var result = new IntegerTriangle[TrianglesCount];
+                CopyTo(result, 0);
                 return result;
             }
 
@@ -397,31 +355,31 @@ namespace PatternRecognition.FingerprintRecognition.Core
                 // Remove triangle from linked list
 
                 if (triangle.Next >= 0)
-                    this.Triangles[triangle.Next].Previous = triangle.Previous;
+                    Triangles[triangle.Next].Previous = triangle.Previous;
 
                 if (triangle.Previous >= 0)
-                    this.Triangles[triangle.Previous].Next = triangle.Next;
+                    Triangles[triangle.Previous].Next = triangle.Next;
                 else
-                    this.TrianglesFirst = triangle.Next;
+                    TrianglesFirst = triangle.Next;
 
                 // Remove triangle from non completed linked list
 
-                this.MarkAsComplete(ref triangle);
+                MarkAsComplete(ref triangle);
 
                 // Add triangle to free triangles linked list
 
                 triangle.Previous = -1;
-                triangle.Next = this.firstFreeTriangle;
+                triangle.Next = firstFreeTriangle;
 
-                this.Triangles[this.firstFreeTriangle].Previous = triangleIndex;
+                Triangles[firstFreeTriangle].Previous = triangleIndex;
 
-                this.firstFreeTriangle = triangleIndex;
+                firstFreeTriangle = triangleIndex;
 
                 // Add triangle edges to edges table
 
-                this.AddEdge(triangle.A, triangle.B);
-                this.AddEdge(triangle.B, triangle.C);
-                this.AddEdge(triangle.C, triangle.A);
+                AddEdge(triangle.A, triangle.B);
+                AddEdge(triangle.B, triangle.C);
+                AddEdge(triangle.C, triangle.A);
             }
 
             private void AddEdge(int edgeA, int edgeB)
@@ -430,9 +388,10 @@ namespace PatternRecognition.FingerprintRecognition.Core
 
                 // Calculate bucked index using an hashcode of edge indices.
                 // Hashcode is generated so order of edges is ignored, it means, edge 1, 2 is equals to edge 2, 1
-                int targetBucket = unchecked(((edgeA < edgeB ? (edgeA << 8) ^ edgeB : (edgeB << 8) ^ edgeA) & 0x7FFFFFFF) % this.edgesBuckets.Length);
+                var targetBucket = ((edgeA < edgeB ? (edgeA << 8) ^ edgeB : (edgeB << 8) ^ edgeA) & 0x7FFFFFFF) %
+                                   edgesBuckets.Length;
 
-                if (this.edgesBuckets[targetBucket].generation != this.edgesGeneration)
+                if (edgesBuckets[targetBucket].generation != edgesGeneration)
                 {
                     // Bucket generation doesn't match current generation.
                     // This means this bucket is empty.
@@ -442,16 +401,16 @@ namespace PatternRecognition.FingerprintRecognition.Core
                     entry.next = -1;
 
                     // Store the new generation
-                    this.edgesBuckets[targetBucket].generation = this.edgesGeneration;
+                    edgesBuckets[targetBucket].generation = edgesGeneration;
                 }
                 else
                 {
-                    int entryIndex = this.edgesBuckets[targetBucket].entryIndex;
+                    var entryIndex = edgesBuckets[targetBucket].entryIndex;
 
-                    for (int i = entryIndex; i >= 0; i = entry.next)
+                    for (var i = entryIndex; i >= 0; i = entry.next)
                     {
-                        entry = this.edgesEntries[i];
-                        if ((entry.A == edgeA && entry.B == edgeB) || (entry.A == edgeB && entry.B == edgeA))
+                        entry = edgesEntries[i];
+                        if (entry.A == edgeA && entry.B == edgeB || entry.A == edgeB && entry.B == edgeA)
                         {
                             ++edgesEntries[i].count;
                             return;
@@ -465,9 +424,9 @@ namespace PatternRecognition.FingerprintRecognition.Core
                 entry.B = edgeB;
                 entry.count = 1;
 
-                this.edgesEntries[this.edgesCount] = entry;
-                this.edgesBuckets[targetBucket].entryIndex = this.edgesCount;
-                ++this.edgesCount;
+                edgesEntries[edgesCount] = entry;
+                edgesBuckets[targetBucket].entryIndex = edgesCount;
+                ++edgesCount;
             }
 
             #endregion
@@ -478,33 +437,33 @@ namespace PatternRecognition.FingerprintRecognition.Core
             {
                 // Acquire the first free triangle
 
-                int result = this.firstFreeTriangle;
-                this.firstFreeTriangle = this.Triangles[result].Next;
-                this.Triangles[this.firstFreeTriangle].Previous = -1;
+                var result = firstFreeTriangle;
+                firstFreeTriangle = Triangles[result].Next;
+                Triangles[firstFreeTriangle].Previous = -1;
 
                 Triangle triangle;
 
                 // Insert the triangle into triangles linked list
 
                 triangle.Previous = -1;
-                triangle.Next = this.TrianglesFirst;
+                triangle.Next = TrianglesFirst;
 
-                if (this.TrianglesFirst != -1)
-                    this.Triangles[this.TrianglesFirst].Previous = result;
+                if (TrianglesFirst != -1)
+                    Triangles[TrianglesFirst].Previous = result;
 
-                this.TrianglesFirst = result;
+                TrianglesFirst = result;
 
                 // Insert the triangle into non completed triangles linked list
 
-                triangle.prevNonCompleted = this.lastNonCompletedTriangle;
+                triangle.prevNonCompleted = lastNonCompletedTriangle;
                 triangle.nextNonCompleted = -1;
 
-                if (this.firstNonCompletedTriangle == -1)
-                    this.firstNonCompletedTriangle = result;
+                if (firstNonCompletedTriangle == -1)
+                    firstNonCompletedTriangle = result;
                 else
-                    this.Triangles[this.lastNonCompletedTriangle].nextNonCompleted = result;
+                    Triangles[lastNonCompletedTriangle].nextNonCompleted = result;
 
-                this.lastNonCompletedTriangle = result;
+                lastNonCompletedTriangle = result;
 
                 // Store new entry
                 //this.Triangles[result] = triangle;
@@ -517,16 +476,16 @@ namespace PatternRecognition.FingerprintRecognition.Core
 
                 // Compute the circum circle of the new triangle
 
-                PointF pA = this.points[a];
-                PointF pB = this.points[b];
-                PointF pC = this.points[c];
+                var pA = points[a];
+                var pB = points[b];
+                var pC = points[c];
 
                 float m1, m2;
                 float mx1, mx2;
                 float my1, my2;
                 float cX, cY;
 
-                if (Math.Abs(pB.Y - pA.Y) < this.tolerance)
+                if (Math.Abs(pB.Y - pA.Y) < tolerance)
                 {
                     m2 = -(pC.X - pB.X) / (pC.Y - pB.Y);
                     mx2 = (pB.X + pC.X) * 0.5f;
@@ -541,7 +500,7 @@ namespace PatternRecognition.FingerprintRecognition.Core
                     mx1 = (pA.X + pB.X) * 0.5f;
                     my1 = (pA.Y + pB.Y) * 0.5f;
 
-                    if (Math.Abs(pC.Y - pB.Y) < this.tolerance)
+                    if (Math.Abs(pC.Y - pB.Y) < tolerance)
                     {
                         cX = (pC.X + pB.X) * 0.5f;
                         cY = m1 * (cX - mx1) + my1;
@@ -568,7 +527,7 @@ namespace PatternRecognition.FingerprintRecognition.Core
 
                 // Store the new triangle
 
-                this.Triangles[result] = triangle;
+                Triangles[result] = triangle;
             }
 
             private void MarkAsComplete(ref Triangle triangle)
@@ -576,23 +535,20 @@ namespace PatternRecognition.FingerprintRecognition.Core
                 // Remove triangle from non completed linked list
 
                 if (triangle.nextNonCompleted >= 0)
-                    this.Triangles[triangle.nextNonCompleted].prevNonCompleted = triangle.prevNonCompleted;
+                    Triangles[triangle.nextNonCompleted].prevNonCompleted = triangle.prevNonCompleted;
                 else
-                    this.lastNonCompletedTriangle = triangle.prevNonCompleted;
+                    lastNonCompletedTriangle = triangle.prevNonCompleted;
 
                 if (triangle.prevNonCompleted >= 0)
-                    this.Triangles[triangle.prevNonCompleted].nextNonCompleted = triangle.nextNonCompleted;
+                    Triangles[triangle.prevNonCompleted].nextNonCompleted = triangle.nextNonCompleted;
                 else
-                    this.firstNonCompletedTriangle = triangle.nextNonCompleted;
+                    firstNonCompletedTriangle = triangle.nextNonCompleted;
             }
 
             #endregion
 
             #region Static functions
 
-            /// <summary>
-            /// Get minimum and maximum X and Y values from specified array.
-            /// </summary>
             private static void GetMinMaxPointCoordinates(PointF[] points, int count, out PointF min, out PointF max)
             {
                 if (count <= 0)
@@ -601,9 +557,9 @@ namespace PatternRecognition.FingerprintRecognition.Core
                 min = points[0];
                 max = points[0];
 
-                for (int i = 1; i < count; ++i)
+                for (var i = 1; i < count; ++i)
                 {
-                    PointF v = points[i];
+                    var v = points[i];
                     if (v.X > max.X)
                         max.X = v.X;
                     else if (v.X < min.X)
@@ -615,26 +571,24 @@ namespace PatternRecognition.FingerprintRecognition.Core
                 }
             }
 
-            /// <summary>
-            /// Create an array of indices from a PointF array sorting them by Y (firstly), X (secondly) and insertion order (thirdly)
-            /// </summary>
+
             private static int[] GetSortedPointIndices(PointF[] points, int count, float tolerance)
             {
-                int[] result = new int[count];
+                var result = new int[count];
 
                 // Store index in indices
 
-                for (int i = 0; i < result.Length; ++i)
+                for (var i = 0; i < result.Length; ++i)
                     result[i] = i;
 
                 // Sort indices by Y (firstly), X (secondly) and insertion order (thirdly)
 
                 Array.Sort(result, delegate(int a, int b)
                 {
-                    PointF va = points[a];
-                    PointF vb = points[b];
+                    var va = points[a];
+                    var vb = points[b];
 
-                    float f = va.Y - vb.Y;
+                    var f = va.Y - vb.Y;
 
                     if (f > tolerance)
                         return +1;
@@ -664,34 +618,36 @@ namespace PatternRecognition.FingerprintRecognition.Core
     {
         #region Prime numbers
 
-        internal static readonly int[] primes = {
-            3, 7, 11, 17, 23, 29, 37, 47, 59, 71, 89, 107, 131, 163, 197, 239, 293, 353, 431, 521, 631, 761, 919, 
-            1103, 1327, 1597, 1931, 2333, 2801, 3371, 4049, 4861, 5839, 7013, 8419, 10103, 12143, 14591, 
+        internal static readonly int[] primes =
+        {
+            3, 7, 11, 17, 23, 29, 37, 47, 59, 71, 89, 107, 131, 163, 197, 239, 293, 353, 431, 521, 631, 761, 919,
+            1103, 1327, 1597, 1931, 2333, 2801, 3371, 4049, 4861, 5839, 7013, 8419, 10103, 12143, 14591,
             17519, 21023, 25229, 30293, 36353, 43627, 52361, 62851, 75431, 90523, 108631, 130363, 156437,
-            187751, 225307, 270371, 324449, 389357, 467237, 560689, 672827, 807403, 968897, 1162687, 1395263, 
-            1674319, 2009191, 2411033, 2893249, 3471899, 4166287, 4999559, 5999471, 7199369};
+            187751, 225307, 270371, 324449, 389357, 467237, 560689, 672827, 807403, 968897, 1162687, 1395263,
+            1674319, 2009191, 2411033, 2893249, 3471899, 4166287, 4999559, 5999471, 7199369
+        };
 
         internal static int GetPrime(int min)
         {
             if (min < 0)
                 return min;
 
-            for (int i = 0; i < primes.Length; i++)
+            for (var i = 0; i < primes.Length; i++)
             {
-                int prime = primes[i];
+                var prime = primes[i];
                 if (prime >= min)
                     return prime;
             }
 
             //outside of our predefined table. 
             //compute the hard way.
-            for (int i = (min | 1); i < Int32.MaxValue; i += 2)
+            for (var i = min | 1; i < int.MaxValue; i += 2)
             {
                 if ((i & 1) != 0)
                 {
-                    int limit = (int)Math.Sqrt(i);
-                    for (int divisor = 3; divisor <= limit; divisor += 2)
-                        if ((i % divisor) == 0)
+                    var limit = (int) Math.Sqrt(i);
+                    for (var divisor = 3; divisor <= limit; divisor += 2)
+                        if (i % divisor == 0)
                             continue;
 
                     return i;

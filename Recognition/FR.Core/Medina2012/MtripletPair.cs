@@ -2,9 +2,9 @@
 {
     internal class MtripletPair
     {
-        public MTriplet queryMTp;
-        public MTriplet templateMTp;
         public double matchingValue;
+        public MTriplet queryMTp;
         public byte[] templateMtiaOrder;
+        public MTriplet templateMTp;
     }
 }
