@@ -15,7 +15,7 @@ namespace PatternRecognition.FingerprintRecognition.Core
 
         #region private fields
 
-        private readonly byte[,] orientations;
+        private readonly byte[,] _orientations;
 
         #endregion
 
@@ -25,7 +25,7 @@ namespace PatternRecognition.FingerprintRecognition.Core
             Width = width;
             Height = height;
             WindowSize = wSize;
-            this.orientations = orientations;
+            this._orientations = orientations;
         }
 
 
@@ -34,14 +34,14 @@ namespace PatternRecognition.FingerprintRecognition.Core
             Width = width;
             Height = height;
             WindowSize = wSize;
-            orientations = new byte[height, width];
+            _orientations = new byte[height, width];
         }
 
 
         public byte this[int row, int col]
         {
-            get => orientations[row, col];
-            set => orientations[row, col] = value;
+            get => _orientations[row, col];
+            set => _orientations[row, col] = value;
         }
 
 
@@ -56,13 +56,13 @@ namespace PatternRecognition.FingerprintRecognition.Core
 
         public double AngleInRadians(int row, int col)
         {
-            return IsNullBlock(row, col) ? double.NaN : orientations[row, col] * Math.PI / 180;
+            return IsNullBlock(row, col) ? double.NaN : _orientations[row, col] * Math.PI / 180;
         }
 
 
         public bool IsNullBlock(int row, int col)
         {
-            return orientations[row, col] == Null;
+            return _orientations[row, col] == Null;
         }
 
 

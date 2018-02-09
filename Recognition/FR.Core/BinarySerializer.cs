@@ -11,10 +11,10 @@ namespace PatternRecognition.FingerprintRecognition.Core
 {
     public static class BinarySerializer
     {
-        public static void Serialize(object obj, string FileName)
+        public static void Serialize(object obj, string fileName)
         {
             var formatter = new BinaryFormatter();
-            Stream stream = new FileStream(FileName, FileMode.Create);
+            Stream stream = new FileStream(fileName, FileMode.Create);
             formatter.Serialize(stream, obj);
             stream.Close();
         }
@@ -46,9 +46,9 @@ namespace PatternRecognition.FingerprintRecognition.Core
         {
             var formatter = new BinaryFormatter();
             Stream stream = new FileStream(fileName, FileMode.Open);
-            var Result = formatter.Deserialize(stream);
+            var result = formatter.Deserialize(stream);
             stream.Close();
-            return Result;
+            return result;
         }
 
 

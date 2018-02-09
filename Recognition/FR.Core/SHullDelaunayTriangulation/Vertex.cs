@@ -26,7 +26,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
 {
     public class Vertex
     {
-        public float x, y;
+        public float X, Y;
 
         protected Vertex()
         {
@@ -34,25 +34,25 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
 
         public Vertex(float x, float y)
         {
-            this.x = x;
-            this.y = y;
+            this.X = x;
+            this.Y = y;
         }
 
-        public float distance2To(Vertex other)
+        public float Distance2To(Vertex other)
         {
-            var dx = x - other.x;
-            var dy = y - other.y;
+            var dx = X - other.X;
+            var dy = Y - other.Y;
             return dx * dx + dy * dy;
         }
 
-        public float distanceTo(Vertex other)
+        public float DistanceTo(Vertex other)
         {
-            return (float) Math.Sqrt(distance2To(other));
+            return (float) Math.Sqrt(Distance2To(other));
         }
 
         public override string ToString()
         {
-            return $"({x},{y})";
+            return $"({X},{Y})";
         }
     }
 }

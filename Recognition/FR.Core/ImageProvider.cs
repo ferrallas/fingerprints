@@ -15,6 +15,7 @@ namespace PatternRecognition.FingerprintRecognition.Core
         public static Bitmap GetResource(byte[] rawImage)
         {
             var srcBitmap = Image.FromStream(new MemoryStream(rawImage)) as Bitmap;
+
             if (srcBitmap == null)
                 return null;
             Bitmap returnBitmap;

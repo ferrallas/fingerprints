@@ -11,11 +11,11 @@ using PatternRecognition.FingerprintRecognition.Core.ImageProcessingTools.Convol
 
 namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
 {
-    public class Ratha1995SkeImgExtractor : FeatureExtractor<SkeletonImage>
+    public static class SkeletonImageExtractor
     {
         #region public
 
-        public override SkeletonImage ExtractFeatures(Bitmap image)
+        public static SkeletonImage ExtractFeatures(Bitmap image)
         {
             var ratha1995OrImgExtractor = new Ratha1995OrImgExtractor();
             var orientationImage = ratha1995OrImgExtractor.ExtractFeatures(image);
@@ -30,7 +30,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
         }
 
 
-        public ImageMatrix ExtractSkeletonImage(Bitmap image, OrientationImage orientationImage)
+        public static ImageMatrix ExtractSkeletonImage(Bitmap image, OrientationImage orientationImage)
         {
             var matrix = new ImageMatrix(image);
 
@@ -50,7 +50,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
 
         #region private
 
-        private ImageMatrix GetBinaryImage(ImageMatrix matrix, OrientationImage orientationImage)
+        private static ImageMatrix GetBinaryImage(ImageMatrix matrix, OrientationImage orientationImage)
         {
             int[] filter = {1, 2, 5, 7, 5, 2, 1};
             var newImg = new ImageMatrix(matrix.Width, matrix.Height);
@@ -118,7 +118,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
             return newImg;
         }
 
-        private int[] GetProjection(OrientationImage oi, int row, int col, int x, int y, ImageMatrix matrix)
+        private static int[] GetProjection(OrientationImage oi, int row, int col, int x, int y, ImageMatrix matrix)
         {
             var angle = oi.AngleInRadians(row, col);
             var orthogonalAngle = oi.AngleInRadians(row, col) + Math.PI / 2;
@@ -164,7 +164,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
             return projection;
         }
 
-        private void ApplyThinning(ImageMatrix matrix, OrientationImage orientationImage)
+        private static void ApplyThinning(ImageMatrix matrix, OrientationImage orientationImage)
         {
             var changed = true;
             while (changed)
@@ -194,10 +194,10 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
                                 var bc = matrix[yi + 1, xi];
                                 var br = matrix[yi + 1, xi + 1];
 
-                                if (IsVL(tl, tc, tr, le, ce, ri, bl, bc, br) ||
-                                    IsVR(tl, tc, tr, le, ce, ri, bl, bc, br) ||
-                                    IsHT(tl, tc, tr, le, ce, ri, bl, bc, br) ||
-                                    IsHB(tl, tc, tr, le, ce, ri, bl, bc, br))
+                                if (IsVl(tl, tc, tr, le, ce, ri, bl, bc, br) ||
+                                    IsVr(tl, tc, tr, le, ce, ri, bl, bc, br) ||
+                                    IsHt(tl, tc, tr, le, ce, ri, bl, bc, br) ||
+                                    IsHb(tl, tc, tr, le, ce, ri, bl, bc, br))
                                 {
                                     matrix[yi, xi] = 255;
                                     changed = true;
@@ -211,7 +211,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
             }
         }
 
-        private void RemoveSpikes(ImageMatrix matrix, OrientationImage orientationImage)
+        private static void RemoveSpikes(ImageMatrix matrix, OrientationImage orientationImage)
         {
             for (var row = 0; row < orientationImage.Height; row++)
             for (var col = 0; col < orientationImage.Width; col++)
@@ -290,7 +290,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
                 }
         }
 
-        private void FixBifurcations(ImageMatrix matrix, OrientationImage orientationImage)
+        private static void FixBifurcations(ImageMatrix matrix, OrientationImage orientationImage)
         {
             var changed = true;
             while (changed)
@@ -334,7 +334,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
             }
         }
 
-        private void RemoveSmallSegments(ImageMatrix matrix, OrientationImage orientationImage)
+        private static void RemoveSmallSegments(ImageMatrix matrix, OrientationImage orientationImage)
         {
             for (var row = 0; row < orientationImage.Height; row++)
             for (var col = 0; col < orientationImage.Width; col++)
@@ -381,7 +381,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
                 }
         }
 
-        private bool IsVR(int tl, int tc, int tr, int le, int ce, int ri, int bl, int bc, int br)
+        private static bool IsVr(int tl, int tc, int tr, int le, int ce, int ri, int bl, int bc, int br)
         {
             if (tl == 0 && tc == 255 && tr == 255 &&
                 le == 0 && ce == 0 && ri == 255 &&
@@ -417,7 +417,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
             return false;
         }
 
-        private bool IsVL(int tl, int tc, int tr, int le, int ce, int ri, int bl, int bc, int br)
+        private static bool IsVl(int tl, int tc, int tr, int le, int ce, int ri, int bl, int bc, int br)
         {
             if (tl == 255 && tc == 255 && tr == 0 &&
                 le == 255 && ce == 0 && ri == 0 &&
@@ -453,7 +453,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
             return false;
         }
 
-        private bool IsHB(int tl, int tc, int tr, int le, int ce, int ri, int bl, int bc, int br)
+        private static bool IsHb(int tl, int tc, int tr, int le, int ce, int ri, int bl, int bc, int br)
         {
             if (tl == 0 && tc == 0 && tr == 0 &&
                 le == 255 && ce == 0 && ri == 255 &&
@@ -488,7 +488,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
             return false;
         }
 
-        private bool IsHT(int tl, int tc, int tr, int le, int ce, int ri, int bl, int bc, int br)
+        private static bool IsHt(int tl, int tc, int tr, int le, int ce, int ri, int bl, int bc, int br)
         {
             if (tl == 255 && tc == 255 && tr == 255 &&
                 le == 255 && ce == 0 && ri == 255 &&
@@ -523,7 +523,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
             return false;
         }
 
-        private bool CouldBeSpike(int tl, int tc, int tr, int le, int ce, int ri, int bl, int bc, int br)
+        private static bool CouldBeSpike(int tl, int tc, int tr, int le, int ce, int ri, int bl, int bc, int br)
         {
             if (tl == 255 && tc == 255 && tr == 255 &&
                 le == 255 && ce == 0 && ri == 255 &&
@@ -569,7 +569,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
             return false;
         }
 
-        private bool IsCorner(int tl, int tc, int tr, int le, int ce, int ri, int bl, int bc, int br)
+        private static bool IsCorner(int tl, int tc, int tr, int le, int ce, int ri, int bl, int bc, int br)
         {
             if (tl == 255 && tc == 255 && //tr == 255 &&
                 le == 255 && ce == 0 && ri == 0 &&
@@ -598,7 +598,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
             return false;
         }
 
-        private bool IsEnd(ImageMatrix matrix, int x, int y, out int x1, out int y1)
+        private static bool IsEnd(ImageMatrix matrix, int x, int y, out int x1, out int y1)
         {
             x1 = -1;
             y1 = -1;
@@ -697,7 +697,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
             return false;
         }
 
-        private bool IsContinous(ImageMatrix matrix, int x0, int y0, int x, int y, out int x1, out int y1)
+        private static bool IsContinous(ImageMatrix matrix, int x0, int y0, int x, int y, out int x1, out int y1)
         {
             x1 = -1;
             y1 = -1;

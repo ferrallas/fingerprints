@@ -10,13 +10,13 @@ using System.Collections.Generic;
 namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
 {
     [Serializable]
-    public class JYFeatures
+    public class JyFeatures
     {
-        internal JYFeatures(List<JYMtiaDescriptor> descriptorsList)
+        internal JyFeatures(List<JyMtiaDescriptor> descriptorsList)
         {
             Minutiae = descriptorsList;
         }
 
-        internal List<JYMtiaDescriptor> Minutiae { get; }
+        internal List<JyMtiaDescriptor> Minutiae { get; }
     }
 }

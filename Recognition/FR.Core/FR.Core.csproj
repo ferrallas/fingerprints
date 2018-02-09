@@ -77,6 +77,7 @@
     <Compile Include="Jiang2000\JYFeatures.cs" />
     <Compile Include="Jiang2000\JYFeaturesProvider.cs" />
     <Compile Include="Jiang2000\JYMtiaDescriptor.cs" />
+    <Compile Include="Jiang2000\JyTriplet.cs" />
     <Compile Include="Jiang2000\MJY.cs" />
     <Compile Include="Medina2011\DalaunayMTpsExtractor.cs" />
     <Compile Include="Medina2011\DelaunayMtpsProvider.cs" />
@@ -84,10 +85,8 @@
     <Compile Include="Medina2011\MTriplet.cs" />
     <Compile Include="Medina2011\MTripletsFeature.cs" />
     <Compile Include="Medina2012\M3gl.cs" />
-    <Compile Include="Medina2012\MtpsFeatureProvider.cs" />
     <Compile Include="Medina2012\MTriplet.cs" />
     <Compile Include="Medina2012\MtripletPair.cs" />
-    <Compile Include="Medina2012\MTripletsDisplay.cs" />
     <Compile Include="Medina2012\MTripletsExtractor.cs" />
     <Compile Include="Medina2012\MTripletsFeature.cs" />
     <Compile Include="MinutiaMapper.cs" />
@@ -102,10 +101,9 @@
     <Compile Include="Qi2005\Qi2005FeatureProvider.cs" />
     <Compile Include="Qi2005\Qi2005Features.cs" />
     <Compile Include="Qi2005\QYW.cs" />
-    <Compile Include="Ratha1995\Ratha1995MinutiaeExtractor.cs" />
+    <Compile Include="Ratha1995\MinutiaeExtractor.cs" />
     <Compile Include="Ratha1995\Ratha1995OrImgExtractor.cs" />
-    <Compile Include="Ratha1995\Ratha1995SkeImgExtractor.cs" />
-    <Compile Include="Sherlock1994\Sherlock1994OrImgExtractor.cs" />
+    <Compile Include="Ratha1995\SkeletonImageExtractor.cs" />
     <Compile Include="SHullDelaunay.cs" />
     <Compile Include="SHullDelaunayTriangulation\Hull.cs" />
     <Compile Include="SHullDelaunayTriangulation\Set.cs" />
@@ -117,11 +115,9 @@
     <Compile Include="ISOMinutiaeSerializer.cs" />
     <Compile Include="Delaunay2D.cs" />
     <Compile Include="MinutiaeSerializer.cs" />
-    <Compile Include="MinutiaListProvider.cs" />
     <Compile Include="OrientationImage.cs" />
     <Compile Include="OrientationImageDisplay.cs" />
     <Compile Include="IFeatureDisplay.cs" />
-    <Compile Include="IFeatureExtractor.cs" />
     <Compile Include="Minutia.cs" />
     <Compile Include="MinutiaeDisplay.cs" />
     <Compile Include="MtiaEuclideanDistance.cs" />

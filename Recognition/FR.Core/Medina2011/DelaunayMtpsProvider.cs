@@ -5,20 +5,17 @@
  */
 
 using System;
+using PatternRecognition.FingerprintRecognition.Core.Ratha1995;
 
 namespace PatternRecognition.FingerprintRecognition.Core.Medina2011
 {
-    public class DelaunayMtpsProvider
+    public static class DelaunayMtpsProvider
     {
-        private readonly DalaunayMTpsExtractor mTripletsCalculator = new DalaunayMTpsExtractor();
-
-        public MtripletsFeature Extract(byte[] image)
+        public static MtripletsFeature Extract(byte[] image)
         {
-            var mtiae = MtiaListProvider.Extract(image);
-            return mTripletsCalculator.ExtractFeatures(mtiae);
+            var mtiae = MinutiaeExtractor.ExtractFeatures(ImageProvider.GetResource(image));
+            return DalaunayMTpsExtractor.ExtractFeatures(mtiae);
         }
-
-        public MinutiaListProvider MtiaListProvider { get; set; }
 
     }
 }

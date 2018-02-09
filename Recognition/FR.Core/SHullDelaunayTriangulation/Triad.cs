@@ -27,33 +27,33 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
 {
     public class Triad
     {
-        public int a, b, c;
-        public int ab, bc, ac; // adjacent edges index to neighbouring triangle.
+        public int A, B, C;
+        public int Ab, Bc, Ac; // adjacent edges index to neighbouring triangle.
 
         // Position and radius squared of circumcircle
-        public float circumcircleR2, circumcircleX, circumcircleY;
+        public float CircumcircleR2, CircumcircleX, CircumcircleY;
 
         public Triad(int x, int y, int z)
         {
-            a = x;
-            b = y;
-            c = z;
-            ab = -1;
-            bc = -1;
-            ac = -1;
-            circumcircleR2 = -1;
+            A = x;
+            B = y;
+            C = z;
+            Ab = -1;
+            Bc = -1;
+            Ac = -1;
+            CircumcircleR2 = -1;
             x = 0;
             y = 0;
         }
 
         public void Initialize(int a, int b, int c, int ab, int bc, int ac, List<Vertex> points)
         {
-            this.a = a;
-            this.b = b;
-            this.c = c;
-            this.ab = ab;
-            this.bc = bc;
-            this.ac = ac;
+            this.A = a;
+            this.B = b;
+            this.C = c;
+            this.Ab = ab;
+            this.Bc = bc;
+            this.Ac = ac;
 
             FindCircumcirclePrecisely(points);
         }
@@ -61,23 +61,23 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
 
         public void MakeClockwise(List<Vertex> points)
         {
-            var centroidX = (points[a].x + points[b].x + points[c].x) / 3.0f;
-            var centroidY = (points[a].y + points[b].y + points[c].y) / 3.0f;
+            var centroidX = (points[A].X + points[B].X + points[C].X) / 3.0f;
+            var centroidY = (points[A].Y + points[B].Y + points[C].Y) / 3.0f;
 
-            float dr0 = points[a].x - centroidX, dc0 = points[a].y - centroidY;
-            float dx01 = points[b].x - points[a].x, dy01 = points[b].y - points[a].y;
+            float dr0 = points[A].X - centroidX, dc0 = points[A].Y - centroidY;
+            float dx01 = points[B].X - points[A].X, dy01 = points[B].Y - points[A].Y;
 
             var df = -dx01 * dc0 + dy01 * dr0;
             if (df > 0)
             {
                 // Need to swap vertices b<->c and edges ab<->bc
-                var t = b;
-                b = c;
-                c = t;
+                var t = B;
+                B = C;
+                C = t;
 
-                t = ab;
-                ab = ac;
-                ac = t;
+                t = Ab;
+                Ab = Ac;
+                Ac = t;
             }
         }
 
@@ -85,28 +85,28 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
         public bool FindCircumcirclePrecisely(List<Vertex> points)
         {
             // Use coordinates relative to point `a' of the triangle
-            Vertex pa = points[a], pb = points[b], pc = points[c];
+            Vertex pa = points[A], pb = points[B], pc = points[C];
 
-            double xba = pb.x - pa.x;
-            double yba = pb.y - pa.y;
-            double xca = pc.x - pa.x;
-            double yca = pc.y - pa.y;
+            double xba = pb.X - pa.X;
+            double yba = pb.Y - pa.Y;
+            double xca = pc.X - pa.X;
+            double yca = pc.Y - pa.Y;
 
             // Squares of lengths of the edges incident to `a'
             var balength = xba * xba + yba * yba;
             var calength = xca * xca + yca * yca;
 
             // Calculate the denominator of the formulae. 
-            var D = xba * yca - yba * xca;
-            if (D == 0)
+            var d = xba * yca - yba * xca;
+            if (d == 0)
             {
-                circumcircleX = 0;
-                circumcircleY = 0;
-                circumcircleR2 = -1;
+                CircumcircleX = 0;
+                CircumcircleY = 0;
+                CircumcircleR2 = -1;
                 return false;
             }
 
-            var denominator = 0.5 / D;
+            var denominator = 0.5 / d;
 
             // Calculate offset (from pa) of circumcenter
             var xC = (yca * balength - yba * calength) * denominator;
@@ -115,15 +115,15 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
             var radius2 = xC * xC + yC * yC;
             if (radius2 > 1e10 * balength || radius2 > 1e10 * calength)
             {
-                circumcircleX = 0;
-                circumcircleY = 0;
-                circumcircleR2 = -1;
+                CircumcircleX = 0;
+                CircumcircleY = 0;
+                CircumcircleR2 = -1;
                 return false;
             }
 
-            circumcircleR2 = (float) radius2;
-            circumcircleX = (float) (pa.x + xC);
-            circumcircleY = (float) (pa.y + yC);
+            CircumcircleR2 = (float) radius2;
+            CircumcircleX = (float) (pa.X + xC);
+            CircumcircleY = (float) (pa.Y + yC);
 
             return true;
         }
@@ -131,21 +131,21 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
 
         public bool InsideCircumcircle(Vertex p)
         {
-            var dx = circumcircleX - p.x;
-            var dy = circumcircleY - p.y;
+            var dx = CircumcircleX - p.X;
+            var dy = CircumcircleY - p.Y;
             var r2 = dx * dx + dy * dy;
-            return r2 < circumcircleR2;
+            return r2 < CircumcircleR2;
         }
 
 
         public void ChangeAdjacentIndex(int fromIndex, int toIndex)
         {
-            if (ab == fromIndex)
-                ab = toIndex;
-            else if (bc == fromIndex)
-                bc = toIndex;
-            else if (ac == fromIndex)
-                ac = toIndex;
+            if (Ab == fromIndex)
+                Ab = toIndex;
+            else if (Bc == fromIndex)
+                Bc = toIndex;
+            else if (Ac == fromIndex)
+                Ac = toIndex;
             else
                 Debug.Assert(false);
         }
@@ -154,49 +154,49 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
         public void FindAdjacency(int vertexIndex, int triangleIndex, out int indexOpposite, out int indexLeft,
             out int indexRight)
         {
-            if (ab == triangleIndex)
+            if (Ab == triangleIndex)
             {
-                indexOpposite = c;
+                indexOpposite = C;
 
-                if (vertexIndex == a)
+                if (vertexIndex == A)
                 {
-                    indexLeft = ac;
-                    indexRight = bc;
+                    indexLeft = Ac;
+                    indexRight = Bc;
                 }
                 else
                 {
-                    indexLeft = bc;
-                    indexRight = ac;
+                    indexLeft = Bc;
+                    indexRight = Ac;
                 }
             }
-            else if (ac == triangleIndex)
+            else if (Ac == triangleIndex)
             {
-                indexOpposite = b;
+                indexOpposite = B;
 
-                if (vertexIndex == a)
+                if (vertexIndex == A)
                 {
-                    indexLeft = ab;
-                    indexRight = bc;
+                    indexLeft = Ab;
+                    indexRight = Bc;
                 }
                 else
                 {
-                    indexLeft = bc;
-                    indexRight = ab;
+                    indexLeft = Bc;
+                    indexRight = Ab;
                 }
             }
-            else if (bc == triangleIndex)
+            else if (Bc == triangleIndex)
             {
-                indexOpposite = a;
+                indexOpposite = A;
 
-                if (vertexIndex == b)
+                if (vertexIndex == B)
                 {
-                    indexLeft = ab;
-                    indexRight = ac;
+                    indexLeft = Ab;
+                    indexRight = Ac;
                 }
                 else
                 {
-                    indexLeft = ac;
-                    indexRight = ab;
+                    indexLeft = Ac;
+                    indexRight = Ab;
                 }
             }
             else
@@ -208,7 +208,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
 
         public override string ToString()
         {
-            return $"Triad vertices {a} {b} {c} ; edges {ab} {ac} {bc}";
+            return $"Triad vertices {A} {B} {C} ; edges {Ab} {Ac} {Bc}";
         }
     }
 }

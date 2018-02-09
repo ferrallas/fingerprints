@@ -12,7 +12,7 @@ using System.Drawing.Drawing2D;
 
 namespace PatternRecognition.FingerprintRecognition.Core.Qi2005
 {
-    public class QYW
+    public class Qyw
     {
         #region public
 
@@ -21,8 +21,8 @@ namespace PatternRecognition.FingerprintRecognition.Core.Qi2005
 
         public double GlobalAngleThr
         {
-            get => gAngThr * 180 / Math.PI;
-            set => gAngThr = value * Math.PI / 180;
+            get => _gAngThr * 180 / Math.PI;
+            set => _gAngThr = value * Math.PI / 180;
         }
 
 
@@ -128,8 +128,8 @@ namespace PatternRecognition.FingerprintRecognition.Core.Qi2005
 
         private bool MatchDistance(Minutia refQuery, Minutia refTemplate, Minutia query, Minutia template)
         {
-            var d0 = dist.Compare(refQuery, query);
-            var d1 = dist.Compare(refTemplate, template);
+            var d0 = MtiaEuclideanDistance.Compare(refQuery, query);
+            var d1 = MtiaEuclideanDistance.Compare(refTemplate, template);
             return Math.Abs(d0 - d1) <= GlobalDistThr;
         }
 
@@ -147,12 +147,12 @@ namespace PatternRecognition.FingerprintRecognition.Core.Qi2005
             y = tMtiai.Y - tMtiaj.Y;
             var tAngle = Angle.ComputeAngle(x, y);
 
-            return Angle.DifferencePi(qAngle, tAngle) <= gAngThr;
+            return Angle.DifferencePi(qAngle, tAngle) <= _gAngThr;
         }
 
         private bool MatchDirections(Minutia query, Minutia template)
         {
-            return Angle.DifferencePi(query.Angle, template.Angle) <= gAngThr;
+            return Angle.DifferencePi(query.Angle, template.Angle) <= _gAngThr;
         }
 
         private class MtiaPairComparer : IComparer<MinutiaPair>
@@ -219,7 +219,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Qi2005
 
         private class FingerprintRegion
         {
-            private readonly GraphicsPath path;
+            private readonly GraphicsPath _path;
 
             public FingerprintRegion(Point[] polygon)
             {
@@ -227,12 +227,12 @@ namespace PatternRecognition.FingerprintRecognition.Core.Qi2005
                 int i;
                 for (i = 0; i < polygon.Length; i++)
                     types[i] = (byte) PathPointType.Line;
-                path = new GraphicsPath(polygon, types);
+                _path = new GraphicsPath(polygon, types);
             }
 
             public bool Contains(Minutia m)
             {
-                return path.IsVisible(m.X, m.Y);
+                return _path.IsVisible(m.X, m.Y);
             }
         }
 
@@ -267,15 +267,15 @@ namespace PatternRecognition.FingerprintRecognition.Core.Qi2005
 
         private class PolygonMapper
         {
-            private readonly double dAngle;
-            private readonly Minutia query;
-            private readonly Minutia template;
+            private readonly double _dAngle;
+            private readonly Minutia _query;
+            private readonly Minutia _template;
 
             public PolygonMapper(Minutia query, Minutia template)
             {
-                dAngle = template.Angle - query.Angle;
-                this.template = template;
-                this.query = query;
+                _dAngle = template.Angle - query.Angle;
+                this._template = template;
+                this._query = query;
             }
 
             public Point[] Map(Point[] polygon)
@@ -285,20 +285,18 @@ namespace PatternRecognition.FingerprintRecognition.Core.Qi2005
                 {
                     newPolygon[i].X =
                         Convert.ToInt16(
-                            Math.Round((polygon[i].X - query.X) * Math.Cos(dAngle) -
-                                       (polygon[i].Y - query.Y) * Math.Sin(dAngle) + template.X));
+                            Math.Round((polygon[i].X - _query.X) * Math.Cos(_dAngle) -
+                                       (polygon[i].Y - _query.Y) * Math.Sin(_dAngle) + _template.X));
                     newPolygon[i].Y =
                         Convert.ToInt16(
-                            Math.Round((polygon[i].X - query.X) * Math.Sin(dAngle) +
-                                       (polygon[i].Y - query.Y) * Math.Cos(dAngle) + template.Y));
+                            Math.Round((polygon[i].X - _query.X) * Math.Sin(_dAngle) +
+                                       (polygon[i].Y - _query.Y) * Math.Cos(_dAngle) + _template.Y));
                 }
                 return newPolygon;
             }
         }
 
-        private double gAngThr = Math.PI / 6;
-
-        private readonly MtiaEuclideanDistance dist = new MtiaEuclideanDistance();
+        private double _gAngThr = Math.PI / 6;
 
         #endregion
     }

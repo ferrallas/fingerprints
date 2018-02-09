@@ -14,7 +14,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Qi2005
     [Serializable]
     internal class GOwMtia
     {
-        [NonSerialized] private const double threshold = 125 * Math.PI;
+        [NonSerialized] private const double Threshold = 125 * Math.PI;
 
         internal GOwMtia(Minutia mnt, OrientationImage dImg)
         {
@@ -33,36 +33,36 @@ namespace PatternRecognition.FingerprintRecognition.Core.Qi2005
             var sum = 0.0;
             for (var i = 0; i < Segments.Length; i++)
             {
-                for (var j = Math.Min(Segments[i].directions.Length, gOwMtia.Segments[i].directions.Length) - 1;
+                for (var j = Math.Min(Segments[i].Directions.Length, gOwMtia.Segments[i].Directions.Length) - 1;
                     j >= 0;
                     j--)
-                    if (double.IsNaN(Segments[i].directions[j]) && !double.IsNaN(gOwMtia.Segments[i].directions[j]))
+                    if (double.IsNaN(Segments[i].Directions[j]) && !double.IsNaN(gOwMtia.Segments[i].Directions[j]))
                     {
-                        sum += Math.Pow(gOwMtia.Segments[i].directions[j], 2);
+                        sum += Math.Pow(gOwMtia.Segments[i].Directions[j], 2);
                     }
                     else
                     {
-                        if (!double.IsNaN(Segments[i].directions[j]) && double.IsNaN(gOwMtia.Segments[i].directions[j]))
-                            sum += Math.Pow(Segments[i].directions[j], 2);
-                        else if (!double.IsNaN(Segments[i].directions[j]) &&
-                                 !double.IsNaN(gOwMtia.Segments[i].directions[j]))
-                            sum += Math.Pow(Segments[i].directions[j] - gOwMtia.Segments[i].directions[j], 2);
+                        if (!double.IsNaN(Segments[i].Directions[j]) && double.IsNaN(gOwMtia.Segments[i].Directions[j]))
+                            sum += Math.Pow(Segments[i].Directions[j], 2);
+                        else if (!double.IsNaN(Segments[i].Directions[j]) &&
+                                 !double.IsNaN(gOwMtia.Segments[i].Directions[j]))
+                            sum += Math.Pow(Segments[i].Directions[j] - gOwMtia.Segments[i].Directions[j], 2);
                     }
-                if (Segments[i].directions.Length > gOwMtia.Segments[i].directions.Length)
+                if (Segments[i].Directions.Length > gOwMtia.Segments[i].Directions.Length)
                 {
-                    for (var k = Segments[i].directions.Length - 1; k >= gOwMtia.Segments[i].directions.Length; k--)
-                        if (!double.IsNaN(Segments[i].directions[k]))
-                            sum += Math.Pow(Segments[i].directions[k], 2);
+                    for (var k = Segments[i].Directions.Length - 1; k >= gOwMtia.Segments[i].Directions.Length; k--)
+                        if (!double.IsNaN(Segments[i].Directions[k]))
+                            sum += Math.Pow(Segments[i].Directions[k], 2);
                 }
-                else if (Segments[i].directions.Length < gOwMtia.Segments[i].directions.Length)
+                else if (Segments[i].Directions.Length < gOwMtia.Segments[i].Directions.Length)
                 {
-                    for (var k = gOwMtia.Segments[i].directions.Length - 1; k >= Segments[i].directions.Length; k--)
-                        if (!double.IsNaN(gOwMtia.Segments[i].directions[k]))
-                            sum += Math.Pow(gOwMtia.Segments[i].directions[k], 2);
+                    for (var k = gOwMtia.Segments[i].Directions.Length - 1; k >= Segments[i].Directions.Length; k--)
+                        if (!double.IsNaN(gOwMtia.Segments[i].Directions[k]))
+                            sum += Math.Pow(gOwMtia.Segments[i].Directions[k], 2);
                 }
             }
-            if (Math.Sqrt(sum) < threshold)
-                return (threshold - Math.Sqrt(sum)) / threshold;
+            if (Math.Sqrt(sum) < Threshold)
+                return (Threshold - Math.Sqrt(sum)) / Threshold;
             return 0;
         }
 
@@ -75,9 +75,9 @@ namespace PatternRecognition.FingerprintRecognition.Core.Qi2005
     [Serializable]
     internal class Segment
     {
-        internal double[] directions;
+        internal double[] Directions;
 
-        [NonSerialized] private readonly int interval = 18;
+        [NonSerialized] private readonly int _interval = 18;
 
         internal Segment(double ang, Minutia mnt, OrientationImage dImg)
         {
@@ -86,7 +86,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Qi2005
             var points = new List<double>();
             while (!endOfPoints)
             {
-                var pnt = SetPosToSPoint(ang, i * interval, new Point(mnt.X, mnt.Y));
+                var pnt = SetPosToSPoint(ang, i * _interval, new Point(mnt.X, mnt.Y));
                 if (IsInBound(pnt, dImg))
                 {
                     int row, col;
@@ -116,7 +116,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Qi2005
                 {
                     isLastNan = true;
                 }
-            directions = points.ToArray();
+            Directions = points.ToArray();
         }
 
         internal Point SetPosToSPoint(double angle, int radio, Point p)

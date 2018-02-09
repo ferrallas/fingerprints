@@ -26,15 +26,15 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
 {
     internal class HullVertex : Vertex
     {
-        public int pointsIndex;
-        public int triadIndex;
+        public int PointsIndex;
+        public int TriadIndex;
 
         public HullVertex(List<Vertex> points, int pointIndex)
         {
-            x = points[pointIndex].x;
-            y = points[pointIndex].y;
-            pointsIndex = pointIndex;
-            triadIndex = 0;
+            X = points[pointIndex].X;
+            Y = points[pointIndex].Y;
+            PointsIndex = pointIndex;
+            TriadIndex = 0;
         }
     }
 
@@ -53,8 +53,8 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
         {
             Vertex et = this[index], en = this[NextIndex(index)];
 
-            dx = en.x - et.x;
-            dy = en.y - et.y;
+            dx = en.X - et.X;
+            dy = en.Y - et.Y;
         }
 
 
@@ -73,8 +73,8 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
             float idx, idy;
             VectorToNext(index, out idx, out idy);
 
-            var dx = point.x - this[index].x;
-            var dy = point.y - this[index].y;
+            var dx = point.X - this[index].X;
+            var dy = point.Y - this[index].Y;
 
             var crossProduct = -dy * idx + dx * idy;
             return crossProduct < 0;

@@ -10,7 +10,7 @@ using System.IO;
 
 namespace PatternRecognition.FingerprintRecognition.Core
 {
-    public static class ISOMinutiaeLoader
+    public static class IsoMinutiaeLoader
     {
         public static List<Minutia> Load(string fileName)
         {

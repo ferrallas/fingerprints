@@ -13,9 +13,9 @@ using System.Drawing;
 namespace PatternRecognition.FingerprintRecognition.Core.Tico2003
 {
     [Serializable]
-    internal class OBMtiaDescriptor
+    internal class ObMtiaDescriptor
     {
-        internal OBMtiaDescriptor(Minutia mnt, OrientationImage dImg)
+        internal ObMtiaDescriptor(Minutia mnt, OrientationImage dImg)
         {
             Minutia = mnt;
             //difRadio = (int) Math.Truncate((Resolution/25.4)*ridgePeriod*2);
@@ -24,7 +24,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Tico2003
             Orientations = new double[72];
             for (int i = 0, j = 0; i < 4; i++)
             {
-                var curr = GetOrientations(initRadio + i * difRadio, Minutia, dImg);
+                var curr = GetOrientations(InitRadio + i * DifRadio, Minutia, dImg);
                 for (var k = 0; k < curr.Length; k++)
                 {
                     Orientations[j++] = curr[k];
@@ -40,12 +40,12 @@ namespace PatternRecognition.FingerprintRecognition.Core.Tico2003
 
         internal byte EmptyFeaturesCount { get; }
 
-        public static implicit operator Minutia(OBMtiaDescriptor desc)
+        public static implicit operator Minutia(ObMtiaDescriptor desc)
         {
             return desc.Minutia;
         }
 
-        internal double Compare(OBMtiaDescriptor mtiaDesc)
+        internal double Compare(ObMtiaDescriptor mtiaDesc)
         {
             double sum = 0;
             for (var i = 0; i < 72; i++)
@@ -67,9 +67,9 @@ namespace PatternRecognition.FingerprintRecognition.Core.Tico2003
 
         #region private 
 
-        [NonSerialized] private const int difRadio = 18;
+        [NonSerialized] private const int DifRadio = 18;
 
-        [NonSerialized] private const int initRadio = 27;
+        [NonSerialized] private const int InitRadio = 27;
 
         private double[] GetOrientations(int radio, Minutia mtia, OrientationImage dirImg)
         {

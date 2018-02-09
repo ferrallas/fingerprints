@@ -4,34 +4,34 @@ namespace PatternRecognition.FingerprintRecognition.Core
 {
     public class MinutiaMapper
     {
-        private readonly double dAngle;
-        private readonly Minutia query;
-        private readonly Minutia template;
+        private readonly double _dAngle;
+        private readonly Minutia _query;
+        private readonly Minutia _template;
 
         public MinutiaMapper(Minutia minutia)
         {
             var t = new Minutia(0, 0, 0);
-            dAngle = t.Angle - minutia.Angle;
-            template = t;
-            query = minutia;
+            _dAngle = t.Angle - minutia.Angle;
+            _template = t;
+            _query = minutia;
         }
 
         public MinutiaMapper(Minutia query, Minutia template)
         {
-            dAngle = template.Angle - query.Angle;
-            this.template = template;
-            this.query = query;
+            _dAngle = template.Angle - query.Angle;
+            this._template = template;
+            this._query = query;
         }
 
         public Minutia Map(Minutia m)
         {
             return new Minutia
             {
-                Angle = m.Angle + dAngle,
-                X = Convert.ToInt16(Math.Round((m.X - query.X) * Math.Cos(dAngle) - (m.Y - query.Y) * Math.Sin(dAngle) +
-                                               template.X)),
-                Y = Convert.ToInt16(Math.Round((m.X - query.X) * Math.Sin(dAngle) + (m.Y - query.Y) * Math.Cos(dAngle) +
-                                               template.Y))
+                Angle = m.Angle + _dAngle,
+                X = Convert.ToInt16(Math.Round((m.X - _query.X) * Math.Cos(_dAngle) - (m.Y - _query.Y) * Math.Sin(_dAngle) +
+                                               _template.X)),
+                Y = Convert.ToInt16(Math.Round((m.X - _query.X) * Math.Sin(_dAngle) + (m.Y - _query.Y) * Math.Cos(_dAngle) +
+                                               _template.Y))
             };
         }
     }

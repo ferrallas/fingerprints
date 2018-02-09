@@ -9,39 +9,14 @@ using PatternRecognition.FingerprintRecognition.Core.Ratha1995;
 
 namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
 {
-    public class JYFeaturesProvider
+    public static class JyFeaturesProvider
     {
-        private readonly MinutiaListProvider _mtiaListProvider;
-        private readonly JYFeatureExtractor featureExtractor;
-        private readonly SkeletonImageProvider SkeletonImgProvider;
-
-        public JYFeaturesProvider(MinutiaListProvider minutiaListProvider)
+        public static JyFeatures Extract(byte[] imageRaw)
         {
-            _mtiaListProvider = minutiaListProvider;
-            SkeletonImgProvider = new SkeletonImageProvider {SkeletonImageExtractor = new Ratha1995SkeImgExtractor()};
-            featureExtractor = new JYFeatureExtractor();
-        }
+            var mtiae = MinutiaeExtractor.ExtractFeatures(ImageProvider.GetResource(imageRaw));
+            var skeletonImg = SkeletonImageExtractor.ExtractFeatures(ImageProvider.GetResource(imageRaw));
 
-
-        protected JYFeatures Extract(byte[] image)
-        {
-            try
-            {
-                var mtiae = _mtiaListProvider.Extract(image);
-                var skeletonImg = SkeletonImgProvider.Extract(image);
-
-                return JYFeatureExtractor.ExtractFeatures(mtiae, skeletonImg);
-            }
-            catch (Exception)
-            {
-                if (_mtiaListProvider == null)
-                    throw new InvalidOperationException(
-                        "Unable to extract JYFeatures: Unassigned minutia list provider!");
-                if (SkeletonImgProvider == null)
-                    throw new InvalidOperationException(
-                        "Unable to extract JYFeatures: Unassigned skeleton image provider!");
-                throw;
-            }
+            return JyFeatureExtractor.ExtractFeatures(mtiae, skeletonImg);
         }
     }
 }

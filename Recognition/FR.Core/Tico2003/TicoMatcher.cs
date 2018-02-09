@@ -13,9 +13,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Tico2003
 {
     public class TicoMatcher
     {
-        private double gAngThr = Math.PI / 6;
-
-        private readonly MtiaEuclideanDistance dist = new MtiaEuclideanDistance();
+        private double _gAngThr = Math.PI / 6;
 
         public int MtiaCountThr { get; set; } = 6;
 
@@ -24,8 +22,8 @@ namespace PatternRecognition.FingerprintRecognition.Core.Tico2003
 
         public double GlobalAngleThr
         {
-            get => gAngThr * 180 / Math.PI;
-            set => gAngThr = value * Math.PI / 180;
+            get => _gAngThr * 180 / Math.PI;
+            set => _gAngThr = value * Math.PI / 180;
         }
 
         public double Match(Tico2003Features query, Tico2003Features template, out List<MinutiaPair> matchingMtiae)
@@ -141,7 +139,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Tico2003
                 {
                     var query = mm.Map(mtiaPair.QueryMtia);
                     var template = mtiaPair.TemplateMtia;
-                    if (dist.Compare(query, template) <= GlobalDistThr && MatchDirections(query, template))
+                    if (MtiaEuclideanDistance.Compare(query, template) <= GlobalDistThr && MatchDirections(query, template))
                     {
                         globalMatchingMtiae.Add(mtiaPair);
                         qMatches.Add(mtiaPair.QueryMtia, mtiaPair.TemplateMtia);
@@ -168,7 +166,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Tico2003
 
         private bool MatchDirections(Minutia query, Minutia template)
         {
-            return Angle.DifferencePi(query.Angle, template.Angle) <= gAngThr;
+            return Angle.DifferencePi(query.Angle, template.Angle) <= _gAngThr;
         }
 
         private class MtiaPairComparer : IComparer<MinutiaPair>
@@ -226,7 +224,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Tico2003
 
         private class FingerprintRegion
         {
-            private readonly GraphicsPath path;
+            private readonly GraphicsPath _path;
 
             public FingerprintRegion(Point[] polygon)
             {
@@ -234,12 +232,12 @@ namespace PatternRecognition.FingerprintRecognition.Core.Tico2003
                 int i;
                 for (i = 0; i < polygon.Length; i++)
                     types[i] = (byte) PathPointType.Line;
-                path = new GraphicsPath(polygon, types);
+                _path = new GraphicsPath(polygon, types);
             }
 
             public bool Contains(Minutia m)
             {
-                return path.IsVisible(m.X, m.Y);
+                return _path.IsVisible(m.X, m.Y);
             }
         }
 
@@ -274,15 +272,15 @@ namespace PatternRecognition.FingerprintRecognition.Core.Tico2003
 
         private class PolygonMapper
         {
-            private readonly double dAngle;
-            private readonly Minutia query;
-            private readonly Minutia template;
+            private readonly double _dAngle;
+            private readonly Minutia _query;
+            private readonly Minutia _template;
 
             public PolygonMapper(Minutia query, Minutia template)
             {
-                dAngle = template.Angle - query.Angle;
-                this.template = template;
-                this.query = query;
+                _dAngle = template.Angle - query.Angle;
+                this._template = template;
+                this._query = query;
             }
 
             public Point[] Map(Point[] polygon)
@@ -292,12 +290,12 @@ namespace PatternRecognition.FingerprintRecognition.Core.Tico2003
                 {
                     newPolygon[i].X =
                         Convert.ToInt16(
-                            Math.Round((polygon[i].X - query.X) * Math.Cos(dAngle) -
-                                       (polygon[i].Y - query.Y) * Math.Sin(dAngle) + template.X));
+                            Math.Round((polygon[i].X - _query.X) * Math.Cos(_dAngle) -
+                                       (polygon[i].Y - _query.Y) * Math.Sin(_dAngle) + _template.X));
                     newPolygon[i].Y =
                         Convert.ToInt16(
-                            Math.Round((polygon[i].X - query.X) * Math.Sin(dAngle) +
-                                       (polygon[i].Y - query.Y) * Math.Cos(dAngle) + template.Y));
+                            Math.Round((polygon[i].X - _query.X) * Math.Sin(_dAngle) +
+                                       (polygon[i].Y - _query.Y) * Math.Cos(_dAngle) + _template.Y));
                 }
                 return newPolygon;
             }

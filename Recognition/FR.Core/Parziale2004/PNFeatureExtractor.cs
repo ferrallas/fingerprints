@@ -4,35 +4,13 @@
  * Comments by: Miguel Angel Medina Pérez (miguel.medina.perez@gmail.com)
  */
 
-using System;
 using System.Collections.Generic;
-using System.Drawing;
 
 namespace PatternRecognition.FingerprintRecognition.Core.Parziale2004
 {
-    public class PNFeatureExtractor : FeatureExtractor<PNFeatures>
+    public class PnFeatureExtractor
     {
-        public IFeatureExtractor<List<Minutia>> MtiaExtractor { set; get; }
-
-
-        public override PNFeatures ExtractFeatures(Bitmap image)
-        {
-            try
-            {
-                var minutiae = MtiaExtractor.ExtractFeatures(image);
-                return ExtractFeatures(minutiae);
-            }
-            catch (Exception e)
-            {
-                if (MtiaExtractor == null)
-                    throw new InvalidOperationException(
-                        "Unable to extract PNFeatures: Unassigned minutia list extractor!", e);
-                throw;
-            }
-        }
-
-
-        public PNFeatures ExtractFeatures(List<Minutia> minutiae)
+        public static PnFeatures ExtractFeatures(List<Minutia> minutiae)
         {
             var result = new List<MtiaTriplet>();
             if (minutiae.Count > 3)
@@ -93,10 +71,10 @@ namespace PatternRecognition.FingerprintRecognition.Core.Parziale2004
                     result.Add(newMTriplet);
                 }
             result.TrimExcess();
-            return new PNFeatures(result, minutiae);
+            return new PnFeatures(result, minutiae);
         }
 
-        public PNFeatures ExtractFeatures1(List<Minutia> minutiae)
+        public PnFeatures ExtractFeatures1(List<Minutia> minutiae)
         {
             var result = new List<MtiaTriplet>();
             if (minutiae.Count > 3)
@@ -162,7 +140,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Parziale2004
             }
 
             result.TrimExcess();
-            return new PNFeatures(result, minutiae);
+            return new PnFeatures(result, minutiae);
         }
     }
 }

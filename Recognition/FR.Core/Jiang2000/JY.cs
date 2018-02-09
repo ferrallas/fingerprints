@@ -9,22 +9,20 @@ using System.Collections.Generic;
 
 namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
 {
-    public class JY
+    public partial class Jy
     {
-        private readonly MtiaEuclideanDistance dist = new MtiaEuclideanDistance();
-
-        private double gAngThr = Math.PI / 6;
+        private double _gAngThr = Math.PI / 6;
 
         public int GlobalDistThr { get; set; } = 8;
 
 
         public double GlobalAngleThr
         {
-            get => gAngThr * 180 / Math.PI;
-            set => gAngThr = value * Math.PI / 180;
+            get => _gAngThr * 180 / Math.PI;
+            set => _gAngThr = value * Math.PI / 180;
         }
 
-        public double Match(JYFeatures query, JYFeatures template, out List<MinutiaPair> matchingMtiae)
+        public double Match(JyFeatures query, JyFeatures template, out List<MinutiaPair> matchingMtiae)
         {
             matchingMtiae = null;
             var localMatchingMtiae = GetLocalMatchingMtiae(query, template);
@@ -42,15 +40,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
             return 100.0 * sum / Math.Max(query.Minutiae.Count, template.Minutiae.Count);
         }
 
-        private class JyTriplet
-        {
-            public MinutiaPair MainMinutia { set; get; }
-            public MinutiaPair NearestMtia { set; get; }
-            public MinutiaPair FarthestMtia { set; get; }
-            public double MatchingValue { set; get; }
-        }
-
-        private static IList<MinutiaPair> GetLocalMatchingMtiae(JYFeatures query, JYFeatures template)
+        private static IList<MinutiaPair> GetLocalMatchingMtiae(JyFeatures query, JyFeatures template)
         {
             var triplets = new List<JyTriplet>(query.Minutiae.Count * template.Minutiae.Count);
             for (var i = 0; i < query.Minutiae.Count; i++)
@@ -61,36 +51,35 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
                     var tMtia = template.Minutiae[j];
                     var currSim = qMtia.RotationInvariantMatch(tMtia);
 
-                    if (currSim != 0)
+                    if (currSim == 0) continue;
+
+                    var currTriplet = new JyTriplet();
+                    var currMtiaPair = new MinutiaPair
                     {
-                        var currTriplet = new JyTriplet();
-                        var currMtiaPair = new MinutiaPair
-                        {
-                            QueryMtia = qMtia.MainMinutia,
-                            TemplateMtia = tMtia.MainMinutia,
-                            MatchingValue = currSim
-                        };
-                        currTriplet.MainMinutia = currMtiaPair;
+                        QueryMtia = qMtia.MainMinutia,
+                        TemplateMtia = tMtia.MainMinutia,
+                        MatchingValue = currSim
+                    };
+                    currTriplet.MainMinutia = currMtiaPair;
 
-                        currMtiaPair = new MinutiaPair
-                        {
-                            QueryMtia = qMtia.NearestMtia,
-                            TemplateMtia = tMtia.NearestMtia,
-                            MatchingValue = currSim
-                        };
-                        currTriplet.NearestMtia = currMtiaPair;
+                    currMtiaPair = new MinutiaPair
+                    {
+                        QueryMtia = qMtia.NearestMtia,
+                        TemplateMtia = tMtia.NearestMtia,
+                        MatchingValue = currSim
+                    };
+                    currTriplet.NearestMtia = currMtiaPair;
 
-                        currMtiaPair = new MinutiaPair
-                        {
-                            QueryMtia = qMtia.FarthestMtia,
-                            TemplateMtia = tMtia.FarthestMtia,
-                            MatchingValue = currSim
-                        };
-                        currTriplet.FarthestMtia = currMtiaPair;
+                    currMtiaPair = new MinutiaPair
+                    {
+                        QueryMtia = qMtia.FarthestMtia,
+                        TemplateMtia = tMtia.FarthestMtia,
+                        MatchingValue = currSim
+                    };
+                    currTriplet.FarthestMtia = currMtiaPair;
 
-                        currTriplet.MatchingValue = currSim;
-                        triplets.Add(currTriplet);
-                    }
+                    currTriplet.MatchingValue = currSim;
+                    triplets.Add(currTriplet);
                 }
             }
             triplets.Sort(new MtiaTripletComparer());
@@ -138,8 +127,8 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
 
         private bool MatchDistance(Minutia refQuery, Minutia refTemplate, Minutia query, Minutia template)
         {
-            var d0 = dist.Compare(refQuery, query);
-            var d1 = dist.Compare(refTemplate, template);
+            var d0 = MtiaEuclideanDistance.Compare(refQuery, query);
+            var d1 = MtiaEuclideanDistance.Compare(refTemplate, template);
             return Math.Abs(d0 - d1) <= GlobalDistThr;
         }
 
@@ -157,12 +146,12 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
             y = tMtiai.Y - tMtiaj.Y;
             var tAngle = Angle.ComputeAngle(x, y);
 
-            return Angle.DifferencePi(qAngle, tAngle) <= gAngThr;
+            return Angle.DifferencePi(qAngle, tAngle) <= _gAngThr;
         }
 
         private bool MatchDirections(Minutia query, Minutia template)
         {
-            return Angle.DifferencePi(query.Angle, template.Angle) <= gAngThr;
+            return Angle.DifferencePi(query.Angle, template.Angle) <= _gAngThr;
         }
 
         private class MtiaTripletComparer : IComparer<JyTriplet>

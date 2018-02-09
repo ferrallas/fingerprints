@@ -23,10 +23,10 @@ namespace PatternRecognition.FingerprintRecognition.Core
         {
             Width = width;
             Height = height;
-            image = new byte[Height, Width];
+            _image = new byte[Height, Width];
             for (var i = 0; i < Height; i++)
             for (var j = 0; j < Width; j++)
-                image[i, j] = img[Width * i + j];
+                _image[i, j] = img[Width * i + j];
         }
 
 
@@ -34,7 +34,7 @@ namespace PatternRecognition.FingerprintRecognition.Core
         {
             Width = width;
             Height = height;
-            image = img;
+            _image = img;
         }
 
 
@@ -94,7 +94,7 @@ namespace PatternRecognition.FingerprintRecognition.Core
         }
 
 
-        public byte this[int row, int col] => image[row, col];
+        public byte this[int row, int col] => _image[row, col];
 
 
         public int Width { get; }
@@ -106,28 +106,28 @@ namespace PatternRecognition.FingerprintRecognition.Core
 
         #region private
 
-        private readonly byte[,] image;
+        private readonly byte[,] _image;
 
         private byte[] ConvertMatrixToArray()
         {
             var img = new byte[Width * Height];
             for (var i = 0; i < Height; i++)
             for (var j = 0; j < Width; j++)
-                img[Width * i + j] = image[i, j];
+                img[Width * i + j] = _image[i, j];
             return img;
         }
 
         private byte PixelEnviroment(Point p)
         {
-            if (image[p.Y - 1, p.X - 1] == 0) return 0;
-            if (image[p.Y - 1, p.X] == 0) return 0;
-            if (image[p.Y - 1, p.X + 1] == 0) return 0;
-            if (image[p.Y, p.X - 1] == 0) return 0;
-            if (image[p.Y, p.X] == 0) return 0;
-            if (image[p.Y, p.X + 1] == 0) return 0;
-            if (image[p.Y + 1, p.X - 1] == 0) return 0;
-            if (image[p.Y + 1, p.X] == 0) return 0;
-            if (image[p.Y + 1, p.X + 1] == 0) return 0;
+            if (_image[p.Y - 1, p.X - 1] == 0) return 0;
+            if (_image[p.Y - 1, p.X] == 0) return 0;
+            if (_image[p.Y - 1, p.X + 1] == 0) return 0;
+            if (_image[p.Y, p.X - 1] == 0) return 0;
+            if (_image[p.Y, p.X] == 0) return 0;
+            if (_image[p.Y, p.X + 1] == 0) return 0;
+            if (_image[p.Y + 1, p.X - 1] == 0) return 0;
+            if (_image[p.Y + 1, p.X] == 0) return 0;
+            if (_image[p.Y + 1, p.X + 1] == 0) return 0;
 
             return 255;
         }
@@ -135,7 +135,7 @@ namespace PatternRecognition.FingerprintRecognition.Core
         private List<Point> Bresenham(int x0, int y0, int x1, int y1)
         {
             var pixels = new List<Point>();
-            int x, y, dx, dy, p, incE, incNE, stepx, stepy;
+            int x, y, dx, dy, p, incE, incNe, stepx, stepy;
             dx = x1 - x0;
             dy = y1 - y0;
             if (dy < 0)
@@ -163,7 +163,7 @@ namespace PatternRecognition.FingerprintRecognition.Core
             {
                 p = 2 * dy - dx;
                 incE = 2 * dy;
-                incNE = 2 * (dy - dx);
+                incNe = 2 * (dy - dx);
                 while (x != x1)
                 {
                     x = x + stepx;
@@ -174,7 +174,7 @@ namespace PatternRecognition.FingerprintRecognition.Core
                     else
                     {
                         y = y + stepy;
-                        p = p + incNE;
+                        p = p + incNe;
                     }
                     pixels.Add(new Point(x, y));
                 }
@@ -183,7 +183,7 @@ namespace PatternRecognition.FingerprintRecognition.Core
             {
                 p = 2 * dx - dy;
                 incE = 2 * dx;
-                incNE = 2 * (dx - dy);
+                incNe = 2 * (dx - dy);
                 while (y != y1)
                 {
                     y = y + stepy;
@@ -194,7 +194,7 @@ namespace PatternRecognition.FingerprintRecognition.Core
                     else
                     {
                         x = x + stepx;
-                        p = p + incNE;
+                        p = p + incNe;
                     }
                     pixels.Add(new Point(x, y));
                 }

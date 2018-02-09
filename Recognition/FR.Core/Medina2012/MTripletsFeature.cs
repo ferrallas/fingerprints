@@ -21,9 +21,9 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2012
 
             mtList.TrimExcess();
             MTriplets = mtList;
-            MTriplets.Sort(new MTComparer());
+            MTriplets.Sort(new MtComparer());
 
-            hashTable = new Dictionary<int, List<MTriplet>>();
+            var hashTable = new Dictionary<int, List<MTriplet>>();
             foreach (var mtp in MTriplets)
             {
                 var alphaCodes = GetAlphaCodes(mtp);
@@ -51,16 +51,14 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2012
                 if (currSim > 0)
                     result.Add(new MtripletPair
                         {
-                            queryMTp = queryMTp,
-                            templateMTp = currMTp,
-                            matchingValue = currSim,
-                            templateMtiaOrder = currOrder
+                            QueryMTp = queryMTp,
+                            TemplateMTp = currMTp,
+                            MatchingValue = currSim,
+                            TemplateMtiaOrder = currOrder
                         }
                     );
             }
-            if (result.Count > 0)
-                return result;
-            return null;
+            return result.Count > 0 ? result : null;
         }
 
         internal List<MTriplet> MTriplets { get; }
@@ -71,9 +69,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2012
 
         #region private
 
-        private readonly Dictionary<int, List<MTriplet>> hashTable;
-
-        private int BinarySearch(List<MTriplet> mtps, double value)
+        private static int BinarySearch(IList<MTriplet> mtps, double value)
         {
             var low = 0;
             var high = mtps.Count - 1;
@@ -90,7 +86,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2012
             return low; // not found
         }
 
-        private class MTComparer : Comparer<MTriplet>
+        private class MtComparer : Comparer<MTriplet>
         {
             public override int Compare(MTriplet x, MTriplet y)
             {

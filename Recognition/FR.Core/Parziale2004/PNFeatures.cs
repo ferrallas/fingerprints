@@ -11,17 +11,17 @@ namespace PatternRecognition.FingerprintRecognition.Core.Parziale2004
 {
     internal class MtiaeTripletPair
     {
-        public MtiaTriplet queryMTp;
-        public MtiaTriplet templateMTp;
+        public MtiaTriplet QueryMTp;
+        public MtiaTriplet TemplateMTp;
     }
 
 
     [Serializable]
-    public class PNFeatures
+    public class PnFeatures
     {
         #region internal
 
-        internal PNFeatures(List<MtiaTriplet> mtList, List<Minutia> mtiaList)
+        internal PnFeatures(List<MtiaTriplet> mtList, List<Minutia> mtiaList)
         {
             Minutiae = mtiaList;
             MTriplets = mtList;
@@ -36,8 +36,8 @@ namespace PatternRecognition.FingerprintRecognition.Core.Parziale2004
                 if (queryMTp.Match(currMTp))
                     result.Add(new MtiaeTripletPair
                         {
-                            queryMTp = queryMTp,
-                            templateMTp = currMTp
+                            QueryMTp = queryMTp,
+                            TemplateMTp = currMTp
                         }
                     );
             }

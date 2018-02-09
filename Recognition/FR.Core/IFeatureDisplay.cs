@@ -15,17 +15,17 @@ namespace PatternRecognition.FingerprintRecognition.Core
     }
 
 
-    public interface IFeatureDisplay<FeatureType> : IFeatureDisplay
+    public interface IFeatureDisplay<TFeatureType> : IFeatureDisplay
     {
-        void Show(FeatureType features, Graphics g);
+        void Show(TFeatureType features, Graphics g);
     }
 
 
-    public abstract class FeatureDisplay<FeatureType> : IFeatureDisplay<FeatureType>
+    public abstract class FeatureDisplay<TFeatureType> : IFeatureDisplay<TFeatureType>
     {
         #region IFeatureDisplay<FeatureType> Members
 
-        public abstract void Show(FeatureType features, Graphics g);
+        public abstract void Show(TFeatureType features, Graphics g);
 
         #endregion
 
@@ -33,12 +33,12 @@ namespace PatternRecognition.FingerprintRecognition.Core
 
         public void Show(object features, Graphics g)
         {
-            if (features.GetType() != typeof(FeatureType))
+            if (features.GetType() != typeof(TFeatureType))
             {
                 var msg = "Unable to display features: Invalid features type!";
                 throw new ArgumentOutOfRangeException(nameof(features), features, msg);
             }
-            Show((FeatureType) features, g);
+            Show((TFeatureType) features, g);
         }
 
         #endregion

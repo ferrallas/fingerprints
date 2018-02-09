@@ -5,29 +5,16 @@
  */
 
 using System;
+using PatternRecognition.FingerprintRecognition.Core.Ratha1995;
 
 namespace PatternRecognition.FingerprintRecognition.Core.Parziale2004
 {
-    public class PNFeatureProvider
+    public static class PnFeatureProvider
     {
-        private readonly PNFeatureExtractor mTripletsCalculator = new PNFeatureExtractor();
-
-        public MinutiaListProvider MtiaListProvider { get; set; }
-
-        public  PNFeatures Extract(byte[] image)
+        public static PnFeatures Extract(byte[] image)
         {
-            try
-            {
-                var mtiae = MtiaListProvider.Extract(image);
-                return mTripletsCalculator.ExtractFeatures(mtiae);
-            }
-            catch (Exception)
-            {
-                if (MtiaListProvider == null)
-                    throw new InvalidOperationException(
-                        "Unable to extract PNFeatures: Unassigned minutia list provider!");
-                throw;
-            }
+            var mtiae = MinutiaeExtractor.ExtractFeatures(ImageProvider.GetResource(image));
+            return PnFeatureExtractor.ExtractFeatures(mtiae);
         }
     }
 }

@@ -9,11 +9,11 @@ using System.Collections.Generic;
 
 namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
 {
-    public class MJY
+    public class Mjy
     {
         #region Miembros de ISimilarity<JYFeatures>
 
-        public double Match(JYFeatures query, JYFeatures template)
+        public double Match(JyFeatures query, JyFeatures template)
         {
             List<MinutiaPair> matchingMtiae;
             return Match(query, template, out matchingMtiae);
@@ -28,18 +28,18 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
 
         public double GlobalAngleThr
         {
-            get => gAngThr * 180 / Math.PI;
-            set => gAngThr = value * Math.PI / 180;
+            get => _gAngThr * 180 / Math.PI;
+            set => _gAngThr = value * Math.PI / 180;
         }
 
         public double Match(object query, object template, out List<MinutiaPair> matchingMtiae)
         {
-            var qJYFeatures = query as JYFeatures;
-            var tJYFeatures = template as JYFeatures;
+            var qJyFeatures = query as JyFeatures;
+            var tJyFeatures = template as JyFeatures;
             try
             {
                 matchingMtiae = null;
-                var localMatchingMtiae = GetLocalMatchingMtiae(qJYFeatures, tJYFeatures);
+                var localMatchingMtiae = GetLocalMatchingMtiae(qJyFeatures, tJyFeatures);
                 if (localMatchingMtiae.Count == 0)
                     return 0;
                 double max = 0;
@@ -63,11 +63,11 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
                 foreach (var mtiaPair in matchingMtiae)
                     sum += 0.5 + 0.5 * mtiaPair.MatchingValue;
 
-                return 100.0 * max / Math.Max(qJYFeatures.Minutiae.Count, tJYFeatures.Minutiae.Count);
+                return 100.0 * max / Math.Max(qJyFeatures.Minutiae.Count, tJyFeatures.Minutiae.Count);
             }
             catch (Exception e)
             {
-                if (query.GetType() != typeof(JYFeatures) || template.GetType() != typeof(JYFeatures))
+                if (query.GetType() != typeof(JyFeatures) || template.GetType() != typeof(JyFeatures))
                 {
                     var msg = "Unable to match fingerprints: Invalid features type!";
                     throw new ArgumentOutOfRangeException(msg, e);
@@ -80,7 +80,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
 
         #region private
 
-        private class JYTriplet
+        private class JyTriplet
         {
             public MinutiaPair MainMinutia { set; get; }
             public MinutiaPair NearestMtia { set; get; }
@@ -88,9 +88,9 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
             public double MatchingValue { set; get; }
         }
 
-        private static IList<MinutiaPair> GetLocalMatchingMtiae(JYFeatures query, JYFeatures template)
+        private static IList<MinutiaPair> GetLocalMatchingMtiae(JyFeatures query, JyFeatures template)
         {
-            var triplets = new List<JYTriplet>(query.Minutiae.Count * template.Minutiae.Count);
+            var triplets = new List<JyTriplet>(query.Minutiae.Count * template.Minutiae.Count);
             for (var i = 0; i < query.Minutiae.Count; i++)
             {
                 var qMtia = query.Minutiae[i];
@@ -101,7 +101,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
 
                     if (currSim != 0)
                     {
-                        var currTriplet = new JYTriplet();
+                        var currTriplet = new JyTriplet();
                         var currMtiaPair = new MinutiaPair
                         {
                             QueryMtia = qMtia.MainMinutia,
@@ -208,34 +208,34 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
 
         private class MtiaMapper
         {
-            private readonly double dAngle;
-            private readonly Minutia query;
-            private readonly Minutia template;
+            private readonly double _dAngle;
+            private readonly Minutia _query;
+            private readonly Minutia _template;
 
             public MtiaMapper(Minutia query, Minutia template)
             {
-                dAngle = template.Angle - query.Angle;
-                this.template = template;
-                this.query = query;
+                _dAngle = template.Angle - query.Angle;
+                this._template = template;
+                this._query = query;
             }
 
             public Minutia Map(Minutia m)
             {
                 return new Minutia
                 {
-                    Angle = m.Angle + dAngle,
-                    X = Convert.ToInt16(Math.Round((m.X - query.X) * Math.Cos(dAngle) -
-                                                   (m.Y - query.Y) * Math.Sin(dAngle) + template.X)),
-                    Y = Convert.ToInt16(Math.Round((m.X - query.X) * Math.Sin(dAngle) +
-                                                   (m.Y - query.Y) * Math.Cos(dAngle) + template.Y))
+                    Angle = m.Angle + _dAngle,
+                    X = Convert.ToInt16(Math.Round((m.X - _query.X) * Math.Cos(_dAngle) -
+                                                   (m.Y - _query.Y) * Math.Sin(_dAngle) + _template.X)),
+                    Y = Convert.ToInt16(Math.Round((m.X - _query.X) * Math.Sin(_dAngle) +
+                                                   (m.Y - _query.Y) * Math.Cos(_dAngle) + _template.Y))
                 };
             }
         }
 
         private bool MatchDistance(Minutia refQuery, Minutia refTemplate, Minutia query, Minutia template)
         {
-            var d0 = dist.Compare(refQuery, query);
-            var d1 = dist.Compare(refTemplate, template);
+            var d0 = MtiaEuclideanDistance.Compare(refQuery, query);
+            var d1 = MtiaEuclideanDistance.Compare(refTemplate, template);
             return Math.Abs(d0 - d1) <= GlobalDistThr;
         }
 
@@ -253,25 +253,23 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
             y = tMtiai.Y - tMtiaj.Y;
             var tAngle = Angle.ComputeAngle(x, y);
 
-            return Angle.DifferencePi(qAngle, tAngle) <= gAngThr;
+            return Angle.DifferencePi(qAngle, tAngle) <= _gAngThr;
         }
 
         private bool MatchDirections(Minutia query, Minutia template)
         {
-            return Angle.DifferencePi(query.Angle, template.Angle) <= gAngThr;
+            return Angle.DifferencePi(query.Angle, template.Angle) <= _gAngThr;
         }
 
-        private class MtiaTripletComparer : IComparer<JYTriplet>
+        private class MtiaTripletComparer : IComparer<JyTriplet>
         {
-            public int Compare(JYTriplet x, JYTriplet y)
+            public int Compare(JyTriplet x, JyTriplet y)
             {
                 return x == y ? 0 : x.MatchingValue < y.MatchingValue ? 1 : -1;
             }
         }
 
-        private double gAngThr = Math.PI / 6;
-
-        private readonly MtiaEuclideanDistance dist = new MtiaEuclideanDistance();
+        private double _gAngThr = Math.PI / 6;
 
         #endregion
     }

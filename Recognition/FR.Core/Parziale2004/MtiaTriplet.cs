@@ -14,11 +14,11 @@ namespace PatternRecognition.FingerprintRecognition.Core.Parziale2004
     {
         #region internal
 
-        internal Minutia this[int i] => minutiae[MtiaIdxs[i]];
+        internal Minutia this[int i] => _minutiae[MtiaIdxs[i]];
 
         internal MtiaTriplet(short[] mIdxs, List<Minutia> minutiae)
         {
-            this.minutiae = minutiae;
+            this._minutiae = minutiae;
             MtiaIdxs = mIdxs;
 
             var mtiaArr = new Minutia[3];
@@ -26,27 +26,27 @@ namespace PatternRecognition.FingerprintRecognition.Core.Parziale2004
             mtiaArr[1] = minutiae[MtiaIdxs[1]];
             mtiaArr[2] = minutiae[MtiaIdxs[2]];
 
-            d[0] = dist.Compare(mtiaArr[0], mtiaArr[1]);
-            d[1] = dist.Compare(mtiaArr[1], mtiaArr[2]);
-            d[2] = dist.Compare(mtiaArr[0], mtiaArr[2]);
+            _d[0] = MtiaEuclideanDistance.Compare(mtiaArr[0], mtiaArr[1]);
+            _d[1] = MtiaEuclideanDistance.Compare(mtiaArr[1], mtiaArr[2]);
+            _d[2] = MtiaEuclideanDistance.Compare(mtiaArr[0], mtiaArr[2]);
         }
 
         internal static double DistanceThreshold
         {
-            get => dThr;
-            set => dThr = value;
+            get => _dThr;
+            set => _dThr = value;
         }
 
         internal static double AlphaThreshold
         {
-            get => alphaThr;
-            set => alphaThr = value;
+            get => _alphaThr;
+            set => _alphaThr = value;
         }
 
         internal static double BetaThreshold
         {
-            get => betaThr;
-            set => betaThr = value;
+            get => _betaThr;
+            set => _betaThr = value;
         }
 
         internal short[] MtiaIdxs { get; } = new short[3];
@@ -76,14 +76,14 @@ namespace PatternRecognition.FingerprintRecognition.Core.Parziale2004
 
         private bool MatchDistances(MtiaTriplet compareTo)
         {
-            var ratio = Math.Abs(d[0] - compareTo.d[0]) / Math.Min(d[0], compareTo.d[0]);
-            if (ratio >= dThr)
+            var ratio = Math.Abs(_d[0] - compareTo._d[0]) / Math.Min(_d[0], compareTo._d[0]);
+            if (ratio >= _dThr)
                 return false;
-            ratio = Math.Abs(d[1] - compareTo.d[1]) / Math.Min(d[1], compareTo.d[1]);
-            if (ratio >= dThr)
+            ratio = Math.Abs(_d[1] - compareTo._d[1]) / Math.Min(_d[1], compareTo._d[1]);
+            if (ratio >= _dThr)
                 return false;
-            ratio = Math.Abs(d[2] - compareTo.d[2]) / Math.Min(d[2], compareTo.d[2]);
-            if (ratio >= dThr)
+            ratio = Math.Abs(_d[2] - compareTo._d[2]) / Math.Min(_d[2], compareTo._d[2]);
+            if (ratio >= _dThr)
                 return false;
             return true;
         }
@@ -94,16 +94,16 @@ namespace PatternRecognition.FingerprintRecognition.Core.Parziale2004
             for (var i = 0; i < 3; i++)
             {
                 var j = idxArr[i + 1];
-                var qMtiai = minutiae[MtiaIdxs[i]];
-                var qMtiaj = minutiae[MtiaIdxs[j]];
+                var qMtiai = _minutiae[MtiaIdxs[i]];
+                var qMtiaj = _minutiae[MtiaIdxs[j]];
                 var qAlpha = Angle.DifferencePi(qMtiai.Angle, qMtiaj.Angle);
 
-                var tMtiai = compareTo.minutiae[compareTo.MtiaIdxs[i]];
-                var tMtiaj = compareTo.minutiae[compareTo.MtiaIdxs[j]];
+                var tMtiai = compareTo._minutiae[compareTo.MtiaIdxs[i]];
+                var tMtiaj = compareTo._minutiae[compareTo.MtiaIdxs[j]];
                 var tAlpha = Angle.DifferencePi(tMtiai.Angle, tMtiaj.Angle);
 
                 var diff = Angle.DifferencePi(qAlpha, tAlpha);
-                if (diff >= alphaThr)
+                if (diff >= _alphaThr)
                     return false;
             }
 
@@ -116,22 +116,22 @@ namespace PatternRecognition.FingerprintRecognition.Core.Parziale2004
             for (var j = 0; j < 3; j++)
                 if (i != j)
                 {
-                    var qMtiai = minutiae[MtiaIdxs[i]];
-                    var qMtiaj = minutiae[MtiaIdxs[j]];
+                    var qMtiai = _minutiae[MtiaIdxs[i]];
+                    var qMtiaj = _minutiae[MtiaIdxs[j]];
                     double x = qMtiai.X - qMtiaj.X;
                     double y = qMtiai.Y - qMtiaj.Y;
                     var angleij = Angle.ComputeAngle(x, y);
                     var qBeta = Angle.DifferencePi(qMtiai.Angle, angleij);
 
-                    var tMtiai = compareTo.minutiae[compareTo.MtiaIdxs[i]];
-                    var tMtiaj = compareTo.minutiae[compareTo.MtiaIdxs[j]];
+                    var tMtiai = compareTo._minutiae[compareTo.MtiaIdxs[i]];
+                    var tMtiaj = compareTo._minutiae[compareTo.MtiaIdxs[j]];
                     x = tMtiai.X - tMtiaj.X;
                     y = tMtiai.Y - tMtiaj.Y;
                     angleij = Angle.ComputeAngle(x, y);
                     var tBeta = Angle.DifferencePi(tMtiai.Angle, angleij);
 
                     var diff = Angle.DifferencePi(qBeta, tBeta);
-                    if (diff >= betaThr)
+                    if (diff >= _betaThr)
                         return false;
                 }
 
@@ -142,9 +142,9 @@ namespace PatternRecognition.FingerprintRecognition.Core.Parziale2004
 
         #region private fields
 
-        private readonly List<Minutia> minutiae;
+        private readonly List<Minutia> _minutiae;
 
-        private readonly double[] d = new double[3];
+        private readonly double[] _d = new double[3];
 
         [NonSerialized] private static readonly byte[][] Orders =
         {
@@ -153,13 +153,11 @@ namespace PatternRecognition.FingerprintRecognition.Core.Parziale2004
             new[] {(byte) 2, (byte) 0, (byte) 1}
         };
 
-        [NonSerialized] private static double alphaThr = Math.PI / 12;
+        [NonSerialized] private static double _alphaThr = Math.PI / 12;
 
-        [NonSerialized] private static double betaThr = Math.PI / 9;
+        [NonSerialized] private static double _betaThr = Math.PI / 9;
 
-        [NonSerialized] private static double dThr = 0.2;
-
-        [NonSerialized] private static readonly MtiaEuclideanDistance dist = new MtiaEuclideanDistance();
+        [NonSerialized] private static double _dThr = 0.2;
 
         #endregion
     }

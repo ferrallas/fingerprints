@@ -25,18 +25,18 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
 {
     internal class Set<T> : IEnumerable<T>
     {
-        private readonly SortedList<T, int> list;
+        private readonly SortedList<T, int> _list;
 
         public Set()
         {
-            list = new SortedList<T, int>();
+            _list = new SortedList<T, int>();
         }
 
-        public int Count => list.Count;
+        public int Count => _list.Count;
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator()
         {
-            return list.Keys.GetEnumerator();
+            return _list.Keys.GetEnumerator();
         }
 
 
@@ -51,20 +51,20 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
 
         public void Add(T k)
         {
-            if (!list.ContainsKey(k))
-                list.Add(k, 0);
+            if (!_list.ContainsKey(k))
+                _list.Add(k, 0);
         }
 
         public void DeepCopy(Set<T> other)
         {
-            list.Clear();
-            foreach (var k in other.list.Keys)
+            _list.Clear();
+            foreach (var k in other._list.Keys)
                 Add(k);
         }
 
         public void Clear()
         {
-            list.Clear();
+            _list.Clear();
         }
     }
 }

@@ -11,23 +11,20 @@ using PatternRecognition.FingerprintRecognition.Core.ImageProcessingTools;
 
 namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
 {
-    public class Ratha1995MinutiaeExtractor : FeatureExtractor<List<Minutia>>
+    public static class MinutiaeExtractor
     {
-        private readonly Ratha1995SkeImgExtractor skeImgExtractor = new Ratha1995SkeImgExtractor();
-
-
-        public override List<Minutia> ExtractFeatures(Bitmap image)
+        public static List<Minutia> ExtractFeatures(Bitmap image)
         {
             var orImgExtractor = new Ratha1995OrImgExtractor();
             var orientationImage = orImgExtractor.ExtractFeatures(image);
-            var matrix = skeImgExtractor.ExtractSkeletonImage(image, orientationImage);
+            var matrix = SkeletonImageExtractor.ExtractSkeletonImage(image, orientationImage);
 
             return GetMinutiaes(matrix, orientationImage);
         }
 
         #region private
 
-        private List<Minutia> GetMinutiaes(ImageMatrix matrix, OrientationImage orientationImage)
+        private static List<Minutia> GetMinutiaes(ImageMatrix matrix, OrientationImage orientationImage)
         {
             var minutiaes = new List<Minutia>();
 
@@ -118,8 +115,6 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
                         noInTheBorder.Add(minutiaes[i]);
             }
 
-            var miEuclideanDistance = new MtiaEuclideanDistance();
-
             var toErase = new bool[noInTheBorder.Count];
             for (var i = 0; i < noInTheBorder.Count; i++)
             {
@@ -131,35 +126,35 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
                         // different to orientation image
                         int row, col;
                         orientationImage.GetBlockCoordFromPixel(mA.X, mA.Y, out row, out col);
-                        var angleOI = orientationImage.AngleInRadians(row, col);
+                        var angleOi = orientationImage.AngleInRadians(row, col);
                         if (mA.MinutiaType == MinutiaType.End &&
-                            Math.Min(Angle.DifferencePi(mA.Angle, angleOI),
-                                Angle.DifferencePi(mA.Angle, angleOI + Math.PI)) > Math.PI / 6)
+                            Math.Min(Angle.DifferencePi(mA.Angle, angleOi),
+                                Angle.DifferencePi(mA.Angle, angleOi + Math.PI)) > Math.PI / 6)
                             toErase[i] = true;
 
                         //  near minutiaes elimination
                         if (mA.MinutiaType == mB.MinutiaType &&
-                            miEuclideanDistance.Compare(mA, mB) < 5)
+                            MtiaEuclideanDistance.Compare(mA, mB) < 5)
                             toErase[i] = toErase[j] = true;
 
                         //  Ridge break elimination (Ratha)
                         if (mA.MinutiaType == MinutiaType.End &&
                             mB.MinutiaType == MinutiaType.End &&
                             mA.Angle == mB.Angle &&
-                            miEuclideanDistance.Compare(mA, mB) < 10)
+                            MtiaEuclideanDistance.Compare(mA, mB) < 10)
                             toErase[i] = toErase[j] = true;
 
                         // Ridge break elimination (tavo - migue)
                         if (mA.MinutiaType == MinutiaType.End &&
                             mB.MinutiaType == MinutiaType.End &&
                             Angle.DifferencePi(mA.Angle, mB.Angle) < Math.PI / 12 &&
-                            miEuclideanDistance.Compare(mA, mB) < 10)
+                            MtiaEuclideanDistance.Compare(mA, mB) < 10)
                             toErase[i] = toErase[j] = true;
 
                         // spike elimination
                         if (mA.MinutiaType == MinutiaType.End &&
                             mB.MinutiaType == MinutiaType.Bifurcation &&
-                            miEuclideanDistance.Compare(mA, mB) < 15)
+                            MtiaEuclideanDistance.Compare(mA, mB) < 15)
                             if (RemoveSpikeOnMinutiae(matrix, mA, mB))
                                 toErase[i] = true;
                     }
@@ -173,7 +168,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
             return result;
         }
 
-        private double GetMinutiaeAngle(ImageMatrix matrix, int x, int y, MinutiaType type)
+        private static double GetMinutiaeAngle(ImageMatrix matrix, int x, int y, MinutiaType type)
         {
             double angle = 0;
 
@@ -256,7 +251,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
             return angle;
         }
 
-        private List<Point> GetNeighboors(ImageMatrix matrix, int x, int y)
+        private static List<Point> GetNeighboors(ImageMatrix matrix, int x, int y)
         {
             var result = new List<Point>();
 
@@ -280,54 +275,53 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
             return result;
         }
 
-        private bool RemoveSpikeOnMinutiae(ImageMatrix matrix, Minutia end, Minutia bifurcation)
+        private static bool RemoveSpikeOnMinutiae(ImageMatrix matrix, Minutia end, Minutia bifurcation)
         {
-            if (bifurcation.MinutiaType == MinutiaType.Bifurcation)
+            if (bifurcation.MinutiaType != MinutiaType.Bifurcation) return false;
+
+            int xBifur = bifurcation.X;
+            int yBifur = bifurcation.Y;
+
+            var treeNeighboors = GetNeighboors(matrix, xBifur, yBifur);
+
+            if (treeNeighboors.Count < 3)
+                return false;
+
+            var n1 = new List<Point> {new Point(xBifur, yBifur), treeNeighboors[0]};
+            var n2 = new List<Point> {new Point(xBifur, yBifur), treeNeighboors[1]};
+            var n3 = new List<Point> {new Point(xBifur, yBifur), treeNeighboors[2]};
+
+            int xEnd = end.X;
+            int yEnd = end.Y;
+
+            for (var i = 0; i < 15; i++)
             {
-                int xBifur = bifurcation.X;
-                int yBifur = bifurcation.Y;
+                var neighboors1 = GetNeighboors(matrix, n1[n1.Count - 1].X, n1[n1.Count - 1].Y);
+                foreach (var neighbor in neighboors1)
+                    if (!n1.Contains(neighbor) && !treeNeighboors.Contains(neighbor))
+                        if (neighbor.X == xEnd &&
+                            neighbor.Y == yEnd)
+                            return true;
+                        else
+                            n1.Add(neighbor);
 
-                var treeNeighboors = GetNeighboors(matrix, xBifur, yBifur);
+                var neighboors2 = GetNeighboors(matrix, n2[n2.Count - 1].X, n2[n2.Count - 1].Y);
+                foreach (var neighbor in neighboors2)
+                    if (!n2.Contains(neighbor) && !treeNeighboors.Contains(neighbor))
+                        if (neighbor.X == xEnd &&
+                            neighbor.Y == yEnd)
+                            return true;
+                        else
+                            n2.Add(neighbor);
 
-                if (treeNeighboors.Count < 3)
-                    return false;
-
-                var n1 = new List<Point> {new Point(xBifur, yBifur), treeNeighboors[0]};
-                var n2 = new List<Point> {new Point(xBifur, yBifur), treeNeighboors[1]};
-                var n3 = new List<Point> {new Point(xBifur, yBifur), treeNeighboors[2]};
-
-                int xEnd = end.X;
-                int yEnd = end.Y;
-
-                for (var i = 0; i < 15; i++)
-                {
-                    var neighboors1 = GetNeighboors(matrix, n1[n1.Count - 1].X, n1[n1.Count - 1].Y);
-                    foreach (var neighbor in neighboors1)
-                        if (!n1.Contains(neighbor) && !treeNeighboors.Contains(neighbor))
-                            if (neighbor.X == xEnd &&
-                                neighbor.Y == yEnd)
-                                return true;
-                            else
-                                n1.Add(neighbor);
-
-                    var neighboors2 = GetNeighboors(matrix, n2[n2.Count - 1].X, n2[n2.Count - 1].Y);
-                    foreach (var neighbor in neighboors2)
-                        if (!n2.Contains(neighbor) && !treeNeighboors.Contains(neighbor))
-                            if (neighbor.X == xEnd &&
-                                neighbor.Y == yEnd)
-                                return true;
-                            else
-                                n2.Add(neighbor);
-
-                    var neighboors3 = GetNeighboors(matrix, n3[n3.Count - 1].X, n3[n3.Count - 1].Y);
-                    foreach (var neighbor in neighboors3)
-                        if (!n3.Contains(neighbor) && !treeNeighboors.Contains(neighbor))
-                            if (neighbor.X == xEnd &&
-                                neighbor.Y == yEnd)
-                                return true;
-                            else
-                                n3.Add(neighbor);
-                }
+                var neighboors3 = GetNeighboors(matrix, n3[n3.Count - 1].X, n3[n3.Count - 1].Y);
+                foreach (var neighbor in neighboors3)
+                    if (!n3.Contains(neighbor) && !treeNeighboors.Contains(neighbor))
+                        if (neighbor.X == xEnd &&
+                            neighbor.Y == yEnd)
+                            return true;
+                        else
+                            n3.Add(neighbor);
             }
             return false;
         }

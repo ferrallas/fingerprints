@@ -10,74 +10,73 @@ using System.Collections.Generic;
 namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
 {
     [Serializable]
-    internal class JYMtiaDescriptor
+    internal class JyMtiaDescriptor
     {
         #region internal
 
-        internal JYMtiaDescriptor(SkeletonImage skeletonImage, List<Minutia> minutiae, short mainMtiaIdx,
+        internal JyMtiaDescriptor(SkeletonImage skeletonImage, List<Minutia> minutiae, short mainMtiaIdx,
             short mtiaIdx0, short mtiaIdx1)
         {
-            this.minutiae = minutiae;
-            this.mainMtiaIdx = mainMtiaIdx;
-            nearestMtiaIdx = mtiaIdx0;
-            farthestMtiaIdx = mtiaIdx1;
+            this._minutiae = minutiae;
+            this._mainMtiaIdx = mainMtiaIdx;
+            _nearestMtiaIdx = mtiaIdx0;
+            _farthestMtiaIdx = mtiaIdx1;
 
-            var dist = new MtiaEuclideanDistance();
-            dist0 = dist.Compare(MainMinutia, NearestMtia);
-            dist1 = dist.Compare(MainMinutia, FarthestMtia);
-            if (dist1 < dist0)
+            _dist0 = MtiaEuclideanDistance.Compare(MainMinutia, NearestMtia);
+            _dist1 = MtiaEuclideanDistance.Compare(MainMinutia, FarthestMtia);
+            if (_dist1 < _dist0)
             {
-                nearestMtiaIdx = mtiaIdx1;
-                farthestMtiaIdx = mtiaIdx0;
-                var temp = dist0;
-                dist0 = dist1;
-                dist1 = temp;
+                _nearestMtiaIdx = mtiaIdx1;
+                _farthestMtiaIdx = mtiaIdx0;
+                var temp = _dist0;
+                _dist0 = _dist1;
+                _dist1 = temp;
             }
 
-            alpha0 = ComputeAlpha(MainMinutia, NearestMtia);
-            alpha1 = ComputeAlpha(MainMinutia, FarthestMtia);
+            _alpha0 = ComputeAlpha(MainMinutia, NearestMtia);
+            _alpha1 = ComputeAlpha(MainMinutia, FarthestMtia);
 
-            beta0 = ComputeBeta(MainMinutia, NearestMtia);
-            beta1 = ComputeBeta(MainMinutia, FarthestMtia);
+            _beta0 = ComputeBeta(MainMinutia, NearestMtia);
+            _beta1 = ComputeBeta(MainMinutia, FarthestMtia);
 
-            ridgeCount0 = ComputeRidgeCount(skeletonImage, MainMinutia, NearestMtia);
-            ridgeCount1 = ComputeRidgeCount(skeletonImage, MainMinutia, FarthestMtia);
+            _ridgeCount0 = ComputeRidgeCount(skeletonImage, MainMinutia, NearestMtia);
+            _ridgeCount1 = ComputeRidgeCount(skeletonImage, MainMinutia, FarthestMtia);
         }
 
-        public static implicit operator Minutia(JYMtiaDescriptor desc)
+        public static implicit operator Minutia(JyMtiaDescriptor desc)
         {
             return desc.MainMinutia;
         }
 
-        internal Minutia MainMinutia => minutiae[mainMtiaIdx];
+        internal Minutia MainMinutia => _minutiae[_mainMtiaIdx];
 
-        internal Minutia NearestMtia => minutiae[nearestMtiaIdx];
+        internal Minutia NearestMtia => _minutiae[_nearestMtiaIdx];
 
-        internal Minutia FarthestMtia => minutiae[farthestMtiaIdx];
+        internal Minutia FarthestMtia => _minutiae[_farthestMtiaIdx];
 
         internal static double DistanceThreshold
         {
-            get => dThr;
-            set => dThr = value;
+            get => _dThr;
+            set => _dThr = value;
         }
 
         internal static double AngleThreshold
         {
-            get => aThr;
-            set => aThr = value;
+            get => _aThr;
+            set => _aThr = value;
         }
 
         public override int GetHashCode()
         {
-            return mainMtiaIdx * 1000000 + nearestMtiaIdx * 1000 + farthestMtiaIdx;
+            return _mainMtiaIdx * 1000000 + _nearestMtiaIdx * 1000 + _farthestMtiaIdx;
         }
 
         public override string ToString()
         {
-            return $"{mainMtiaIdx},{nearestMtiaIdx},{farthestMtiaIdx}";
+            return $"{_mainMtiaIdx},{_nearestMtiaIdx},{_farthestMtiaIdx}";
         }
 
-        internal double RotationInvariantMatch(JYMtiaDescriptor target)
+        internal double RotationInvariantMatch(JyMtiaDescriptor target)
         {
             var distDiff = MatchDistances(target);
             var alphaDiff = MatchAlphaAngles(target);
@@ -90,7 +89,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
             return dist < 66 ? (66 - dist) / 66 : 0;
         }
 
-        internal double NoRotateMatch(JYMtiaDescriptor target)
+        internal double NoRotateMatch(JyMtiaDescriptor target)
         {
             if (!MatchMtiaDirections(target))
                 return 0;
@@ -126,15 +125,15 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
             return Angle.Difference2Pi(mtia0.Angle, mtia1.Angle);
         }
 
-        private double MatchDistances(JYMtiaDescriptor target)
+        private double MatchDistances(JyMtiaDescriptor target)
         {
-            var diff0 = Math.Abs(target.dist0 - dist0);
-            var diff1 = Math.Abs(target.dist1 - dist1);
+            var diff0 = Math.Abs(target._dist0 - _dist0);
+            var diff1 = Math.Abs(target._dist1 - _dist1);
 
             return diff0 + diff1;
         }
 
-        private bool MatchMtiaDirections(JYMtiaDescriptor target)
+        private bool MatchMtiaDirections(JyMtiaDescriptor target)
         {
             var diff = Angle.DifferencePi(target.MainMinutia.Angle, MainMinutia.Angle);
             if (diff >= Math.PI / 4)
@@ -149,31 +148,31 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
             return true;
         }
 
-        private double MatchRidgeCounts(JYMtiaDescriptor target)
+        private double MatchRidgeCounts(JyMtiaDescriptor target)
         {
-            double diff0 = Math.Abs(target.ridgeCount0 - ridgeCount0);
-            double diff1 = Math.Abs(target.ridgeCount1 - ridgeCount1);
+            double diff0 = Math.Abs(target._ridgeCount0 - _ridgeCount0);
+            double diff1 = Math.Abs(target._ridgeCount1 - _ridgeCount1);
 
             return 3 * (Math.Pow(diff0, 2) + Math.Pow(diff1, 2));
         }
 
-        private double MatchAlphaAngles(JYMtiaDescriptor target)
+        private double MatchAlphaAngles(JyMtiaDescriptor target)
         {
-            var diff0 = Angle.DifferencePi(target.alpha0, alpha0);
-            var diff1 = Angle.DifferencePi(target.alpha1, alpha1);
+            var diff0 = Angle.DifferencePi(target._alpha0, _alpha0);
+            var diff1 = Angle.DifferencePi(target._alpha1, _alpha1);
 
             return 54 * (Math.Pow(diff0, 2) + Math.Pow(diff1, 2)) / Math.PI;
         }
 
-        private double MatchBetaAngles(JYMtiaDescriptor target)
+        private double MatchBetaAngles(JyMtiaDescriptor target)
         {
-            var diff0 = Angle.DifferencePi(target.beta0, beta0);
-            var diff1 = Angle.DifferencePi(target.beta1, beta1);
+            var diff0 = Angle.DifferencePi(target._beta0, _beta0);
+            var diff1 = Angle.DifferencePi(target._beta1, _beta1);
 
             return 54 * (Math.Pow(diff0, 2) + Math.Pow(diff1, 2)) / Math.PI;
         }
 
-        private double MatchByType(JYMtiaDescriptor target)
+        private double MatchByType(JyMtiaDescriptor target)
         {
             var diff0 = target.MainMinutia.MinutiaType == MainMinutia.MinutiaType ? 0 : 1;
             var diff1 = target.NearestMtia.MinutiaType == NearestMtia.MinutiaType ? 0 : 1;
@@ -185,20 +184,20 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
 
         #region private fields
 
-        private readonly short mainMtiaIdx, nearestMtiaIdx, farthestMtiaIdx;
+        private readonly short _mainMtiaIdx, _nearestMtiaIdx, _farthestMtiaIdx;
 
-        private readonly double dist0, dist1;
+        private readonly double _dist0, _dist1;
 
-        private readonly double alpha0, alpha1, beta0, beta1;
+        private readonly double _alpha0, _alpha1, _beta0, _beta1;
 
-        private readonly byte ridgeCount0;
-        private readonly byte ridgeCount1;
+        private readonly byte _ridgeCount0;
+        private readonly byte _ridgeCount1;
 
-        private readonly List<Minutia> minutiae;
+        private readonly List<Minutia> _minutiae;
 
-        [NonSerialized] private static double aThr = Math.PI / 6;
+        [NonSerialized] private static double _aThr = Math.PI / 6;
 
-        [NonSerialized] private static double dThr = 12;
+        [NonSerialized] private static double _dThr = 12;
 
         #endregion
     }

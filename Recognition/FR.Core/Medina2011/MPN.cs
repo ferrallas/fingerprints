@@ -9,95 +9,47 @@ using System.Collections.Generic;
 
 namespace PatternRecognition.FingerprintRecognition.Core.Medina2011
 {
-    public class MPN
+    public class Mpn
     {
-        #region public
+        private const int GlobalDistThr  = 12;
 
-        public double LocalAngleThr
+        private readonly double _gaThr = Math.PI / 6;
+
+        public double Match(MtripletsFeature query, MtripletsFeature template, out List<MinutiaPair> matchingMtiae)
         {
-            get => MTriplet.AngleThreshold * 180 / Math.PI;
-            set => MTriplet.AngleThreshold = value * Math.PI / 180;
-        }
+            matchingMtiae = new List<MinutiaPair>();
+            IList<MtripletPair> matchingTriplets = GetMatchingTriplets(query, template);
+            if (matchingTriplets.Count == 0)
+                return 0;
 
-        public double LocalDistThr
-        {
-            get => MTriplet.DistanceThreshold;
-            set => MTriplet.DistanceThreshold = value;
-        }
-
-        public int GlobalDistThr { get; set; } = 12;
-
-        public double GlobalAngleThr
-        {
-            get => gaThr * 180 / Math.PI;
-            set => gaThr = value * Math.PI / 180;
-        }
-
-
-        public double Match(MtripletsFeature query, MtripletsFeature template)
-        {
-            List<MinutiaPair> matchingMtiae;
-            return Match(query, template, out matchingMtiae);
-        }
-
-
-        public double Match(object query, object template, out List<MinutiaPair> matchingMtiae)
-        {
-            var qMtripletsFeature = query as MtripletsFeature;
-            var tMtripletsFeature = template as MtripletsFeature;
-            try
-            {
-                matchingMtiae = new List<MinutiaPair>();
-                IList<MtripletPair> matchingTriplets = GetMatchingTriplets(qMtripletsFeature, tMtripletsFeature);
-                if (matchingTriplets.Count == 0)
-                    return 0;
-
-                var localMatchingMtiae = new List<MinutiaPair>(3600);
-                foreach (var qMtia in qMtripletsFeature.Minutiae)
-                foreach (var tMtia in tMtripletsFeature.Minutiae)
-                    localMatchingMtiae.Add(new MinutiaPair
-                    {
-                        QueryMtia = qMtia,
-                        TemplateMtia = tMtia,
-                        MatchingValue = 1
-                    });
-                //List<MinutiaPair> localMatchingMtiae = GetLocalMatchingMtiae(qMtripletsFeature, tMtripletsFeature, matchingTriplets);
-                //if (localMatchingMtiae.Count == 0)
-                //    return 0;
-
-                var refMtiaePairs = GetReferenceMtiae(matchingTriplets);
-
-                // Iterating over the reference Minutia pair
-                var max = 0;
-                var notMatchingCount = int.MaxValue;
-                for (var i = 0; i < refMtiaePairs.Count; i++)
+            var localMatchingMtiae = new List<MinutiaPair>(3600);
+            foreach (var qMtia in query.Minutiae)
+            foreach (var tMtia in template.Minutiae)
+                localMatchingMtiae.Add(new MinutiaPair
                 {
-                    var currMatchingMtiae =
-                        GetGlobalMatchingMtiae(localMatchingMtiae, refMtiaePairs[i], ref notMatchingCount);
-                    if (currMatchingMtiae != null && currMatchingMtiae.Count > max)
-                    {
-                        max = currMatchingMtiae.Count;
-                        matchingMtiae = currMatchingMtiae;
-                    }
-                }
+                    QueryMtia = qMtia,
+                    TemplateMtia = tMtia,
+                    MatchingValue = 1
+                });
 
-                return 100 * Math.Sqrt(1.0 * max * max /
-                                       (qMtripletsFeature.Minutiae.Count * tMtripletsFeature.Minutiae.Count));
-            }
-            catch (Exception e)
+            var refMtiaePairs = GetReferenceMtiae(matchingTriplets);
+
+            // Iterating over the reference Minutia pair
+            var max = 0;
+            var notMatchingCount = int.MaxValue;
+            for (var i = 0; i < refMtiaePairs.Count; i++)
             {
-                if (query.GetType() != typeof(MtripletsFeature) || template.GetType() != typeof(MtripletsFeature))
+                var currMatchingMtiae =
+                    GetGlobalMatchingMtiae(localMatchingMtiae, refMtiaePairs[i], ref notMatchingCount);
+                if (currMatchingMtiae != null && currMatchingMtiae.Count > max)
                 {
-                    var msg = "Unable to match fingerprints: Invalid features type!";
-                    throw new ArgumentOutOfRangeException(msg, e);
+                    max = currMatchingMtiae.Count;
+                    matchingMtiae = currMatchingMtiae;
                 }
-                throw e;
             }
+
+            return 100 * Math.Sqrt(1.0 * max * max / (query.Minutiae.Count * template.Minutiae.Count));
         }
-
-        #endregion
-
-        #region private
 
         private List<MtripletPair> GetMatchingTriplets(MtripletsFeature t1, MtripletsFeature t2)
         {
@@ -119,15 +71,15 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2011
             var qMatches = new Dictionary<MTriplet, byte>(matchingTriplets.Count);
             var tMatches = new Dictionary<MTriplet, byte>(matchingTriplets.Count);
             foreach (var pair in matchingTriplets)
-                if (!qMatches.ContainsKey(pair.queryMTp) || !tMatches.ContainsKey(pair.templateMTp))
+                if (!qMatches.ContainsKey(pair.QueryMTp) || !tMatches.ContainsKey(pair.TemplateMTp))
                 {
-                    var qMtia0 = pair.queryMTp[0];
-                    var qMtia1 = pair.queryMTp[1];
-                    var qMtia2 = pair.queryMTp[2];
+                    var qMtia0 = pair.QueryMTp[0];
+                    var qMtia1 = pair.QueryMTp[1];
+                    var qMtia2 = pair.QueryMTp[2];
 
-                    var tMtia0 = pair.templateMTp[0];
-                    var tMtia1 = pair.templateMTp[1];
-                    var tMtia2 = pair.templateMTp[2];
+                    var tMtia0 = pair.TemplateMTp[0];
+                    var tMtia1 = pair.TemplateMTp[1];
+                    var tMtia2 = pair.TemplateMTp[2];
 
                     var qRefMtia = new Minutia();
                     qRefMtia.X = Convert.ToInt16(Math.Round((qMtia0.X + qMtia1.X + qMtia2.X) / 3.0));
@@ -149,10 +101,10 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2011
                         matches.Add(mPair, 0);
                         pairs.Add(mPair);
                     }
-                    if (!qMatches.ContainsKey(pair.queryMTp))
-                        qMatches.Add(pair.queryMTp, 0);
-                    if (!tMatches.ContainsKey(pair.templateMTp))
-                        tMatches.Add(pair.templateMTp, 0);
+                    if (!qMatches.ContainsKey(pair.QueryMTp))
+                        qMatches.Add(pair.QueryMTp, 0);
+                    if (!tMatches.ContainsKey(pair.TemplateMTp))
+                        tMatches.Add(pair.TemplateMTp, 0);
                 }
             return pairs;
         }
@@ -174,7 +126,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2011
                 {
                     var query = mm.Map(mtiaPair.QueryMtia);
                     var template = mtiaPair.TemplateMtia;
-                    if (dist.Compare(query, template) <= GlobalDistThr && MatchDirections(query, template))
+                    if (MtiaEuclideanDistance.Compare(query, template) <= GlobalDistThr && MatchDirections(query, template))
                     {
                         globalMatchingMtiae.Add(mtiaPair);
                         qMatches.Add(mtiaPair.QueryMtia, mtiaPair.TemplateMtia);
@@ -198,13 +150,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2011
 
         private bool MatchDirections(Minutia query, Minutia template)
         {
-            return Angle.DifferencePi(query.Angle, template.Angle) <= gaThr;
+            return Angle.DifferencePi(query.Angle, template.Angle) <= _gaThr;
         }
-
-        private double gaThr = Math.PI / 6;
-
-        private readonly MtiaEuclideanDistance dist = new MtiaEuclideanDistance();
-
-        #endregion
     }
 }

@@ -11,17 +11,20 @@ using PatternRecognition.FingerprintRecognition.Core.ImageProcessingTools.Convol
 
 namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
 {
-    public class Ratha1995OrImgExtractor : FeatureExtractor<OrientationImage>
+    public class Ratha1995OrImgExtractor
     {
-        public byte BlockSize { get; set; } = 16;
+        private const byte BlockSize = 16;
 
+        private readonly SobelHorizontalFilter _xFilter = new SobelHorizontalFilter();
 
-        public override OrientationImage ExtractFeatures(Bitmap image)
+        private readonly SobelVerticalFilter _yFilter = new SobelVerticalFilter();
+
+        public OrientationImage ExtractFeatures(Bitmap image)
         {
             var matrix = new ImageMatrix(image);
 
-            var Gx = yFilter.Apply(matrix);
-            var Gy = xFilter.Apply(matrix);
+            var gx = _yFilter.Apply(matrix);
+            var gy = _xFilter.Apply(matrix);
 
             var width = Convert.ToByte(image.Width / BlockSize);
             var height = Convert.ToByte(image.Height / BlockSize);
@@ -36,22 +39,22 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
                 var y0 = Math.Max(y - BlockSize / 2, 0);
                 var y1 = Math.Min(image.Height - 1, y + BlockSize / 2);
 
-                int Gxy = 0, Gxx = 0, Gyy = 0;
+                int gxy = 0, gxx = 0, gyy = 0;
                 for (var yi = y0; yi <= y1; yi++)
                 for (var xi = x0; xi <= x1; xi++)
                 {
-                    Gxy += Gx[yi, xi] * Gy[yi, xi];
-                    Gxx += Gx[yi, xi] * Gx[yi, xi];
-                    Gyy += Gy[yi, xi] * Gy[yi, xi];
+                    gxy += gx[yi, xi] * gy[yi, xi];
+                    gxx += gx[yi, xi] * gx[yi, xi];
+                    gyy += gy[yi, xi] * gy[yi, xi];
                 }
 
-                if (Gxx - Gyy == 0 && Gxy == 0)
+                if (gxx - gyy == 0 && gxy == 0)
                 {
                     oi[row, col] = OrientationImage.Null;
                 }
                 else
                 {
-                    var angle = Angle.ToDegrees(Angle.ComputeAngle(Gxx - Gyy, 2 * Gxy));
+                    var angle = Angle.ToDegrees(Angle.ComputeAngle(gxx - gyy, 2 * gxy));
                     angle = angle / 2 + 90;
                     if (angle > 180)
                         angle = angle - 180;
@@ -67,7 +70,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
 
         #region private
 
-        private void RemoveBadBlocksVariance(OrientationImage oi, ImageMatrix matrix)
+        private static void RemoveBadBlocksVariance(OrientationImage oi, ImageMatrix matrix)
         {
             var maxLength = oi.WindowSize / 2;
             var varianceMatrix = new int[oi.Height, oi.Width];
@@ -198,10 +201,6 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
 
             return smoothed;
         }
-
-        private readonly SobelHorizontalFilter xFilter = new SobelHorizontalFilter();
-
-        private readonly SobelVerticalFilter yFilter = new SobelVerticalFilter();
 
         #endregion
     }

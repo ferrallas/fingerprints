@@ -10,7 +10,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.ImageProcessingTools
 {
     public class ConvolutionFilter
     {
-        public int this[int row, int column] => pixels[row, column];
+        public int this[int row, int column] => Pixels[row, column];
 
 
         public virtual int Height { private set; get; }
@@ -48,7 +48,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.ImageProcessingTools
 
         #region protected
 
-        protected int[,] pixels;
+        protected int[,] Pixels;
 
 
         protected ConvolutionFilter()

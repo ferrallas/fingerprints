@@ -14,14 +14,14 @@ namespace PatternRecognition.FingerprintRecognition.Core.Tico2003
     [Serializable]
     public class Tico2003Features
     {
-        internal List<OBMtiaDescriptor> Minutiae;
+        internal List<ObMtiaDescriptor> Minutiae;
 
         internal Tico2003Features(List<Minutia> minutiae, OrientationImage dImg)
         {
-            Minutiae = new List<OBMtiaDescriptor>(minutiae.Count);
+            Minutiae = new List<ObMtiaDescriptor>(minutiae.Count);
             for (short i = 0; i < minutiae.Count; i++)
             {
-                var mtiaDescriptor = new OBMtiaDescriptor(minutiae[i], dImg);
+                var mtiaDescriptor = new ObMtiaDescriptor(minutiae[i], dImg);
                 Minutiae.Add(mtiaDescriptor);
             }
         }

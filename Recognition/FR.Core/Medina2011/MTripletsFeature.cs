@@ -12,10 +12,10 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2011
 {
     internal class MtripletPair
     {
-        public double matchingValue;
-        public MTriplet queryMTp;
-        public byte[] templateMtiaOrder;
-        public MTriplet templateMTp;
+        public double MatchingValue;
+        public MTriplet QueryMTp;
+        public byte[] TemplateMtiaOrder;
+        public MTriplet TemplateMTp;
     }
 
 
@@ -46,10 +46,10 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2011
                 if (currSim > 0)
                     result.Add(new MtripletPair
                         {
-                            queryMTp = queryMTp,
-                            templateMTp = currMTp,
-                            matchingValue = currSim,
-                            templateMtiaOrder = currOrder
+                            QueryMTp = queryMTp,
+                            TemplateMTp = currMTp,
+                            MatchingValue = currSim,
+                            TemplateMtiaOrder = currOrder
                         }
                     );
             }

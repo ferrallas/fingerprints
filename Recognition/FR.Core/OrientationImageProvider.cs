@@ -5,13 +5,15 @@
  */
 
 
+using PatternRecognition.FingerprintRecognition.Core.Ratha1995;
+
 namespace PatternRecognition.FingerprintRecognition.Core
 {
     public class OrientationImageProvider
     {
-        private readonly IFeatureExtractor<OrientationImage> _orientationImageExtractor;
+        private readonly Ratha1995OrImgExtractor _orientationImageExtractor;
 
-        public OrientationImageProvider(IFeatureExtractor<OrientationImage> provider)
+        public OrientationImageProvider(Ratha1995OrImgExtractor provider)
         {
             _orientationImageExtractor = provider;
         }

@@ -8,9 +8,9 @@ using System;
 
 namespace PatternRecognition.FingerprintRecognition.Core
 {
-    public class MtiaEuclideanDistance
+    static class MtiaEuclideanDistance
     {
-        public double Compare(Minutia m0, Minutia m1)
+        public static double Compare(Minutia m0, Minutia m1)
         {
             double diff0 = m0.Y - m1.Y;
             double diff1 = m0.X - m1.X;

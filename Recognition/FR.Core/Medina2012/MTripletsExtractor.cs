@@ -7,38 +7,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 
 namespace PatternRecognition.FingerprintRecognition.Core.Medina2012
 {
-    public class MTripletsExtractor : FeatureExtractor<MtripletsFeature>
+    public static class MTripletsExtractor
     {
-        private readonly MtiaEuclideanDistance dist = new MtiaEuclideanDistance();
+        private const byte NeighborsCount  = 4;
 
-        public byte NeighborsCount { set; get; } = 4;
-
-
-        public IFeatureExtractor<List<Minutia>> MtiaExtractor { set; get; }
-
-
-        public override MtripletsFeature ExtractFeatures(Bitmap image)
-        {
-            try
-            {
-                var minutiae = MtiaExtractor.ExtractFeatures(image);
-                return ExtractFeatures(minutiae);
-            }
-            catch (Exception)
-            {
-                if (MtiaExtractor == null)
-                    throw new InvalidOperationException(
-                        "Unable to extract MTriplets: Unassigned minutia list extractor!");
-                throw;
-            }
-        }
-
-
-        public MtripletsFeature ExtractFeatures(List<Minutia> minutiae)
+        public static MtripletsFeature ExtractFeatures(List<Minutia> minutiae)
         {
             var result = new List<MTriplet>();
             var triplets = new Dictionary<int, int>();
@@ -81,11 +57,11 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2012
             return new MtripletsFeature(result, minutiae);
         }
 
-        private void UpdateNearest(List<Minutia> minutiae, int idx, short[,] nearest, double[,] distance)
+        private static void UpdateNearest(IList<Minutia> minutiae, int idx, short[,] nearest, double[,] distance)
         {
             for (var i = idx + 1; i < minutiae.Count; i++)
             {
-                var dValue = dist.Compare(minutiae[idx], minutiae[i]);
+                var dValue = MtiaEuclideanDistance.Compare(minutiae[idx], minutiae[i]);
 
                 var maxIdx = 0;
                 for (var j = 1; j < NeighborsCount; j++)

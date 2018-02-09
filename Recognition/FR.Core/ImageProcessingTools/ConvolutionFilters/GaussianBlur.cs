@@ -10,7 +10,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.ImageProcessingTools.Co
     {
         public GaussianBlur()
         {
-            pixels = new int[5, 5]
+            Pixels = new int[5, 5]
             {
                 {0, 1, 2, 1, 0},
                 {1, 2, 3, 2, 1},

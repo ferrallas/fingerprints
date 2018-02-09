@@ -13,7 +13,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.ImageProcessingTools
     {
         #region private
 
-        private readonly int[,] pixels;
+        private readonly int[,] _pixels;
 
         #endregion
 
@@ -27,7 +27,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.ImageProcessingTools
             var scan0 = bmData.Scan0;
             Height = bmp.Height;
             Width = bmp.Width;
-            pixels = new int[bmp.Height, bmp.Width];
+            _pixels = new int[bmp.Height, bmp.Width];
             unsafe
             {
                 var p = (byte*) (void*) scan0;
@@ -44,7 +44,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.ImageProcessingTools
                         green = p[1];
                         red = p[2];
 
-                        pixels[y, x] = (byte) (.299 * red
+                        _pixels[y, x] = (byte) (.299 * red
                                                + .587 * green
                                                + .114 * blue);
 
@@ -62,14 +62,14 @@ namespace PatternRecognition.FingerprintRecognition.Core.ImageProcessingTools
         {
             Height = height;
             Width = width;
-            pixels = new int[height, width];
+            _pixels = new int[height, width];
         }
 
 
         public int this[int row, int column]
         {
-            get => pixels[row, column];
-            set => pixels[row, column] = value;
+            get => _pixels[row, column];
+            set => _pixels[row, column] = value;
         }
 
 
@@ -95,7 +95,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.ImageProcessingTools
                 {
                     for (var x = 0; x < Width; ++x)
                     {
-                        p[0] = p[1] = p[2] = (byte) (pixels[y, x] < 0 ? 0 : pixels[y, x] > 255 ? 255 : pixels[y, x]);
+                        p[0] = p[1] = p[2] = (byte) (_pixels[y, x] < 0 ? 0 : _pixels[y, x] > 255 ? 255 : _pixels[y, x]);
                         p += 3;
                     }
                     p += nOffset;

@@ -12,7 +12,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.ImageProcessingTools.Co
 
         public SobelHorizontalFilter()
         {
-            pixels = new int[3, 3]
+            Pixels = new int[3, 3]
             {
                 {1, 2, 1},
                 {0, 0, 0},

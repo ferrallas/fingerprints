@@ -7,32 +7,13 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using PatternRecognition.FingerprintRecognition.Core.Ratha1995;
 
 namespace PatternRecognition.FingerprintRecognition.Core.Medina2011
 {
-    public class DalaunayMTpsExtractor : FeatureExtractor<MtripletsFeature>
+    public class DalaunayMTpsExtractor
     {
-        public IFeatureExtractor<List<Minutia>> MtiaExtractor { set; get; }
-
-
-        public override MtripletsFeature ExtractFeatures(Bitmap image)
-        {
-            try
-            {
-                var minutiae = MtiaExtractor.ExtractFeatures(image);
-                return ExtractFeatures(minutiae);
-            }
-            catch (Exception e)
-            {
-                if (MtiaExtractor == null)
-                    throw new InvalidOperationException(
-                        "Unable to extract MtripletsFeature: Unassigned minutia list extractor!", e);
-                throw;
-            }
-        }
-
-
-        public MtripletsFeature ExtractFeatures(List<Minutia> minutiae)
+        public static MtripletsFeature ExtractFeatures(List<Minutia> minutiae)
         {
             var mtriplets = new List<MTriplet>();
             var triplets = new Dictionary<int, int>();
