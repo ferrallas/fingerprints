@@ -1,0 +1,7 @@
+var searchData=
+[
+  ['b',['B',['../struct_pattern_recognition_1_1_fingerprint_recognition_1_1_core_1_1_integer_triangle.html#a641a3ab4deec77439d48a73a58f380b5',1,'PatternRecognition::FingerprintRecognition::Core::IntegerTriangle']]],
+  ['betaanglethr',['BetaAngleThr',['../class_pattern_recognition_1_1_fingerprint_recognition_1_1_matchers_1_1_p_n.html#ac312de934600353d7eee1dfd168b433a',1,'PatternRecognition::FingerprintRecognition::Matchers::PN']]],
+  ['blocksize',['BlockSize',['../class_pattern_recognition_1_1_fingerprint_recognition_1_1_feature_extractors_1_1_ratha1995_or_img_extractor.html#a26afb869185cd654a16022f07268ad49',1,'PatternRecognition.FingerprintRecognition.FeatureExtractors.Ratha1995OrImgExtractor.BlockSize()'],['../class_pattern_recognition_1_1_fingerprint_recognition_1_1_feature_extractors_1_1_sherlock1994_or_img_extractor.html#ab7fed4e22a6c7ee6edae84e95e7c81ac',1,'PatternRecognition.FingerprintRecognition.FeatureExtractors.Sherlock1994OrImgExtractor.BlockSize()']]],
+  ['buildroc',['BuildROC',['../interface_pattern_recognition_1_1_r_o_c_1_1_i_r_o_c_builder.html#a333c78cbee809e30a19ebdc369275d3d',1,'PatternRecognition.ROC.IROCBuilder.BuildROC()'],['../class_pattern_recognition_1_1_r_o_c_1_1_f_n_m_rvs_f_m_r.html#a97e593483c234cc41e4ecfc51c647256',1,'PatternRecognition.ROC.FNMRvsFMR.BuildROC()'],['../class_pattern_recognition_1_1_r_o_c_1_1_t_p_rvs_f_p_r.html#af91f8313f38aae250a24e47df92ac9a7',1,'PatternRecognition.ROC.TPRvsFPR.BuildROC()']]]
+];

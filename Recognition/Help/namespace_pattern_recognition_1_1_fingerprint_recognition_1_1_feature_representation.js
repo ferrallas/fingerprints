@@ -1,0 +1,8 @@
+var namespace_pattern_recognition_1_1_fingerprint_recognition_1_1_feature_representation =
+[
+    [ "JYFeatures", "class_pattern_recognition_1_1_fingerprint_recognition_1_1_feature_representation_1_1_j_y_features.html", "class_pattern_recognition_1_1_fingerprint_recognition_1_1_feature_representation_1_1_j_y_features" ],
+    [ "MtripletsFeature", "class_pattern_recognition_1_1_fingerprint_recognition_1_1_feature_representation_1_1_mtriplets_feature.html", "class_pattern_recognition_1_1_fingerprint_recognition_1_1_feature_representation_1_1_mtriplets_feature" ],
+    [ "PNFeatures", "class_pattern_recognition_1_1_fingerprint_recognition_1_1_feature_representation_1_1_p_n_features.html", "class_pattern_recognition_1_1_fingerprint_recognition_1_1_feature_representation_1_1_p_n_features" ],
+    [ "Qi2005Features", "class_pattern_recognition_1_1_fingerprint_recognition_1_1_feature_representation_1_1_qi2005_features.html", null ],
+    [ "Tico2003Features", "class_pattern_recognition_1_1_fingerprint_recognition_1_1_feature_representation_1_1_tico2003_features.html", null ]
+];

@@ -1,0 +1,19 @@
+var searchData=
+[
+  ['core',['Core',['../namespace_pattern_recognition_1_1_core.html',1,'PatternRecognition']]],
+  ['core',['Core',['../namespace_pattern_recognition_1_1_fingerprint_recognition_1_1_core.html',1,'PatternRecognition::FingerprintRecognition']]],
+  ['experiments',['Experiments',['../namespace_pattern_recognition_1_1_fingerprint_recognition_1_1_experiments.html',1,'PatternRecognition::FingerprintRecognition']]],
+  ['featuredisplay',['FeatureDisplay',['../namespace_pattern_recognition_1_1_fingerprint_recognition_1_1_feature_display.html',1,'PatternRecognition::FingerprintRecognition']]],
+  ['featureextractors',['FeatureExtractors',['../namespace_pattern_recognition_1_1_fingerprint_recognition_1_1_feature_extractors.html',1,'PatternRecognition::FingerprintRecognition']]],
+  ['featurerepresentation',['FeatureRepresentation',['../namespace_pattern_recognition_1_1_fingerprint_recognition_1_1_feature_representation.html',1,'PatternRecognition::FingerprintRecognition']]],
+  ['fingerprintrecognition',['FingerprintRecognition',['../namespace_pattern_recognition_1_1_fingerprint_recognition.html',1,'PatternRecognition']]],
+  ['matchers',['Matchers',['../namespace_pattern_recognition_1_1_fingerprint_recognition_1_1_matchers.html',1,'PatternRecognition::FingerprintRecognition']]],
+  ['patternrecognition',['PatternRecognition',['../namespace_pattern_recognition.html',1,'']]],
+  ['pixels',['pixels',['../class_image_processing_tools_1_1_convolution_filter.html#a3f9a2a32bad42ed07b2a472c75cd1140',1,'ImageProcessingTools::ConvolutionFilter']]],
+  ['pn',['PN',['../class_pattern_recognition_1_1_fingerprint_recognition_1_1_matchers_1_1_p_n.html',1,'PatternRecognition::FingerprintRecognition::Matchers']]],
+  ['pnfeatureextractor',['PNFeatureExtractor',['../class_pattern_recognition_1_1_fingerprint_recognition_1_1_feature_extractors_1_1_p_n_feature_extractor.html',1,'PatternRecognition::FingerprintRecognition::FeatureExtractors']]],
+  ['pnfeatureprovider',['PNFeatureProvider',['../class_pattern_recognition_1_1_fingerprint_recognition_1_1_resource_providers_1_1_p_n_feature_provider.html',1,'PatternRecognition::FingerprintRecognition::ResourceProviders']]],
+  ['pnfeatures',['PNFeatures',['../class_pattern_recognition_1_1_fingerprint_recognition_1_1_feature_representation_1_1_p_n_features.html',1,'PatternRecognition::FingerprintRecognition::FeatureRepresentation']]],
+  ['resourceproviders',['ResourceProviders',['../namespace_pattern_recognition_1_1_fingerprint_recognition_1_1_resource_providers.html',1,'PatternRecognition::FingerprintRecognition']]],
+  ['roc',['ROC',['../namespace_pattern_recognition_1_1_r_o_c.html',1,'PatternRecognition']]]
+];

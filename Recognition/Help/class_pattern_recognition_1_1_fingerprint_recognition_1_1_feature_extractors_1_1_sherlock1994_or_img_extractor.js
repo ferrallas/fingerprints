@@ -1,0 +1,5 @@
+var class_pattern_recognition_1_1_fingerprint_recognition_1_1_feature_extractors_1_1_sherlock1994_or_img_extractor =
+[
+    [ "ExtractFeatures", "class_pattern_recognition_1_1_fingerprint_recognition_1_1_feature_extractors_1_1_sherlock1994_or_img_extractor.html#ac2ea37b760dd4081241f12ca00c75c2a", null ],
+    [ "BlockSize", "class_pattern_recognition_1_1_fingerprint_recognition_1_1_feature_extractors_1_1_sherlock1994_or_img_extractor.html#ab7fed4e22a6c7ee6edae84e95e7c81ac", null ]
+];

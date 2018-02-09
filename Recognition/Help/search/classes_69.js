@@ -1,0 +1,27 @@
+var searchData=
+[
+  ['ibooleansimilarity_2dg',['IBooleanSimilarity-g',['../interface_pattern_recognition_1_1_core_1_1_i_boolean_similarity-g.html',1,'PatternRecognition::Core']]],
+  ['idissimilarity_2dg',['IDissimilarity-g',['../interface_pattern_recognition_1_1_core_1_1_i_dissimilarity-g.html',1,'PatternRecognition::Core']]],
+  ['iexperiment',['IExperiment',['../interface_pattern_recognition_1_1_fingerprint_recognition_1_1_core_1_1_i_experiment.html',1,'PatternRecognition::FingerprintRecognition::Core']]],
+  ['ifeaturedisplay',['IFeatureDisplay',['../interface_pattern_recognition_1_1_fingerprint_recognition_1_1_core_1_1_i_feature_display.html',1,'PatternRecognition::FingerprintRecognition::Core']]],
+  ['ifeaturedisplay_2dg',['IFeatureDisplay-g',['../interface_pattern_recognition_1_1_fingerprint_recognition_1_1_core_1_1_i_feature_display-g.html',1,'PatternRecognition::FingerprintRecognition::Core']]],
+  ['ifeaturedisplay_3c_20featuretype_20_3e',['IFeatureDisplay&lt; FeatureType &gt;',['../interface_pattern_recognition_1_1_fingerprint_recognition_1_1_core_1_1_i_feature_display.html',1,'PatternRecognition::FingerprintRecognition::Core']]],
+  ['ifeatureextractor',['IFeatureExtractor',['../interface_pattern_recognition_1_1_fingerprint_recognition_1_1_core_1_1_i_feature_extractor.html',1,'PatternRecognition::FingerprintRecognition::Core']]],
+  ['ifeatureextractor_2dg',['IFeatureExtractor-g',['../interface_pattern_recognition_1_1_fingerprint_recognition_1_1_core_1_1_i_feature_extractor-g.html',1,'PatternRecognition::FingerprintRecognition::Core']]],
+  ['ifeatureextractor_3c_20featuretype_20_3e',['IFeatureExtractor&lt; FeatureType &gt;',['../interface_pattern_recognition_1_1_fingerprint_recognition_1_1_core_1_1_i_feature_extractor.html',1,'PatternRecognition::FingerprintRecognition::Core']]],
+  ['ifvcmatchingexperiment',['IFVCMatchingExperiment',['../interface_pattern_recognition_1_1_fingerprint_recognition_1_1_core_1_1_i_f_v_c_matching_experiment.html',1,'PatternRecognition::FingerprintRecognition::Core']]],
+  ['imagematrix',['ImageMatrix',['../class_image_processing_tools_1_1_image_matrix.html',1,'ImageProcessingTools']]],
+  ['imatcher',['IMatcher',['../interface_pattern_recognition_1_1_fingerprint_recognition_1_1_core_1_1_i_matcher.html',1,'PatternRecognition::FingerprintRecognition::Core']]],
+  ['imatcher_2dg',['IMatcher-g',['../interface_pattern_recognition_1_1_fingerprint_recognition_1_1_core_1_1_i_matcher-g.html',1,'PatternRecognition::FingerprintRecognition::Core']]],
+  ['imatcher_3c_20featuretype_20_3e',['IMatcher&lt; FeatureType &gt;',['../interface_pattern_recognition_1_1_fingerprint_recognition_1_1_core_1_1_i_matcher.html',1,'PatternRecognition::FingerprintRecognition::Core']]],
+  ['iminutiamatcher',['IMinutiaMatcher',['../interface_pattern_recognition_1_1_fingerprint_recognition_1_1_core_1_1_i_minutia_matcher.html',1,'PatternRecognition::FingerprintRecognition::Core']]],
+  ['integertriangle',['IntegerTriangle',['../struct_pattern_recognition_1_1_fingerprint_recognition_1_1_core_1_1_integer_triangle.html',1,'PatternRecognition::FingerprintRecognition::Core']]],
+  ['iresourceprovider',['IResourceProvider',['../interface_pattern_recognition_1_1_fingerprint_recognition_1_1_core_1_1_i_resource_provider.html',1,'PatternRecognition::FingerprintRecognition::Core']]],
+  ['iresourceprovider_2dg',['IResourceProvider-g',['../interface_pattern_recognition_1_1_fingerprint_recognition_1_1_core_1_1_i_resource_provider-g.html',1,'PatternRecognition::FingerprintRecognition::Core']]],
+  ['iresourceprovider_3c_20bitmap_20_3e',['IResourceProvider&lt; Bitmap &gt;',['../interface_pattern_recognition_1_1_fingerprint_recognition_1_1_core_1_1_i_resource_provider.html',1,'PatternRecognition::FingerprintRecognition::Core']]],
+  ['iresourceprovider_3c_20orientationimage_20_3e',['IResourceProvider&lt; OrientationImage &gt;',['../interface_pattern_recognition_1_1_fingerprint_recognition_1_1_core_1_1_i_resource_provider.html',1,'PatternRecognition::FingerprintRecognition::Core']]],
+  ['iresourceprovider_3c_20resourcetype_20_3e',['IResourceProvider&lt; ResourceType &gt;',['../interface_pattern_recognition_1_1_fingerprint_recognition_1_1_core_1_1_i_resource_provider.html',1,'PatternRecognition::FingerprintRecognition::Core']]],
+  ['iresourceprovider_3c_20skeletonimage_20_3e',['IResourceProvider&lt; SkeletonImage &gt;',['../interface_pattern_recognition_1_1_fingerprint_recognition_1_1_core_1_1_i_resource_provider.html',1,'PatternRecognition::FingerprintRecognition::Core']]],
+  ['irocbuilder',['IROCBuilder',['../interface_pattern_recognition_1_1_r_o_c_1_1_i_r_o_c_builder.html',1,'PatternRecognition::ROC']]],
+  ['isimilarity_2dg',['ISimilarity-g',['../interface_pattern_recognition_1_1_core_1_1_i_similarity-g.html',1,'PatternRecognition::Core']]]
+];

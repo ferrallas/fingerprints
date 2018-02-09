@@ -1,0 +1,4 @@
+var class_pattern_recognition_1_1_fingerprint_recognition_1_1_feature_representation_1_1_j_y_features =
+[
+    [ "Minutiae", "class_pattern_recognition_1_1_fingerprint_recognition_1_1_feature_representation_1_1_j_y_features.html#a511a5635e352b3ea29671db22bb936ea", null ]
+];

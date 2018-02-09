@@ -1,0 +1,8 @@
+var searchData=
+[
+  ['c',['C',['../struct_pattern_recognition_1_1_fingerprint_recognition_1_1_core_1_1_integer_triangle.html#a962c77fa03ac292134c92bbe68e2a0cb',1,'PatternRecognition::FingerprintRecognition::Core::IntegerTriangle']]],
+  ['compare',['Compare',['../interface_pattern_recognition_1_1_core_1_1_i_boolean_similarity-g.html#a38a83cfa22d1f4ad885c7090c086ee65',1,'PatternRecognition.Core.IBooleanSimilarity-g.Compare()'],['../interface_pattern_recognition_1_1_core_1_1_i_dissimilarity-g.html#aeb5898c764e1fb2da24439e8da22a5c4',1,'PatternRecognition.Core.IDissimilarity-g.Compare()'],['../interface_pattern_recognition_1_1_core_1_1_i_similarity-g.html#a1605c083140f4036517bdcfae699d065',1,'PatternRecognition.Core.ISimilarity-g.Compare()'],['../class_pattern_recognition_1_1_fingerprint_recognition_1_1_core_1_1_mtia_euclidean_distance.html#a1789371904ee13bfa21cac1b17876861',1,'PatternRecognition.FingerprintRecognition.Core.MtiaEuclideanDistance.Compare()']]],
+  ['converttobitmap',['ConvertToBitmap',['../class_pattern_recognition_1_1_fingerprint_recognition_1_1_core_1_1_skeleton_image.html#af1fbb2b2f494c63135195a22b802f1c3',1,'PatternRecognition::FingerprintRecognition::Core::SkeletonImage']]],
+  ['convolutionfilter',['ConvolutionFilter',['../class_image_processing_tools_1_1_convolution_filter.html#a07df919a825c2e56890227dbebd9a164',1,'ImageProcessingTools.ConvolutionFilter.ConvolutionFilter(int width, int height, int factor)'],['../class_image_processing_tools_1_1_convolution_filter.html#a8e392d752ef8c64d945c6d32de670b51',1,'ImageProcessingTools.ConvolutionFilter.ConvolutionFilter()']]],
+  ['convolutionfilter',['ConvolutionFilter',['../class_image_processing_tools_1_1_convolution_filter.html',1,'ImageProcessingTools']]]
+];
