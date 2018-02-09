@@ -8,6 +8,8 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Alea;
+using Alea.Parallel;
 using PatternRecognition.FingerprintRecognition.Core.Ratha1995;
 
 namespace PatternRecognition.FingerprintRecognition.Core.Medina2012

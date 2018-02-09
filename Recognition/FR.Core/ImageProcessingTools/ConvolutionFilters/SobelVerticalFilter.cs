@@ -21,13 +21,13 @@ namespace PatternRecognition.FingerprintRecognition.Core.ImageProcessingTools.Co
         }
 
 
-        public override int Height => 3;
+        protected override int Height => 3;
 
 
-        public override int Width => 3;
+        protected override int Width => 3;
 
 
-        public override int Factor => 1;
+        protected override int Factor => 1;
 
         #endregion
     }

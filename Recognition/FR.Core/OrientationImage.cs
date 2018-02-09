@@ -19,16 +19,6 @@ namespace PatternRecognition.FingerprintRecognition.Core
 
         #endregion
 
-
-        public OrientationImage(byte width, byte height, byte[,] orientations, byte wSize)
-        {
-            Width = width;
-            Height = height;
-            WindowSize = wSize;
-            this._orientations = orientations;
-        }
-
-
         public OrientationImage(byte width, byte height, byte wSize)
         {
             Width = width;
@@ -45,13 +35,13 @@ namespace PatternRecognition.FingerprintRecognition.Core
         }
 
 
-        public byte Width { set; get; }
+        public byte Width { get; }
 
 
-        public byte Height { set; get; }
+        public byte Height { get; }
 
 
-        public byte WindowSize { set; get; }
+        public byte WindowSize { get; }
 
 
         public double AngleInRadians(int row, int col)
@@ -72,30 +62,10 @@ namespace PatternRecognition.FingerprintRecognition.Core
             col = Convert.ToInt16(Math.Round((x - 1.0 * WindowSize / 2) / (1.0 * WindowSize)));
         }
 
-
-        public void GetPixelCoordFromBlock(int row, int col, out double x, out double y)
-        {
-            x = col * WindowSize + 1.0 * WindowSize / 2;
-            y = row * WindowSize + 1.0 * WindowSize / 2;
-        }
-
-
         public void GetPixelCoordFromBlock(int row, int col, out int x, out int y)
         {
             x = col * WindowSize + WindowSize / 2;
             y = row * WindowSize + WindowSize / 2;
-        }
-
-
-        public void GetBlockCoordFromIdx(int blockIdx, out int row, out int col)
-        {
-            row = Math.DivRem(blockIdx, Width, out col);
-        }
-
-
-        public int GetBlockIdxFromCoord(int row, int col)
-        {
-            return row * Width + col;
         }
     }
 }

@@ -61,13 +61,13 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
             for (var col = 0; col < orientationImage.Width; col++)
                 if (!orientationImage.IsNullBlock(row, col))
                 {
-                    int x, y;
-                    orientationImage.GetPixelCoordFromBlock(row, col, out x, out y);
+                        orientationImage.GetPixelCoordFromBlock(row, col, out int x, out int y);
 
                     var maxLength = orientationImage.WindowSize / 2;
                     for (var xi = x - maxLength; xi < x + maxLength; xi++)
                     for (var yi = y - maxLength; yi < y + maxLength; yi++)
                     {
+
                         var projection = GetProjection(orientationImage, row, col, xi, yi, matrix);
 
                         var smoothed = new int[orientationImage.WindowSize + 1];
@@ -97,22 +97,22 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
                         if (xi >= 0 && xi < matrix.Width && yi >= 0 && yi < matrix.Height)
                             newImg[yi, xi] = 255;
 
-                        if (xi > 0 && xi < matrix.Width - 1 && yi > 0 && yi < matrix.Height - 1 &&
-                            !(left == 255 && rigth == smoothed.Length - 1))
-                            if (smoothed[center] < smoothed[left] && smoothed[center] < smoothed[rigth])
-                                newImg[yi, xi] = 0;
-                            else if (rigth - left == 2 &&
-                                     (smoothed[left] < smoothed[left - 1] &&
-                                      smoothed[left] < smoothed[center] ||
-                                      smoothed[rigth] < smoothed[rigth + 1] &&
-                                      smoothed[rigth] < smoothed[center] ||
-                                      smoothed[center] < smoothed[left - 1] &&
-                                      smoothed[center] < smoothed[rigth + 1] ||
-                                      smoothed[center] < smoothed[left - 1] &&
-                                      smoothed[center] < smoothed[rigth] ||
-                                      smoothed[center] < smoothed[left] &&
-                                      smoothed[center] < smoothed[rigth + 1]))
-                                newImg[yi, xi] = 0;
+                        if (xi <= 0 || xi >= matrix.Width - 1 || yi <= 0 || yi >= matrix.Height - 1 ||
+                            left == 255 && rigth == smoothed.Length - 1) continue;
+                        if (smoothed[center] < smoothed[left] && smoothed[center] < smoothed[rigth])
+                            newImg[yi, xi] = 0;
+                        else if (rigth - left == 2 &&
+                                 (smoothed[left] < smoothed[left - 1] &&
+                                  smoothed[left] < smoothed[center] ||
+                                  smoothed[rigth] < smoothed[rigth + 1] &&
+                                  smoothed[rigth] < smoothed[center] ||
+                                  smoothed[center] < smoothed[left - 1] &&
+                                  smoothed[center] < smoothed[rigth + 1] ||
+                                  smoothed[center] < smoothed[left - 1] &&
+                                  smoothed[center] < smoothed[rigth] ||
+                                  smoothed[center] < smoothed[left] &&
+                                  smoothed[center] < smoothed[rigth + 1]))
+                            newImg[yi, xi] = 0;
                     }
                 }
             return newImg;
@@ -174,8 +174,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
                 for (var col = 0; col < orientationImage.Width; col++)
                     if (!orientationImage.IsNullBlock(row, col))
                     {
-                        int x, y;
-                        orientationImage.GetPixelCoordFromBlock(row, col, out x, out y);
+                            orientationImage.GetPixelCoordFromBlock(row, col, out int x, out int y);
 
                         var maxLength = orientationImage.WindowSize / 2;
                         for (var xi = x - maxLength; xi < x + maxLength; xi++)
@@ -231,9 +230,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
                     var orthogonalAngle2 = orthogonalAngle - Math.PI / 12;
                     cos[2] = Math.Cos(orthogonalAngle2);
                     sin[2] = Math.Sin(orthogonalAngle2);
-
-                    int x, y;
-                    orientationImage.GetPixelCoordFromBlock(row, col, out x, out y);
+                        orientationImage.GetPixelCoordFromBlock(row, col, out int x, out int y);
 
                     var maxLength = orientationImage.WindowSize / 2;
                     for (var xi = x - maxLength; xi < x + maxLength; xi++)
@@ -300,8 +297,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
                 for (var col = 0; col < orientationImage.Width; col++)
                     if (!orientationImage.IsNullBlock(row, col))
                     {
-                        int x, y;
-                        orientationImage.GetPixelCoordFromBlock(row, col, out x, out y);
+                            orientationImage.GetPixelCoordFromBlock(row, col, out int x, out int y);
 
                         var maxLength = orientationImage.WindowSize / 2;
                         for (var xi = x - maxLength; xi < x + maxLength; xi++)
@@ -340,8 +336,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
             for (var col = 0; col < orientationImage.Width; col++)
                 if (!orientationImage.IsNullBlock(row, col))
                 {
-                    int x, y;
-                    orientationImage.GetPixelCoordFromBlock(row, col, out x, out y);
+                        orientationImage.GetPixelCoordFromBlock(row, col, out int x, out int y);
 
                     var maxLength = orientationImage.WindowSize / 2;
                     for (var xi = x - maxLength; xi < x + maxLength; xi++)
@@ -350,9 +345,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Ratha1995
                         const int pThreshold = 10;
                         var xArr = new int[pThreshold + 1];
                         var yArr = new int[pThreshold + 1];
-
-                        int x0, y0;
-                        if (IsEnd(matrix, xi, yi, out x0, out y0))
+                                if (IsEnd(matrix, xi, yi, out int x0, out int y0))
                         {
                             xArr[0] = xi;
                             yArr[0] = yi;

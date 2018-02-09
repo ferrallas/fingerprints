@@ -29,40 +29,6 @@ namespace PatternRecognition.FingerprintRecognition.Core
                 _image[i, j] = img[Width * i + j];
         }
 
-
-        public SkeletonImage(byte[,] img, int width, int height)
-        {
-            Width = width;
-            Height = height;
-            _image = img;
-        }
-
-
-        public unsafe Bitmap ConvertToBitmap()
-        {
-            var bmp = new Bitmap(Width, Height, PixelFormat.Format8bppIndexed);
-            var cp = bmp.Palette;
-            for (var i = 1; i < 256; i++)
-                cp.Entries[i] = Color.FromArgb(i, i, i);
-            cp.Entries[0] = Color.Black;
-            bmp.Palette = cp;
-            var bmData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height),
-                ImageLockMode.ReadWrite, bmp.PixelFormat);
-
-            var p = (byte*) (void*) bmData.Scan0;
-            var b = 0;
-            var nOffset = bmData.Stride - bmp.Width;
-            for (var y = 0; y < bmp.Height; ++y)
-            {
-                Marshal.Copy(ConvertMatrixToArray(), b, (IntPtr) p, bmp.Width);
-                p += bmp.Width + nOffset;
-                b += bmp.Width;
-            }
-            bmp.UnlockBits(bmData);
-            return bmp;
-        }
-
-
         public byte RidgeCount(int x0, int y0, int x1, int y1)
         {
             byte count = 0;
@@ -93,29 +59,16 @@ namespace PatternRecognition.FingerprintRecognition.Core
             return count;
         }
 
-
-        public byte this[int row, int col] => _image[row, col];
-
-
-        public int Width { get; }
+        private int Width { get; }
 
 
-        public int Height { get; }
+        private int Height { get; }
 
         #endregion
 
         #region private
 
         private readonly byte[,] _image;
-
-        private byte[] ConvertMatrixToArray()
-        {
-            var img = new byte[Width * Height];
-            for (var i = 0; i < Height; i++)
-            for (var j = 0; j < Width; j++)
-                img[Width * i + j] = _image[i, j];
-            return img;
-        }
 
         private byte PixelEnviroment(Point p)
         {
@@ -132,12 +85,12 @@ namespace PatternRecognition.FingerprintRecognition.Core
             return 255;
         }
 
-        private List<Point> Bresenham(int x0, int y0, int x1, int y1)
+        private static List<Point> Bresenham(int x0, int y0, int x1, int y1)
         {
             var pixels = new List<Point>();
-            int x, y, dx, dy, p, incE, incNe, stepx, stepy;
-            dx = x1 - x0;
-            dy = y1 - y0;
+            int p, incE, incNe, stepx, stepy;
+            var dx = x1 - x0;
+            var dy = y1 - y0;
             if (dy < 0)
             {
                 dy = -dy;
@@ -156,8 +109,8 @@ namespace PatternRecognition.FingerprintRecognition.Core
             {
                 stepx = 1;
             }
-            x = x0;
-            y = y0;
+            var x = x0;
+            var y = y0;
             pixels.Add(new Point(x, y));
             if (dx > dy)
             {
