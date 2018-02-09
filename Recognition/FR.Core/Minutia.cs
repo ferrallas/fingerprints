@@ -153,8 +153,8 @@ namespace PatternRecognition.FingerprintRecognition.Core
         public MtiaMapper(Minutia query, Minutia template)
         {
             _dAngle = template.Angle - query.Angle;
-            this._template = template;
-            this._query = query;
+            _template = template;
+            _query = query;
         }
 
         public Minutia Map(Minutia m)
