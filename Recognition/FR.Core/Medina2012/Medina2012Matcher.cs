@@ -8,13 +8,11 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using Alea;
-using Alea.Parallel;
 using PatternRecognition.FingerprintRecognition.Core.Ratha1995;
 
 namespace PatternRecognition.FingerprintRecognition.Core.Medina2012
 {
-    public static class M3Gl
+    public static class Medina2012Matcher
     {
         private const double GaThr = Math.PI / 6;
 
@@ -22,13 +20,125 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2012
 
         private const int MtiaCountThr = 2;
 
-        public static MtripletsFeature Extract(Bitmap image)
+        private const byte NeighborsCount = 4;
+
+        public static void Store(IStoreProvider<MtripletsFeature> storage, Bitmap bitmap, string subjectId)
         {
-            var mtiae = MinutiaeExtractor.ExtractFeatures(image);
-            return MTripletsExtractor.ExtractFeatures(mtiae);
+            var extract = Extract(ImageProvider.AdaptImage(bitmap));
+
+            storage.Add(new Candidate<MtripletsFeature>
+            {
+                EntryId = subjectId,
+                Feauture = extract
+            });
         }
 
-        public static double Match(MtripletsFeature query, MtripletsFeature template, out List<MinutiaPair> matchingMtiae)
+        public static IEnumerable<Match> Match(IStoreProvider<MtripletsFeature> storage, Bitmap bitmap, string subjectId = null)
+        {
+            var extract = Extract(ImageProvider.AdaptImage(bitmap));
+
+            if (subjectId != null)
+            {
+                storage.Add(new Candidate<MtripletsFeature>
+                {
+                    EntryId = subjectId,
+                    Feauture = extract
+                });
+            }
+
+            var list = new List<Match>();
+            foreach (var candidate in storage.Candidates)
+            {
+                var score = Match(extract, candidate.Feauture, out var matchingMtiae);
+
+                if (Math.Abs(score) < double.Epsilon || matchingMtiae == null)
+                    continue;
+
+                if (matchingMtiae.Count > 10)
+                    list.Add(new Match
+                    {
+                        Confidence = score,
+                        EntryId = candidate.EntryId,
+                        MatchingPoints = matchingMtiae.Count
+                    });
+            }
+
+            return list;
+        }
+
+        private static MtripletsFeature Extract(Bitmap image)
+        {
+            var minutiae = MinutiaeExtractor.ExtractFeatures(image);
+            var result = new List<MTriplet>();
+            var triplets = new Dictionary<int, int>();
+
+            var nearest = new short[minutiae.Count, NeighborsCount];
+            var distance = new double[minutiae.Count, NeighborsCount];
+
+            // Initializing distances
+            for (var i = 0; i < minutiae.Count; i++)
+            for (var j = 0; j < NeighborsCount; j++)
+            {
+                distance[i, j] = double.MaxValue;
+                nearest[i, j] = -1;
+            }
+
+            // Computing m-triplets
+            for (short i = 0; i < minutiae.Count; i++)
+            {
+                // Updating nearest minutiae
+                UpdateNearest(minutiae, i, nearest, distance);
+
+                // Building m-triplets
+                for (var j = 0; j < NeighborsCount - 1; j++)
+                for (var k = j + 1; k < NeighborsCount; k++)
+                    if (nearest[i, j] != -1 && nearest[i, k] != -1)
+                    {
+                        if (i == nearest[i, j] || i == nearest[i, k] || nearest[i, j] == nearest[i, k])
+                            throw new Exception("Wrong mtp");
+
+                        var newMTriplet = new MTriplet(new[] { i, nearest[i, j], nearest[i, k] }, minutiae);
+                        var newHash = newMTriplet.GetHashCode();
+                        if (!triplets.ContainsKey(newHash))
+                        {
+                            triplets.Add(newHash, 0);
+                            result.Add(newMTriplet);
+                        }
+                    }
+            }
+            result.TrimExcess();
+            return new MtripletsFeature(result, minutiae);
+        }
+
+        private static void UpdateNearest(IList<Minutia> minutiae, int idx, short[,] nearest, double[,] distance)
+        {
+            for (var i = idx + 1; i < minutiae.Count; i++)
+            {
+                var dValue = MtiaEuclideanDistance.Compare(minutiae[idx], minutiae[i]);
+
+                var maxIdx = 0;
+                for (var j = 1; j < NeighborsCount; j++)
+                    if (distance[idx, j] > distance[idx, maxIdx])
+                        maxIdx = j;
+                if (dValue < distance[idx, maxIdx])
+                {
+                    distance[idx, maxIdx] = dValue;
+                    nearest[idx, maxIdx] = Convert.ToInt16(i);
+                }
+
+                maxIdx = 0;
+                for (var j = 1; j < NeighborsCount; j++)
+                    if (distance[i, j] > distance[i, maxIdx])
+                        maxIdx = j;
+                if (dValue < distance[i, maxIdx])
+                {
+                    distance[i, maxIdx] = dValue;
+                    nearest[i, maxIdx] = Convert.ToInt16(idx);
+                }
+            }
+        }
+
+        private static double Match(MtripletsFeature query, MtripletsFeature template, out List<MinutiaPair> matchingMtiae)
         {
             matchingMtiae = new List<MinutiaPair>();
             if (query.Minutiae.Count < MtiaCountThr || template.Minutiae.Count < MtiaCountThr)

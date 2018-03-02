@@ -13,8 +13,8 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
     {
         public static JyFeatures Extract(byte[] imageRaw)
         {
-            var mtiae = MinutiaeExtractor.ExtractFeatures(ImageProvider.GetResource(imageRaw));
-            var skeletonImg = SkeletonImageExtractor.ExtractFeatures(ImageProvider.GetResource(imageRaw));
+            var mtiae = MinutiaeExtractor.ExtractFeatures(ImageProvider.AdaptImage(imageRaw));
+            var skeletonImg = SkeletonImageExtractor.ExtractFeatures(ImageProvider.AdaptImage(imageRaw));
 
             return JyFeatureExtractor.ExtractFeatures(mtiae, skeletonImg);
         }

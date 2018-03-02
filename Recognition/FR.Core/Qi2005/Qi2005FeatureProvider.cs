@@ -11,12 +11,13 @@ namespace PatternRecognition.FingerprintRecognition.Core.Qi2005
 {
     public class Qi2005FeatureProvider
     {
-        public OrientationImageProvider OrImgProvider { get; set; }
+        private readonly Ratha1995OrImgExtractor _orientationImageExtractor = new Ratha1995OrImgExtractor();
 
-        public Qi2005Features Extract(byte[] image)
+        public Qi2005Features Extract(byte[] rawImage)
         {
-            var mtiae = MinutiaeExtractor.ExtractFeatures(ImageProvider.GetResource(image));
-            var dirImg = OrImgProvider.Extract(image);
+            var image = ImageProvider.AdaptImage(rawImage);
+            var mtiae = MinutiaeExtractor.ExtractFeatures(image);
+            var dirImg = _orientationImageExtractor.ExtractFeatures(image);
 
             return Qi2005FeatureExtractor.ExtractFeatures(mtiae, dirImg);
         }

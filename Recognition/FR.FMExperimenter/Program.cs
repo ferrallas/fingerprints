@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using PatternRecognition.FingerprintRecognition.Core;
 using PatternRecognition.FingerprintRecognition.Core.Medina2012;
 
@@ -17,26 +15,18 @@ namespace PatternRecognition.FingerprintRecognition.Applications
         [STAThread]
         static void Main()
         {
-            var candidate = ImageProvider.GetResource(File.ReadAllBytes(@"D:\IMPRONTE\101_1.tif"));
+            var fs = new FileSystemStorage();
 
-            var qFeatures = M3Gl.Extract(candidate);
-
-            var ss = Directory.GetFiles(@"D:\IMPRONTE", "*.tif")
-                .Select(File.ReadAllBytes)
-                .ToArray();
-
-
-            foreach (var tFeatures in ss)
+            foreach (var f in Directory.GetFiles(@"D:\IMPRONTE","*tif"))
             {
+                Medina2012Matcher.Store(fs, new Bitmap(f), Path.GetFileNameWithoutExtension(f));
+            }
 
-                var feat = M3Gl.Extract(ImageProvider.GetResource(File.ReadAllBytes(@"D:\IMPRONTE\101_1.tif")));
-                var score = M3Gl.Match(qFeatures, feat, out List<MinutiaPair> matchingMtiae);
+            var matches = Medina2012Matcher.Match(fs, new Bitmap(@"D:\IMPRONTE\101_1.tif"));
 
-                if (Math.Abs(score) < double.Epsilon || matchingMtiae == null)
-                    continue;
-
-                if(matchingMtiae.Count > 10) 
-                    Console.WriteLine($"{tFeatures} confidence:{score*100}% {matchingMtiae.Count}");
+            foreach (var m in matches)
+            {
+                Console.WriteLine($"{m.EntryId},");
             }
         }
     }

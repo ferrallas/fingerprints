@@ -13,7 +13,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Parziale2004
     {
         public static PnFeatures Extract(byte[] image)
         {
-            var mtiae = MinutiaeExtractor.ExtractFeatures(ImageProvider.GetResource(image));
+            var mtiae = MinutiaeExtractor.ExtractFeatures(ImageProvider.AdaptImage(image));
             return PnFeatureExtractor.ExtractFeatures(mtiae);
         }
     }

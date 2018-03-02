@@ -75,12 +75,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Algorithm.cs" />
     <Compile Include="Angle.cs" />
+    <Compile Include="Candidate.cs" />
     <Compile Include="ImageProcessingTools\ConvolutionFilter.cs" />
     <Compile Include="ImageProcessingTools\ConvolutionFilters\GaussianBlur.cs" />
     <Compile Include="ImageProcessingTools\ConvolutionFilters\SobelHorizontalFilter.cs" />
     <Compile Include="ImageProcessingTools\ConvolutionFilters\SobelVerticalFilter.cs" />
     <Compile Include="ImageProcessingTools\ImageMatrix.cs" />
+    <Compile Include="IStoreProvider.cs" />
     <Compile Include="Jiang2000\JY.cs" />
     <Compile Include="Jiang2000\JYFeatureExtractor.cs" />
     <Compile Include="Jiang2000\JYFeatures.cs" />
@@ -88,17 +91,19 @@
     <Compile Include="Jiang2000\JYMtiaDescriptor.cs" />
     <Compile Include="Jiang2000\JyTriplet.cs" />
     <Compile Include="Jiang2000\MJY.cs" />
-    <Compile Include="Medina2011\DalaunayMTpsExtractor.cs" />
+    <Compile Include="Match.cs" />
     <Compile Include="Medina2011\DelaunayMtpsProvider.cs" />
-    <Compile Include="Medina2011\MPN.cs" />
+    <Compile Include="Medina2011\Medina2011Matcher.cs" />
     <Compile Include="Medina2011\MTriplet.cs" />
+    <Compile Include="Medina2011\MtripletPair.cs" />
     <Compile Include="Medina2011\MTripletsFeature.cs" />
-    <Compile Include="Medina2012\M3gl.cs" />
+    <Compile Include="Medina2012\Medina2012Matcher.cs" />
     <Compile Include="Medina2012\MTriplet.cs" />
     <Compile Include="Medina2012\MtripletPair.cs" />
-    <Compile Include="Medina2012\MTripletsExtractor.cs" />
     <Compile Include="Medina2012\MTripletsFeature.cs" />
     <Compile Include="MinutiaMapper.cs" />
+    <Compile Include="MinutiaPair.cs" />
+    <Compile Include="MtiaMapper.cs" />
     <Compile Include="Parziale2004\MtiaTriplet.cs" />
     <Compile Include="Parziale2004\PN.cs" />
     <Compile Include="Parziale2004\PNFeatureExtractor.cs" />
@@ -124,7 +129,6 @@
     <Compile Include="OrientationImage.cs" />
     <Compile Include="Minutia.cs" />
     <Compile Include="MtiaEuclideanDistance.cs" />
-    <Compile Include="OrientationImageProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SkeletonImage.cs" />
     <Compile Include="Tico2003\TicoMatcher.cs" />

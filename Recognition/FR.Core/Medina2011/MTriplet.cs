@@ -13,13 +13,35 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2011
     [Serializable]
     internal class MTriplet
     {
-        #region Public
+        public List<Minutia> Minutiae { get; set; }
 
-        public Minutia this[int i] => _minutiae[MtiaIdxs[i]];
+        public double[] D { get; set; } = new double[3];
+
+        public byte[] SortedDistIdxs { get; set; } = { 0, 1, 2 };
+
+        public double MaxBeta { get; set; }
+
+        public short[] MtiaIdxs { get; set; } = new short[3];
+
+        [NonSerialized]
+        public static readonly byte[][] Orders =
+        {
+            new[] {(byte) 0, (byte) 1, (byte) 2},
+            new[] {(byte) 1, (byte) 2, (byte) 0},
+            new[] {(byte) 2, (byte) 0, (byte) 1}
+        };
+
+        [NonSerialized] private const double AThr = Math.PI / 6;
+
+        [NonSerialized] private const double DThr = 12;
+
+        public Minutia this[int i] => Minutiae[MtiaIdxs[i]];
+
+        public MTriplet() { }
 
         public MTriplet(short[] mIdxs, List<Minutia> minutiae)
         {
-            this._minutiae = minutiae;
+            this.Minutiae = minutiae;
 
             MtiaIdxs = ArrangeClockwise(mIdxs, minutiae);
 
@@ -29,43 +51,29 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2011
             mtiaArr[2] = minutiae[MtiaIdxs[2]];
 
             // Computing distances and maxBeta angle
-            _d[0] = MtiaEuclideanDistance.Compare(mtiaArr[0], mtiaArr[1]);
-            _d[1] = MtiaEuclideanDistance.Compare(mtiaArr[1], mtiaArr[2]);
-            _d[2] = MtiaEuclideanDistance.Compare(mtiaArr[0], mtiaArr[2]);
-            _maxBeta = double.MinValue;
+            D[0] = MtiaEuclideanDistance.Compare(mtiaArr[0], mtiaArr[1]);
+            D[1] = MtiaEuclideanDistance.Compare(mtiaArr[1], mtiaArr[2]);
+            D[2] = MtiaEuclideanDistance.Compare(mtiaArr[0], mtiaArr[2]);
+            MaxBeta = double.MinValue;
             for (byte i = 0; i < 2; i++)
             for (var j = (byte) (i + 1); j < 3; j++)
             {
-                if (_d[_sortedDistIdxs[i]] > _d[_sortedDistIdxs[j]])
+                if (D[SortedDistIdxs[i]] > D[SortedDistIdxs[j]])
                 {
-                    var temp = _sortedDistIdxs[i];
-                    _sortedDistIdxs[i] = _sortedDistIdxs[j];
-                    _sortedDistIdxs[j] = temp;
+                    var temp = SortedDistIdxs[i];
+                    SortedDistIdxs[i] = SortedDistIdxs[j];
+                    SortedDistIdxs[j] = temp;
                 }
                 var currBeta = Angle.DifferencePi(mtiaArr[i].Angle, mtiaArr[j].Angle);
-                _maxBeta = Math.Max(_maxBeta, Math.Max(currBeta, currBeta));
+                MaxBeta = Math.Max(MaxBeta, Math.Max(currBeta, currBeta));
             }
         }
 
-        public static double DistanceThreshold
-        {
-            get => _dThr;
-            set => _dThr = value;
-        }
+        private double MinDistance => D[SortedDistIdxs[0]];
 
-        public static double AngleThreshold
-        {
-            get => _aThr;
-            set => _aThr = value;
-        }
+        private double MidDistance => D[SortedDistIdxs[1]];
 
-        public double MinDistance => _d[_sortedDistIdxs[0]];
-
-        public double MidDistance => _d[_sortedDistIdxs[1]];
-
-        public double MaxDistance => _d[_sortedDistIdxs[2]];
-
-        public short[] MtiaIdxs { get; } = new short[3];
+        private double MaxDistance => D[SortedDistIdxs[2]];
 
         public override int GetHashCode()
         {
@@ -84,8 +92,8 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2011
         {
             byte[] matchOrder = null;
             double maxSimil = 0;
-            if (Math.Abs(MaxDistance - target.MaxDistance) < _dThr &&
-                Math.Abs(MidDistance - target.MidDistance) < _dThr && Math.Abs(MinDistance - target.MinDistance) < _dThr)
+            if (Math.Abs(MaxDistance - target.MaxDistance) < DThr &&
+                Math.Abs(MidDistance - target.MidDistance) < DThr && Math.Abs(MinDistance - target.MinDistance) < DThr)
                 foreach (var order in Orders)
                 {
                     var dirSim = MatchMtiaDirections(target, order);
@@ -116,22 +124,21 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2011
             return maxSimil;
         }
 
-        #endregion
 
         #region private methods
 
         private double MatchDistances(MTriplet compareTo, byte[] order)
         {
-            var diff0 = Math.Abs(_d[0] - compareTo._d[order[0]]);
-            if (diff0 > _dThr)
+            var diff0 = Math.Abs(D[0] - compareTo.D[order[0]]);
+            if (diff0 > DThr)
                 return 0;
-            var diff1 = Math.Abs(_d[1] - compareTo._d[order[1]]);
-            if (diff1 > _dThr)
+            var diff1 = Math.Abs(D[1] - compareTo.D[order[1]]);
+            if (diff1 > DThr)
                 return 0;
-            var diff2 = Math.Abs(_d[2] - compareTo._d[order[2]]);
-            if (diff2 > _dThr)
+            var diff2 = Math.Abs(D[2] - compareTo.D[order[2]]);
+            if (diff2 > DThr)
                 return 0;
-            return 1 - Math.Max(diff0, Math.Max(diff1, diff2)) / _dThr;
+            return 1 - Math.Max(diff0, Math.Max(diff1, diff2)) / DThr;
         }
 
         private double MatchBetaAngles(MTriplet compareTo, byte[] order)
@@ -141,22 +148,22 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2011
             for (var i = 0; i < 3; i++)
             {
                 var j = idxArr[i + 1];
-                var qMtiai = _minutiae[MtiaIdxs[i]];
-                var qMtiaj = _minutiae[MtiaIdxs[j]];
+                var qMtiai = Minutiae[MtiaIdxs[i]];
+                var qMtiaj = Minutiae[MtiaIdxs[j]];
                 var qbeta = Angle.Difference2Pi(qMtiai.Angle, qMtiaj.Angle);
 
-                var tMtiai = compareTo._minutiae[compareTo.MtiaIdxs[order[i]]];
-                var tMtiaj = compareTo._minutiae[compareTo.MtiaIdxs[order[j]]];
+                var tMtiai = compareTo.Minutiae[compareTo.MtiaIdxs[order[i]]];
+                var tMtiaj = compareTo.Minutiae[compareTo.MtiaIdxs[order[j]]];
                 var tbeta = Angle.Difference2Pi(tMtiai.Angle, tMtiaj.Angle);
 
                 var diff = Angle.DifferencePi(qbeta, tbeta);
-                if (diff >= _aThr)
+                if (diff >= AThr)
                     return 0;
                 if (diff > maxdiff)
                     maxdiff = diff;
             }
 
-            return 1 - maxdiff / _aThr;
+            return 1 - maxdiff / AThr;
         }
 
         private double MatchMtiaDirections(MTriplet compareTo, byte[] order)
@@ -164,8 +171,8 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2011
             double maxdiff = 0;
             for (var i = 0; i < 3; i++)
             {
-                var qMtiai = _minutiae[MtiaIdxs[i]];
-                var tMtiai = compareTo._minutiae[compareTo.MtiaIdxs[order[i]]];
+                var qMtiai = Minutiae[MtiaIdxs[i]];
+                var tMtiai = compareTo.Minutiae[compareTo.MtiaIdxs[order[i]]];
                 var diff = Angle.DifferencePi(qMtiai.Angle, tMtiai.Angle);
                 if (diff >= Math.PI / 4)
                     return 0;
@@ -183,28 +190,28 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2011
             for (var j = 0; j < 3; j++)
                 if (i != j)
                 {
-                    var qMtiai = _minutiae[MtiaIdxs[i]];
-                    var qMtiaj = _minutiae[MtiaIdxs[j]];
+                    var qMtiai = Minutiae[MtiaIdxs[i]];
+                    var qMtiaj = Minutiae[MtiaIdxs[j]];
                     double x = qMtiai.X - qMtiaj.X;
                     double y = qMtiai.Y - qMtiaj.Y;
                     var angleij = Angle.ComputeAngle(x, y);
                     var qAlpha = Angle.Difference2Pi(qMtiai.Angle, angleij);
 
-                    var tMtiai = compareTo._minutiae[compareTo.MtiaIdxs[order[i]]];
-                    var tMtiaj = compareTo._minutiae[compareTo.MtiaIdxs[order[j]]];
+                    var tMtiai = compareTo.Minutiae[compareTo.MtiaIdxs[order[i]]];
+                    var tMtiaj = compareTo.Minutiae[compareTo.MtiaIdxs[order[j]]];
                     x = tMtiai.X - tMtiaj.X;
                     y = tMtiai.Y - tMtiaj.Y;
                     angleij = Angle.ComputeAngle(x, y);
                     var tAlpha = Angle.Difference2Pi(tMtiai.Angle, angleij);
 
                     var diff = Angle.DifferencePi(qAlpha, tAlpha);
-                    if (diff >= _aThr)
+                    if (diff >= AThr)
                         return 0;
                     if (diff > maxdiff)
                         maxdiff = diff;
                 }
 
-            return 1 - maxdiff / _aThr;
+            return 1 - maxdiff / AThr;
         }
 
         private class DoubleComparer : IComparer<double>
@@ -231,29 +238,6 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2011
             }
             return new[] {list.Values[0], list.Values[1], list.Values[2]};
         }
-
-        #endregion
-
-        #region private fields
-
-        private readonly List<Minutia> _minutiae;
-
-        private readonly double[] _d = new double[3];
-
-        private readonly byte[] _sortedDistIdxs = {0, 1, 2};
-
-        private readonly double _maxBeta;
-
-        [NonSerialized] public static readonly byte[][] Orders =
-        {
-            new[] {(byte) 0, (byte) 1, (byte) 2},
-            new[] {(byte) 1, (byte) 2, (byte) 0},
-            new[] {(byte) 2, (byte) 0, (byte) 1}
-        };
-
-        [NonSerialized] private static double _aThr = Math.PI / 6;
-
-        [NonSerialized] private static double _dThr = 12;
 
         #endregion
     }

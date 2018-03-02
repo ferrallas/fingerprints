@@ -11,14 +11,14 @@ namespace PatternRecognition.FingerprintRecognition.Core.Tico2003
 {
     public class Tico2003FeatureProvider 
     {
+        private readonly Ratha1995OrImgExtractor _orientationImageExtractor = new Ratha1995OrImgExtractor();
         private readonly Tico2003FeatureExtractor _featureExtractor = new Tico2003FeatureExtractor();
 
-        public OrientationImageProvider OrImgProvider { get; set; }
-
-        public Tico2003Features Extract(byte[] image)
+        public Tico2003Features Extract(byte[] rawImage)
         {
-            var mtiae = MinutiaeExtractor.ExtractFeatures(ImageProvider.GetResource(image));
-            var dirImg = OrImgProvider.Extract(image);
+            var image = ImageProvider.AdaptImage(rawImage);
+            var mtiae = MinutiaeExtractor.ExtractFeatures(image);
+            var dirImg = _orientationImageExtractor.ExtractFeatures(image);
 
             return _featureExtractor.ExtractFeatures(mtiae, dirImg);
         }

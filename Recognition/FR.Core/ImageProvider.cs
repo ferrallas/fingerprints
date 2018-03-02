@@ -12,10 +12,13 @@ namespace PatternRecognition.FingerprintRecognition.Core
 {
     public static class ImageProvider
     {
-        public static Bitmap GetResource(byte[] rawImage)
+        public static Bitmap AdaptImage(byte[] rawImage)
         {
-            var srcBitmap = Image.FromStream(new MemoryStream(rawImage)) as Bitmap;
+            return AdaptImage(Image.FromStream(new MemoryStream(rawImage)) as Bitmap);
+        }
 
+        public static Bitmap AdaptImage(Bitmap srcBitmap)
+        {
             if (srcBitmap == null)
                 return null;
             Bitmap returnBitmap;

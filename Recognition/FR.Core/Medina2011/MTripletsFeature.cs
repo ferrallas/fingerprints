@@ -10,15 +10,6 @@ using System.Collections.Generic;
 
 namespace PatternRecognition.FingerprintRecognition.Core.Medina2011
 {
-    internal class MtripletPair
-    {
-        public double MatchingValue;
-        public MTriplet QueryMTp;
-        public byte[] TemplateMtiaOrder;
-        public MTriplet TemplateMTp;
-    }
-
-
     [Serializable]
     public class MtripletsFeature
     {
@@ -39,9 +30,8 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2011
             for (var j = 0; j < MTriplets.Count; j++)
             {
                 var currMTp = MTriplets[j];
-                byte[] currOrder;
 
-                var currSim = queryMTp.Match(currMTp, out currOrder);
+                var currSim = queryMTp.Match(currMTp, out var currOrder);
 
                 if (currSim > 0)
                     result.Add(new MtripletPair

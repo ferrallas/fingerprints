@@ -12,7 +12,11 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2012
     [Serializable]
     public class MtripletsFeature
     {
-        #region public
+        public List<MTriplet> MTriplets { get; set; }
+
+        public List<Minutia> Minutiae { get; set; }
+
+        public MtripletsFeature() { }
 
         internal MtripletsFeature(List<MTriplet> mtList, List<Minutia> mtiaList)
         {
@@ -46,8 +50,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2012
             for (var j = iniIdx; j < MTriplets.Count && MTriplets[j].MaxDistance <= d; j++)
             {
                 var currMTp = MTriplets[j];
-                byte[] currOrder;
-                var currSim = queryMTp.NoRotateMatch(currMTp, out currOrder);
+                var currSim = queryMTp.NoRotateMatch(currMTp, out var currOrder);
                 if (currSim > 0)
                     result.Add(new MtripletPair
                         {
@@ -60,12 +63,6 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2012
             }
             return result.Count > 0 ? result : null;
         }
-
-        internal List<MTriplet> MTriplets { get; }
-
-        public List<Minutia> Minutiae { get; }
-
-        #endregion
 
         #region private
 

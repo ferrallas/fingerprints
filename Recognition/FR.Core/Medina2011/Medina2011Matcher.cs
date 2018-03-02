@@ -6,16 +6,89 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using PatternRecognition.FingerprintRecognition.Core.Ratha1995;
 
 namespace PatternRecognition.FingerprintRecognition.Core.Medina2011
 {
-    public class Mpn
+    public static class Medina2011Matcher
     {
         private const int GlobalDistThr  = 12;
 
-        private readonly double _gaThr = Math.PI / 6;
+        private const double GaThr = Math.PI / 6;
 
-        public double Match(MtripletsFeature query, MtripletsFeature template, out List<MinutiaPair> matchingMtiae)
+        public static void Store(IStoreProvider<MtripletsFeature> storage, Bitmap bitmap, string subjectId)
+        {
+            var extract = Extract(ImageProvider.AdaptImage(bitmap));
+
+            storage.Add(new Candidate<MtripletsFeature>
+            {
+                EntryId = subjectId,
+                Feauture = extract
+            });
+        }
+
+        public static IEnumerable<Match> Match(IStoreProvider<MtripletsFeature> storage, Bitmap bitmap, string subjectId = null)
+        {
+            var extract = Extract(ImageProvider.AdaptImage(bitmap));
+
+            if (subjectId != null)
+            {
+                storage.Add(new Candidate<MtripletsFeature>
+                {
+                    EntryId = subjectId,
+                    Feauture = extract
+                });
+            }
+
+            var list = new List<Match>();
+            foreach (var candidate in storage.Candidates)
+            {
+                var score = Match(extract, candidate.Feauture, out var matchingMtiae);
+
+                if (Math.Abs(score) < double.Epsilon || matchingMtiae == null)
+                    continue;
+
+                if (matchingMtiae.Count > 10)
+                    list.Add(new Match
+                    {
+                        Confidence = score,
+                        EntryId = candidate.EntryId,
+                        MatchingPoints = matchingMtiae.Count
+                    });
+            }
+
+            return list;
+        }
+
+        private static MtripletsFeature Extract(Bitmap image)
+        {
+            var minutiae = MinutiaeExtractor.ExtractFeatures(ImageProvider.AdaptImage(image));
+            var mtriplets = new List<MTriplet>();
+            var triplets = new Dictionary<int, int>();
+
+            foreach (var triangle in Delaunay2D.Triangulate(minutiae))
+            {
+                var idxArr = new[]
+                {
+                    (short) triangle.A,
+                    (short) triangle.B,
+                    (short) triangle.C
+                };
+                var newMTriplet = new MTriplet(idxArr, minutiae);
+                var newHash = newMTriplet.GetHashCode();
+                if (!triplets.ContainsKey(newHash))
+                {
+                    triplets.Add(newHash, 0);
+                    mtriplets.Add(newMTriplet);
+                }
+            }
+
+            mtriplets.TrimExcess();
+            return new MtripletsFeature(mtriplets, minutiae);
+        }
+
+        private static double Match(MtripletsFeature query, MtripletsFeature template, out List<MinutiaPair> matchingMtiae)
         {
             matchingMtiae = new List<MinutiaPair>();
             IList<MtripletPair> matchingTriplets = GetMatchingTriplets(query, template);
@@ -51,7 +124,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2011
             return 100 * Math.Sqrt(1.0 * max * max / (query.Minutiae.Count * template.Minutiae.Count));
         }
 
-        private List<MtripletPair> GetMatchingTriplets(MtripletsFeature t1, MtripletsFeature t2)
+        private static List<MtripletPair> GetMatchingTriplets(MtripletsFeature t1, MtripletsFeature t2)
         {
             var mostSimilar = new List<MtripletPair>();
             foreach (var queryTriplet in t1.MTriplets)
@@ -64,7 +137,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2011
             return mostSimilar;
         }
 
-        private List<MinutiaPair> GetReferenceMtiae(IList<MtripletPair> matchingTriplets)
+        private static List<MinutiaPair> GetReferenceMtiae(ICollection<MtripletPair> matchingTriplets)
         {
             var pairs = new List<MinutiaPair>();
             var matches = new Dictionary<MinutiaPair, byte>(60);
@@ -109,7 +182,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2011
             return pairs;
         }
 
-        private List<MinutiaPair> GetGlobalMatchingMtiae(List<MinutiaPair> localMatchingPairs, MinutiaPair refMtiaPair,
+        private static List<MinutiaPair> GetGlobalMatchingMtiae(IReadOnlyList<MinutiaPair> localMatchingPairs, MinutiaPair refMtiaPair,
             ref int notMatchingCount)
         {
             var globalMatchingMtiae = new List<MinutiaPair>(localMatchingPairs.Count);
@@ -148,9 +221,9 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2011
             return null;
         }
 
-        private bool MatchDirections(Minutia query, Minutia template)
+        private static bool MatchDirections(Minutia query, Minutia template)
         {
-            return Angle.DifferencePi(query.Angle, template.Angle) <= _gaThr;
+            return Angle.DifferencePi(query.Angle, template.Angle) <= GaThr;
         }
     }
 }
