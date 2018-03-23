@@ -1,4 +1,0 @@
-var class_pattern_recognition_1_1_fingerprint_recognition_1_1_feature_extractors_1_1_ratha1995_minutiae_extractor =
-[
-    [ "ExtractFeatures", "class_pattern_recognition_1_1_fingerprint_recognition_1_1_feature_extractors_1_1_ratha1995_minutiae_extractor.html#a16e24f4e5faed2719c42816e912dbeee", null ]
-];

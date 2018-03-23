@@ -38,3 +38,8 @@
 /Algortims/Fingerprints.Medina2012/obj
 /Fingerprints/bin/Debug/netcoreapp2.0
 /Fingerprints/bin/Release/netcoreapp2.0
+/Fingerprints.Run/obj
+/Fingerprints.Run/bin
+/Fingerprints/obj
+/Fingerprints/obj
+/.vs/Fingerprints/v15/*.suo
