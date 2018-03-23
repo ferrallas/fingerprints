@@ -47,6 +47,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.ImageProcessingTools
                 var value = 1.0 * sum / Factor;
                 newImg[row, col] = Convert.ToInt32(Math.Round(value));
             }
+
             return newImg;
         }
     }

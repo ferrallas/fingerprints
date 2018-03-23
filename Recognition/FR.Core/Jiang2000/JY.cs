@@ -13,7 +13,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Jiang2000
     {
         private double _gAngThr = Math.PI / 6;
 
-        public int GlobalDistThr { get; set; } = 8;
+        private int GlobalDistThr { get; set; } = 8;
 
 
         public double GlobalAngleThr

@@ -14,9 +14,9 @@ namespace PatternRecognition.FingerprintRecognition.Core.Tico2003
     [Serializable]
     public class Tico2003Features
     {
-        internal List<ObMtiaDescriptor> Minutiae;
+        internal readonly List<ObMtiaDescriptor> Minutiae;
 
-        internal Tico2003Features(List<Minutia> minutiae, OrientationImage dImg)
+        internal Tico2003Features(IReadOnlyList<Minutia> minutiae, OrientationImage dImg)
         {
             Minutiae = new List<ObMtiaDescriptor>(minutiae.Count);
             for (short i = 0; i < minutiae.Count; i++)

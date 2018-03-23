@@ -294,7 +294,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2012
 
             public int Compare(MtripletPair x, MtripletPair y)
             {
-                return x.MatchingValue == y.MatchingValue ? 0 : x.MatchingValue < y.MatchingValue ? 1 : -1;
+                return y != null && (x != null && Math.Abs(x.MatchingValue - y.MatchingValue) < double.Epsilon) ? 0 : x != null && x.MatchingValue < y.MatchingValue ? 1 : -1;
             }
         }
     }

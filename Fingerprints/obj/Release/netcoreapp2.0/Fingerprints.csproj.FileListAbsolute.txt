@@ -1,0 +1,9 @@
+D:\Maddalena\Fingerprints\Fingerprints\bin\Release\netcoreapp2.0\Fingerprints.deps.json
+D:\Maddalena\Fingerprints\Fingerprints\bin\Release\netcoreapp2.0\Fingerprints.dll
+D:\Maddalena\Fingerprints\Fingerprints\bin\Release\netcoreapp2.0\Fingerprints.pdb
+D:\Maddalena\Fingerprints\Fingerprints\obj\Release\netcoreapp2.0\Fingerprints.csprojResolveAssemblyReference.cache
+D:\Maddalena\Fingerprints\Fingerprints\obj\Release\netcoreapp2.0\Fingerprints.csproj.CoreCompileInputs.cache
+D:\Maddalena\Fingerprints\Fingerprints\obj\Release\netcoreapp2.0\Fingerprints.AssemblyInfoInputs.cache
+D:\Maddalena\Fingerprints\Fingerprints\obj\Release\netcoreapp2.0\Fingerprints.AssemblyInfo.cs
+D:\Maddalena\Fingerprints\Fingerprints\obj\Release\netcoreapp2.0\Fingerprints.dll
+D:\Maddalena\Fingerprints\Fingerprints\obj\Release\netcoreapp2.0\Fingerprints.pdb

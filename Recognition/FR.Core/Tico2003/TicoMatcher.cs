@@ -35,10 +35,10 @@ namespace PatternRecognition.FingerprintRecognition.Core.Tico2003
             var max = 0;
             var notMatchingCount = int.MaxValue;
 
-            for (var i = 0; i < localMatchingMtiae.Count; i++)
+            foreach (var minutia in localMatchingMtiae)
             {
                 var currMatchingMtiae =
-                    GetGlobalMatchingMtiae(localMatchingMtiae, localMatchingMtiae[i], ref notMatchingCount);
+                    GetGlobalMatchingMtiae(localMatchingMtiae, minutia, ref notMatchingCount);
                 if (currMatchingMtiae != null && currMatchingMtiae.Count > max)
                 {
                     max = currMatchingMtiae.Count;

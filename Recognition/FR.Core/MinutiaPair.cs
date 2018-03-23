@@ -29,9 +29,7 @@ namespace PatternRecognition.FingerprintRecognition.Core
         {
             if (!ReferenceEquals(null, mp1))
                 return mp1.Equals(mp2);
-            if (ReferenceEquals(null, mp1) && ReferenceEquals(null, mp2))
-                return true;
-            return false;
+            return ReferenceEquals(null, mp2);
         }
 
 
@@ -39,13 +37,11 @@ namespace PatternRecognition.FingerprintRecognition.Core
         {
             if (!ReferenceEquals(null, mp1))
                 return !mp1.Equals(mp2);
-            if (ReferenceEquals(null, mp1) && ReferenceEquals(null, mp2))
-                return false;
-            return true;
+            return !ReferenceEquals(null, mp2);
         }
 
 
-        public bool Equals(MinutiaPair obj)
+        private bool Equals(MinutiaPair obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             return obj.QueryMtia.Equals(QueryMtia) && obj.TemplateMtia.Equals(TemplateMtia);

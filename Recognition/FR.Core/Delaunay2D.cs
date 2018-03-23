@@ -239,19 +239,13 @@ namespace PatternRecognition.FingerprintRecognition.Core
             {
                 // Process all sorted points
 
-                float circumCirclecenterX;
-                float circumCirclecenterY;
-                float circumCircleRadius;
-                float dx, dy;
                 float pointX = 0, pointY = 0;
-                float pointYplusTolerance;
 
-                var point = _points[_pointsIndices[_pointsIndices.Length - 1]];
                 for (var sortedIndex = 0; sortedIndex < _pointsIndices.Length; ++sortedIndex)
                 {
                     var pointIndex = _pointsIndices[sortedIndex];
 
-                    point = _points[pointIndex];
+                    var point = _points[pointIndex];
 
                     if (sortedIndex != 0 && Math.Abs(point.X - pointX) < _tolerance &&
                         Math.Abs(point.Y - pointY) < _tolerance)
@@ -259,7 +253,7 @@ namespace PatternRecognition.FingerprintRecognition.Core
 
                     pointX = point.X;
                     pointY = point.Y;
-                    pointYplusTolerance = pointY + _tolerance;
+                    var pointYplusTolerance = pointY + _tolerance;
 
                     // Check if triangle contains current point in its circumcenter.
                     // If yes, add triangle edges to edges table and remove triangle.
@@ -271,13 +265,13 @@ namespace PatternRecognition.FingerprintRecognition.Core
                         // Compare that distance with radius of triangle circumcircle
                         // If is less, it means that the point is inside of circumcircle, else, it means it is outside.
 
-                        circumCirclecenterX = _triangles[triangleIndex].CircumCirclecenterX;
-                        circumCirclecenterY = _triangles[triangleIndex].CircumCirclecenterY;
-                        circumCircleRadius = _triangles[triangleIndex].CircumCircleRadius;
+                        var circumCirclecenterX = _triangles[triangleIndex].CircumCirclecenterX;
+                        var circumCirclecenterY = _triangles[triangleIndex].CircumCirclecenterY;
+                        var circumCircleRadius = _triangles[triangleIndex].CircumCircleRadius;
                         nextNonCompleted = _triangles[triangleIndex].NextNonCompleted;
 
-                        dx = pointX - circumCirclecenterX;
-                        dy = pointY - circumCirclecenterY;
+                        var dx = pointX - circumCirclecenterX;
+                        var dy = pointY - circumCirclecenterY;
 
                         if (dx * dx + dy * dy <= circumCircleRadius)
                             ReplaceTriangleWithEdges(triangleIndex, ref _triangles[triangleIndex]);

@@ -82,8 +82,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Tico2003
                 if (myAng > 2 * Math.PI)
                     myAng -= 2 * Math.PI;
                 var pnt = SetPosToSPoint(myAng, radio, new Point(mtia.X, mtia.Y));
-                int row, col;
-                dirImg.GetBlockCoordFromPixel(pnt.X, pnt.Y, out row, out col);
+                dirImg.GetBlockCoordFromPixel(pnt.X, pnt.Y, out var row, out var col);
                 if (col < 0 || row < 0 || row >= dirImg.Height ||
                     col >= dirImg.Width || dirImg.IsNullBlock(row, col))
                     currOrientations[i] = double.NaN;
@@ -95,7 +94,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Tico2003
             return currOrientations;
         }
 
-        private Point SetPosToSPoint(double angle, int radio, Point p)
+        private static Point SetPosToSPoint(double angle, int radio, Point p)
         {
             var point = new Point();
             var dx = radio * Math.Cos(angle);

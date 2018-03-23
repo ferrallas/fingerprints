@@ -21,7 +21,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2012
             new[] {(byte) 2, (byte) 0, (byte) 1}
         };
 
-        private const double _aThr = Math.PI / 6;
+        private const double AThr = Math.PI / 6;
 
         internal const double DistanceThreshold = 12;
 
@@ -162,13 +162,13 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2012
 
                 var diff1 = Math.Abs(tbeta - qbeta);
                 var diff = Math.Min(diff1, 2 * Math.PI - diff1);
-                if (diff >= _aThr)
+                if (diff >= AThr)
                     return 0;
                 if (diff > maxdiff)
                     maxdiff = diff;
             }
 
-            return 1 - maxdiff / _aThr;
+            return 1 - maxdiff / AThr;
         }
 
         private double MatchMtiaDirections(MTriplet compareTo, byte[] order)
@@ -214,13 +214,13 @@ namespace PatternRecognition.FingerprintRecognition.Core.Medina2012
 
                     var diff1 = Math.Abs(tAlpha - qAlpha);
                     var diff = Math.Min(diff1, 2 * Math.PI - diff1);
-                    if (diff >= _aThr)
+                    if (diff >= AThr)
                         return 0;
                     if (diff > maxdiff)
                         maxdiff = diff;
                 }
 
-            return 1 - maxdiff / _aThr;
+            return 1 - maxdiff / AThr;
         }
 
         private class DoubleComparer : IComparer<double>

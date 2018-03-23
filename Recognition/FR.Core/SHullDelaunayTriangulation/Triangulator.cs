@@ -129,7 +129,6 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
 
             // Add new points into hull (removing obscured ones from the chain)
             // and creating triangles....
-            var numt = 0;
             for (var k = 3; k < nump; k++)
             {
                 var pointsIndex = sortedIndices[k];
@@ -137,14 +136,13 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
 
                 float dx = ptx.X - hull[0].X, dy = ptx.Y - hull[0].Y; // outwards pointing from hull[0] to pt.
 
-                int numh = hull.Count, numhOld = numh;
+                int numh = hull.Count;
                 List<int> pidx = new List<int>(), tridx = new List<int>();
                 int hidx; // new hull point location within hull.....
 
                 if (hull.EdgeVisibleFrom(0, dx, dy))
                 {
                     // starting with a visible hull facet !!!
-                    var e2 = numh;
                     hidx = 0;
 
                     // check to see if segment numh is also visible
@@ -268,7 +266,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
                 int a = pointsIndex, t0;
 
                 var npx = pidx.Count - 1;
-                numt = triads.Count;
+                var numt = triads.Count;
                 t0 = numt;
 
                 for (var p = 0; p < npx; p++)
@@ -360,10 +358,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
             var iterations = 1;
             while (flipped > (int) (Fraction * numt))
             {
-                if ((iterations & 1) == 1)
-                    flipped = FlipTriangles(triads, idsA, idsB);
-                else
-                    flipped = FlipTriangles(triads, idsB, idsA);
+                flipped = (iterations & 1) == 1 ? FlipTriangles(triads, idsA, idsB) : FlipTriangles(triads, idsB, idsA);
 
                 iterations++;
             }
@@ -375,10 +370,7 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
             iterations = 1;
             while (flipped > 0)
             {
-                if ((iterations & 1) == 1)
-                    flipped = FlipTriangles(triads, idSetA, idSetB);
-                else
-                    flipped = FlipTriangles(triads, idSetB, idSetA);
+                flipped = (iterations & 1) == 1 ? FlipTriangles(triads, idSetA, idSetB) : FlipTriangles(triads, idSetB, idSetA);
 
                 iterations++;
             }
@@ -387,9 +379,9 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
         }
 
 
-        private bool FlipTriangle(List<Triad> triads, int triadIndexToTest, out int triadIndexFlipped)
+        private bool FlipTriangle(IReadOnlyList<Triad> triads, int triadIndexToTest, out int triadIndexFlipped)
         {
-            int oppositeVertex = 0, edge1, edge2, edge3 = 0, edge4 = 0;
+            int oppositeVertex, edge1, edge2, edge3, edge4;
             triadIndexFlipped = 0;
 
             var tri = triads[triadIndexToTest];

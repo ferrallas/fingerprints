@@ -8,18 +8,6 @@ using System;
 
 namespace PatternRecognition.FingerprintRecognition.Core
 {
-    public enum MinutiaType
-    {
-        Unknown,
-
-
-        End,
-
-
-        Bifurcation
-    }
-
-
     [Serializable]
     public class Minutia
     {
@@ -74,7 +62,7 @@ namespace PatternRecognition.FingerprintRecognition.Core
 
         public static bool operator ==(Minutia m1, Minutia m2)
         {
-            return m1.X == m2.X && m1.Y == m2.Y && m1.Angle == m2.Angle;
+            return m2 != null && (m1 != null && (m1.X == m2.X && m1.Y == m2.Y && Math.Abs(m1.Angle - m2.Angle) < double.Epsilon));
         }
 
 

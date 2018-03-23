@@ -42,8 +42,6 @@ namespace PatternRecognition.FingerprintRecognition.Core.SHullDelaunayTriangulat
             Bc = -1;
             Ac = -1;
             CircumcircleR2 = -1;
-            x = 0;
-            y = 0;
         }
 
         public void Initialize(int a, int b, int c, int ab, int bc, int ac, List<Vertex> points)

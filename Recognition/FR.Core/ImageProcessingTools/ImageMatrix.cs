@@ -37,11 +37,12 @@ namespace PatternRecognition.FingerprintRecognition.Core.ImageProcessingTools
                         var red = p[2];
 
                         _pixels[y, x] = (byte) (.299 * red
-                                               + .587 * green
-                                               + .114 * blue);
+                                                + .587 * green
+                                                + .114 * blue);
 
                         p += 3;
                     }
+
                     p += nOffset;
                 }
             }
