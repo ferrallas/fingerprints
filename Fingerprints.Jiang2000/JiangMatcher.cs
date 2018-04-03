@@ -12,7 +12,7 @@ using Fingerprints.Model;
 
 namespace Fingerprints.Jiang2000
 {
-    internal static class Jiang2000Matcher
+    public static class JiangMatcher
     {
         private const double _gAngThr = Math.PI / 6;
 
@@ -38,7 +38,7 @@ namespace Fingerprints.Jiang2000
             var list = new List<Match>();
             foreach (var candidate in storage.Candidates)
             {
-                var retrieved = Serializer.Deserialize<JyFeatures>(storage.Retrieve(candidate));
+                var retrieved = Serializer.Deserialize<JiangFeatures>(storage.Retrieve(candidate));
                 var score = Match(extract, retrieved, out var matchingMtiae);
 
                 if (Math.Abs(score) < Double.Epsilon || matchingMtiae == null)
@@ -56,18 +56,18 @@ namespace Fingerprints.Jiang2000
             return list;
         }
 
-        private static JyFeatures Extract(Bitmap image)
+        private static JiangFeatures Extract(Bitmap image)
         {
             var minutiae = MinutiaeExtractor.ExtractFeatures(image);
             var skeletonImg = SkeletonImageExtractor.ExtractFeatures(image);
             return ExtractFeatures(minutiae, skeletonImg);
         }
 
-        private static JyFeatures ExtractFeatures(List<Minutia> minutiae, SkeletonImage skeletonImg)
+        private static JiangFeatures ExtractFeatures(List<Minutia> minutiae, SkeletonImage skeletonImg)
         {
-            var descriptorsList = new List<JyMtiaDescriptor>();
+            var descriptorsList = new List<JiangMinutiaDescriptor>();
 
-            if (minutiae.Count <= 3) return new JyFeatures(descriptorsList);
+            if (minutiae.Count <= 3) return new JiangFeatures(descriptorsList);
 
             var mtiaIdx = new Dictionary<Minutia, int>();
             for (var i = 0; i < minutiae.Count; i++)
@@ -79,13 +79,13 @@ namespace Fingerprints.Jiang2000
                 for (var i = 0; i < nearest.Length - 1; i++)
                     for (var j = i + 1; j < nearest.Length; j++)
                     {
-                        var newMTriplet = new JyMtiaDescriptor(skeletonImg, minutiae, idx, nearest[i],
+                        var newMTriplet = new JiangMinutiaDescriptor(skeletonImg, minutiae, idx, nearest[i],
                             nearest[j]);
                         descriptorsList.Add(newMTriplet);
                     }
             }
             descriptorsList.TrimExcess();
-            return new JyFeatures(descriptorsList);
+            return new JiangFeatures(descriptorsList);
         }
 
         private static short[] GetNearest(IReadOnlyList<Minutia> minutiae, Minutia query)
@@ -112,7 +112,7 @@ namespace Fingerprints.Jiang2000
             return nearestM;
         }
 
-        private static double Match(JyFeatures query, JyFeatures template, out List<MinutiaPair> matchingMtiae)
+        private static double Match(JiangFeatures query, JiangFeatures template, out List<MinutiaPair> matchingMtiae)
         {
             matchingMtiae = null;
             var localMatchingMtiae = GetLocalMatchingMtiae(query, template);
@@ -130,9 +130,9 @@ namespace Fingerprints.Jiang2000
             return 100.0 * sum / Math.Max(query.Minutiae.Count, template.Minutiae.Count);
         }
 
-        private static IList<MinutiaPair> GetLocalMatchingMtiae(JyFeatures query, JyFeatures template)
+        private static IList<MinutiaPair> GetLocalMatchingMtiae(JiangFeatures query, JiangFeatures template)
         {
-            var triplets = new List<JyTriplet>(query.Minutiae.Count * template.Minutiae.Count);
+            var triplets = new List<JiangMinutiaTriplet>(query.Minutiae.Count * template.Minutiae.Count);
             for (var i = 0; i < query.Minutiae.Count; i++)
             {
                 var qMtia = query.Minutiae[i];
@@ -143,7 +143,7 @@ namespace Fingerprints.Jiang2000
 
                     if (Math.Abs(currSim) < Double.Epsilon) continue;
 
-                    var currTriplet = new JyTriplet();
+                    var currTriplet = new JiangMinutiaTriplet();
                     var currMtiaPair = new MinutiaPair
                     {
                         QueryMtia = qMtia.MainMinutia,
@@ -244,9 +244,9 @@ namespace Fingerprints.Jiang2000
             return Angle.DifferencePi(query.Angle, template.Angle) <= _gAngThr;
         }
 
-        private class MtiaTripletComparer : IComparer<JyTriplet>
+        private class MtiaTripletComparer : IComparer<JiangMinutiaTriplet>
         {
-            public int Compare(JyTriplet x, JyTriplet y)
+            public int Compare(JiangMinutiaTriplet x, JiangMinutiaTriplet y)
             {
                 return x == y ? 0 : x.MatchingValue < y.MatchingValue ? 1 : -1;
             }

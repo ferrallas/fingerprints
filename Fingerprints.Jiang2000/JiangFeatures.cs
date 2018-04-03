@@ -10,13 +10,13 @@ using System.Collections.Generic;
 namespace Fingerprints.Jiang2000
 {
     [Serializable]
-    internal class JyFeatures
+    public class JiangFeatures
     {
-        internal JyFeatures(List<JyMtiaDescriptor> descriptorsList)
+        internal JiangFeatures(List<JiangMinutiaDescriptor> descriptorsList)
         {
             Minutiae = descriptorsList;
         }
 
-        internal List<JyMtiaDescriptor> Minutiae { get; }
+        internal List<JiangMinutiaDescriptor> Minutiae { get; }
     }
 }

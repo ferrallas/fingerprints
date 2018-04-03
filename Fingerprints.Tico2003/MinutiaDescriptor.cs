@@ -15,9 +15,9 @@ using Fingerprints.Model;
 namespace Fingerprints.Tico2003
 {
     [Serializable]
-    internal class ObMtiaDescriptor
+    internal class MinutiaDescriptor
     {
-        internal ObMtiaDescriptor(Minutia mnt, OrientationImage dImg)
+        internal MinutiaDescriptor(Minutia mnt, OrientationImage dImg)
         {
             Minutia = mnt;
             //difRadio = (int) Math.Truncate((Resolution/25.4)*ridgePeriod*2);
@@ -42,12 +42,12 @@ namespace Fingerprints.Tico2003
 
         internal byte EmptyFeaturesCount { get; }
 
-        public static implicit operator Minutia(ObMtiaDescriptor desc)
+        public static implicit operator Minutia(MinutiaDescriptor desc)
         {
             return desc.Minutia;
         }
 
-        internal double Compare(ObMtiaDescriptor mtiaDesc)
+        internal double Compare(MinutiaDescriptor mtiaDesc)
         {
             double sum = 0;
             for (var i = 0; i < 72; i++)

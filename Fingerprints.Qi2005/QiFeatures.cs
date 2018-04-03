@@ -12,15 +12,15 @@ using Fingerprints.Model;
 namespace Fingerprints.Qi2005
 {
     [Serializable]
-    public class Qi2005Features
+    public class QiFeatures
     {
-        internal List<GOwMtia> Minutiae { get; set; }
+        internal List<QiMinutia> Minutiae { get; set; }
 
-        internal Qi2005Features(IReadOnlyCollection<Minutia> minutiae, OrientationImage dImg)
+        internal QiFeatures(IReadOnlyCollection<Minutia> minutiae, OrientationImage dImg)
         {
-            Minutiae = new List<GOwMtia>(minutiae.Count);
+            Minutiae = new List<QiMinutia>(minutiae.Count);
             foreach (var mtia in minutiae)
-                Minutiae.Add(new GOwMtia(mtia, dImg));
+                Minutiae.Add(new QiMinutia(mtia, dImg));
         }
     }
 }

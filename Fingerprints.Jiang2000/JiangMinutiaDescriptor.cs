@@ -12,11 +12,26 @@ using Fingerprints.Model;
 namespace Fingerprints.Jiang2000
 {
     [Serializable]
-    internal class JyMtiaDescriptor
+    public class JiangMinutiaDescriptor
     {
+        private readonly short _mainMtiaIdx, _nearestMtiaIdx, _farthestMtiaIdx;
+
+        private readonly double _dist0, _dist1;
+
+        private readonly double _alpha0, _alpha1, _beta0, _beta1;
+
+        private readonly byte _ridgeCount0;
+        private readonly byte _ridgeCount1;
+
+        private readonly List<Minutia> _minutiae;
+
+        public static double AngleThreshold { get; set; } = Math.PI / 6;
+
+        public static double DistanceThreshold { get; set; } = 12;
+
         #region internal
 
-        internal JyMtiaDescriptor(SkeletonImage skeletonImage, List<Minutia> minutiae, short mainMtiaIdx,
+        internal JiangMinutiaDescriptor(SkeletonImage skeletonImage, List<Minutia> minutiae, short mainMtiaIdx,
             short mtiaIdx0, short mtiaIdx1)
         {
             _minutiae = minutiae;
@@ -45,7 +60,7 @@ namespace Fingerprints.Jiang2000
             _ridgeCount1 = ComputeRidgeCount(skeletonImage, MainMinutia, FarthestMtia);
         }
 
-        public static implicit operator Minutia(JyMtiaDescriptor desc)
+        public static implicit operator Minutia(JiangMinutiaDescriptor desc)
         {
             return desc.MainMinutia;
         }
@@ -55,18 +70,6 @@ namespace Fingerprints.Jiang2000
         internal Minutia NearestMtia => _minutiae[_nearestMtiaIdx];
 
         internal Minutia FarthestMtia => _minutiae[_farthestMtiaIdx];
-
-        internal static double DistanceThreshold
-        {
-            get => _dThr;
-            set => _dThr = value;
-        }
-
-        internal static double AngleThreshold
-        {
-            get => _aThr;
-            set => _aThr = value;
-        }
 
         public override int GetHashCode()
         {
@@ -78,7 +81,7 @@ namespace Fingerprints.Jiang2000
             return $"{_mainMtiaIdx},{_nearestMtiaIdx},{_farthestMtiaIdx}";
         }
 
-        internal double RotationInvariantMatch(JyMtiaDescriptor target)
+        internal double RotationInvariantMatch(JiangMinutiaDescriptor target)
         {
             var distDiff = MatchDistances(target);
             var alphaDiff = MatchAlphaAngles(target);
@@ -91,7 +94,7 @@ namespace Fingerprints.Jiang2000
             return dist < 66 ? (66 - dist) / 66 : 0;
         }
 
-        internal double NoRotateMatch(JyMtiaDescriptor target)
+        internal double NoRotateMatch(JiangMinutiaDescriptor target)
         {
             if (!MatchMtiaDirections(target))
                 return 0;
@@ -110,24 +113,24 @@ namespace Fingerprints.Jiang2000
 
         #region private methods
 
-        private byte ComputeRidgeCount(SkeletonImage skeletonImage, Minutia mtia0, Minutia mtia1)
+        private static byte ComputeRidgeCount(SkeletonImage skeletonImage, Minutia mtia0, Minutia mtia1)
         {
             return skeletonImage.RidgeCount(mtia0.X, mtia0.Y, mtia1.X, mtia1.Y);
         }
 
-        private double ComputeAlpha(Minutia mtia0, Minutia mtia1)
+        private static double ComputeAlpha(Minutia mtia0, Minutia mtia1)
         {
             double x = mtia0.X - mtia1.X;
             double y = mtia0.Y - mtia1.Y;
             return Angle.Difference2Pi(mtia0.Angle, Angle.ComputeAngle(x, y));
         }
 
-        private double ComputeBeta(Minutia mtia0, Minutia mtia1)
+        private static double ComputeBeta(Minutia mtia0, Minutia mtia1)
         {
             return Angle.Difference2Pi(mtia0.Angle, mtia1.Angle);
         }
 
-        private double MatchDistances(JyMtiaDescriptor target)
+        private double MatchDistances(JiangMinutiaDescriptor target)
         {
             var diff0 = Math.Abs(target._dist0 - _dist0);
             var diff1 = Math.Abs(target._dist1 - _dist1);
@@ -135,7 +138,7 @@ namespace Fingerprints.Jiang2000
             return diff0 + diff1;
         }
 
-        private bool MatchMtiaDirections(JyMtiaDescriptor target)
+        private bool MatchMtiaDirections(JiangMinutiaDescriptor target)
         {
             var diff = Angle.DifferencePi(target.MainMinutia.Angle, MainMinutia.Angle);
             if (diff >= Math.PI / 4)
@@ -144,13 +147,10 @@ namespace Fingerprints.Jiang2000
             if (diff >= Math.PI / 4)
                 return false;
             diff = Angle.DifferencePi(target.FarthestMtia.Angle, FarthestMtia.Angle);
-            if (diff >= Math.PI / 4)
-                return false;
-
-            return true;
+            return !(diff >= Math.PI / 4);
         }
 
-        private double MatchRidgeCounts(JyMtiaDescriptor target)
+        private double MatchRidgeCounts(JiangMinutiaDescriptor target)
         {
             double diff0 = Math.Abs(target._ridgeCount0 - _ridgeCount0);
             double diff1 = Math.Abs(target._ridgeCount1 - _ridgeCount1);
@@ -158,7 +158,7 @@ namespace Fingerprints.Jiang2000
             return 3 * (Math.Pow(diff0, 2) + Math.Pow(diff1, 2));
         }
 
-        private double MatchAlphaAngles(JyMtiaDescriptor target)
+        private double MatchAlphaAngles(JiangMinutiaDescriptor target)
         {
             var diff0 = Angle.DifferencePi(target._alpha0, _alpha0);
             var diff1 = Angle.DifferencePi(target._alpha1, _alpha1);
@@ -166,7 +166,7 @@ namespace Fingerprints.Jiang2000
             return 54 * (Math.Pow(diff0, 2) + Math.Pow(diff1, 2)) / Math.PI;
         }
 
-        private double MatchBetaAngles(JyMtiaDescriptor target)
+        private double MatchBetaAngles(JiangMinutiaDescriptor target)
         {
             var diff0 = Angle.DifferencePi(target._beta0, _beta0);
             var diff1 = Angle.DifferencePi(target._beta1, _beta1);
@@ -174,32 +174,13 @@ namespace Fingerprints.Jiang2000
             return 54 * (Math.Pow(diff0, 2) + Math.Pow(diff1, 2)) / Math.PI;
         }
 
-        private double MatchByType(JyMtiaDescriptor target)
+        private double MatchByType(JiangMinutiaDescriptor target)
         {
             var diff0 = target.MainMinutia.MinutiaType == MainMinutia.MinutiaType ? 0 : 1;
             var diff1 = target.NearestMtia.MinutiaType == NearestMtia.MinutiaType ? 0 : 1;
             var diff2 = target.FarthestMtia.MinutiaType == FarthestMtia.MinutiaType ? 0 : 1;
             return 3 * (diff0 + diff1 + diff2);
         }
-
-        #endregion
-
-        #region private fields
-
-        private readonly short _mainMtiaIdx, _nearestMtiaIdx, _farthestMtiaIdx;
-
-        private readonly double _dist0, _dist1;
-
-        private readonly double _alpha0, _alpha1, _beta0, _beta1;
-
-        private readonly byte _ridgeCount0;
-        private readonly byte _ridgeCount1;
-
-        private readonly List<Minutia> _minutiae;
-
-        [NonSerialized] private static double _aThr = Math.PI / 6;
-
-        [NonSerialized] private static double _dThr = 12;
 
         #endregion
     }

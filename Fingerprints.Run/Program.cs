@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using Fingerprints.Medina2012;
 
 namespace Fingerprints.Run
 {
@@ -14,6 +13,7 @@ namespace Fingerprints.Run
         [STAThread]
         static void Main()
         {
+            /*
             var fs = new FileSystemStorage(@"D:\IMPRONTE", "dat");
 
             foreach (var f in Directory.GetFiles(@"D:\IMPRONTE","*.tif"))
@@ -38,7 +38,7 @@ namespace Fingerprints.Run
                 Console.WriteLine($"{m.EntryId},");
             }
             
-            Console.WriteLine($"Found in {ts.ElapsedMilliseconds} ms");
+            Console.WriteLine($"Found in {ts.ElapsedMilliseconds} ms");*/
             Console.ReadLine();
         }
     }

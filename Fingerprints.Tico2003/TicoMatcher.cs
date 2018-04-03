@@ -15,20 +15,21 @@ namespace Fingerprints.Tico2003
 {
     public class TicoMatcher
     {
-        private double _gAngThr = Math.PI / 6;
+        private const double GAngThr = Math.PI / 6;
 
         public int MtiaCountThr { get; set; } = 6;
 
         public int GlobalDistThr { get; set; } = 12;
 
-
-        public double GlobalAngleThr
+        public TicoFeatures Extract(Bitmap image)
         {
-            get => _gAngThr * 180 / Math.PI;
-            set => _gAngThr = value * Math.PI / 180;
+            var mtiae = MinutiaeExtractor.ExtractFeatures(image);
+            var dirImg = ImageOrietantionExtractor.ExtractFeatures(image);
+
+            return new TicoFeatures(mtiae, dirImg);
         }
 
-        public double Match(Tico2003Features query, Tico2003Features template, out List<MinutiaPair> matchingMtiae)
+        public double Match(TicoFeatures query, TicoFeatures template, out List<MinutiaPair> matchingMtiae)
         {
             matchingMtiae = null;
             var localMatchingMtiae = GetLocalMatchingMtiae(query, template);
@@ -54,7 +55,7 @@ namespace Fingerprints.Tico2003
 
         #region private
 
-        private static List<MinutiaPair> GetLocalMatchingMtiae(Tico2003Features query, Tico2003Features template)
+        private static List<MinutiaPair> GetLocalMatchingMtiae(TicoFeatures query, TicoFeatures template)
         {
             var qIndex = new Dictionary<Minutia, int>(query.Minutiae.Count);
             var tIndex = new Dictionary<Minutia, int>(template.Minutiae.Count);
@@ -157,18 +158,17 @@ namespace Fingerprints.Tico2003
                 //if (globalMatchingMtiae.Count + (localMatchingPairs.Count - i - 1) < MtiaCountThr)
                 //    break;
             }
-            if (i == localMatchingPairs.Count)
-            {
-                notMatchingCount = currNotMatchingMtiaCount;
-                globalMatchingMtiae.Add(refMtiaPair);
-                return globalMatchingMtiae;
-            }
-            return null;
+
+            if (i != localMatchingPairs.Count) return null;
+
+            notMatchingCount = currNotMatchingMtiaCount;
+            globalMatchingMtiae.Add(refMtiaPair);
+            return globalMatchingMtiae;
         }
 
-        private bool MatchDirections(Minutia query, Minutia template)
+        private static bool MatchDirections(Minutia query, Minutia template)
         {
-            return Angle.DifferencePi(query.Angle, template.Angle) <= _gAngThr;
+            return Angle.DifferencePi(query.Angle, template.Angle) <= GAngThr;
         }
 
         private class MtiaPairComparer : IComparer<MinutiaPair>
@@ -179,7 +179,7 @@ namespace Fingerprints.Tico2003
             }
         }
 
-        private double Eval(Tico2003Features query, Tico2003Features template, List<MinutiaPair> matchingPair)
+        private double Eval(TicoFeatures query, TicoFeatures template, List<MinutiaPair> matchingPair)
         {
             if (matchingPair == null)
                 return 0;
@@ -243,7 +243,7 @@ namespace Fingerprints.Tico2003
             }
         }
 
-        private Point[] GetBounds(Tico2003Features features)
+        private static Point[] GetBounds(TicoFeatures features)
         {
             var minX = int.MaxValue;
             var minY = int.MaxValue;

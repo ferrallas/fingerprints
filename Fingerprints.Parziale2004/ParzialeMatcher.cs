@@ -12,7 +12,7 @@ using Fingerprints.Model;
 
 namespace Fingerprints.Parziale2004
 {
-    public static class Parziale2004Matcher
+    public static class ParzialeMatcher
     {
         private const double GaThr = Math.PI / 6;
         private const int GlobalDistThr = 12;
@@ -35,10 +35,10 @@ namespace Fingerprints.Parziale2004
             var list = new List<Match>();
             foreach (var candidate in storage.Candidates)
             {
-                var retrieved = Serializer.Deserialize<PnFeatures>(storage.Retrieve(candidate));
+                var retrieved = Serializer.Deserialize<PartialeFeatures>(storage.Retrieve(candidate));
                 var score = Match(extract, retrieved, out var matchingMtiae);
 
-                if (Math.Abs(score) < Double.Epsilon || matchingMtiae == null)
+                if (Math.Abs(score) < double.Epsilon || matchingMtiae == null)
                     continue;
 
                 if (matchingMtiae.Count > 10)
@@ -53,9 +53,9 @@ namespace Fingerprints.Parziale2004
             return list;
         }
 
-        private static PnFeatures Extract(List<Minutia> minutiae)
+        private static PartialeFeatures Extract(List<Minutia> minutiae)
         {
-            var result = new List<MtiaTriplet>();
+            var result = new List<MinutiaTriplet>();
             if (minutiae.Count > 3)
                 foreach (var triangle in Delaunay2D.Triangulate(minutiae))
                 {
@@ -65,7 +65,7 @@ namespace Fingerprints.Parziale2004
                         (short) triangle.B,
                         (short) triangle.C
                     };
-                    var newMTriplet = new MtiaTriplet(idxArr, minutiae);
+                    var newMTriplet = new MinutiaTriplet(idxArr, minutiae);
                     result.Add(newMTriplet);
 
                     idxArr = new[]
@@ -74,7 +74,7 @@ namespace Fingerprints.Parziale2004
                         (short) triangle.C,
                         (short) triangle.B
                     };
-                    newMTriplet = new MtiaTriplet(idxArr, minutiae);
+                    newMTriplet = new MinutiaTriplet(idxArr, minutiae);
                     result.Add(newMTriplet);
 
                     idxArr = new[]
@@ -83,7 +83,7 @@ namespace Fingerprints.Parziale2004
                         (short) triangle.A,
                         (short) triangle.C
                     };
-                    newMTriplet = new MtiaTriplet(idxArr, minutiae);
+                    newMTriplet = new MinutiaTriplet(idxArr, minutiae);
                     result.Add(newMTriplet);
 
                     idxArr = new[]
@@ -92,7 +92,7 @@ namespace Fingerprints.Parziale2004
                         (short) triangle.C,
                         (short) triangle.A
                     };
-                    newMTriplet = new MtiaTriplet(idxArr, minutiae);
+                    newMTriplet = new MinutiaTriplet(idxArr, minutiae);
                     result.Add(newMTriplet);
 
                     idxArr = new[]
@@ -101,7 +101,7 @@ namespace Fingerprints.Parziale2004
                         (short) triangle.A,
                         (short) triangle.B
                     };
-                    newMTriplet = new MtiaTriplet(idxArr, minutiae);
+                    newMTriplet = new MinutiaTriplet(idxArr, minutiae);
                     result.Add(newMTriplet);
 
                     idxArr = new[]
@@ -110,25 +110,25 @@ namespace Fingerprints.Parziale2004
                         (short) triangle.B,
                         (short) triangle.A
                     };
-                    newMTriplet = new MtiaTriplet(idxArr, minutiae);
+                    newMTriplet = new MinutiaTriplet(idxArr, minutiae);
                     result.Add(newMTriplet);
                 }
             result.TrimExcess();
-            return new PnFeatures(result, minutiae);
+            return new PartialeFeatures(result, minutiae);
         }
 
-        private static double Match(PnFeatures qPnFeatures, PnFeatures tPnFeatures, out List<MinutiaPair> matchingMtiae)
+        private static double Match(PartialeFeatures qPartialeFeatures, PartialeFeatures tPartialeFeatures, out List<MinutiaPair> matchingMtiae)
         {
             try
             {
                 matchingMtiae = new List<MinutiaPair>();
-                IList<MtiaeTripletPair> matchingTriplets = GetMatchingTriplets(qPnFeatures, tPnFeatures);
+                IList<MinutiaTripletPair> matchingTriplets = GetMatchingTriplets(qPartialeFeatures, tPartialeFeatures);
                 if (matchingTriplets.Count == 0)
                     return 0;
 
                 var localMatchingMtiae = new List<MinutiaPair>(3600);
-                foreach (var qMtia in qPnFeatures.Minutiae)
-                foreach (var tMtia in tPnFeatures.Minutiae)
+                foreach (var qMtia in qPartialeFeatures.Minutiae)
+                foreach (var tMtia in tPartialeFeatures.Minutiae)
                     localMatchingMtiae.Add(new MinutiaPair
                     {
                         QueryMtia = qMtia,
@@ -152,7 +152,7 @@ namespace Fingerprints.Parziale2004
                     }
                 }
 
-                return 100 * Math.Sqrt(1.0 * max * max / (qPnFeatures.Minutiae.Count * tPnFeatures.Minutiae.Count));
+                return 100 * Math.Sqrt(1.0 * max * max / (qPartialeFeatures.Minutiae.Count * tPartialeFeatures.Minutiae.Count));
             }
             catch (Exception e)
             {
@@ -160,9 +160,9 @@ namespace Fingerprints.Parziale2004
             }
         }
 
-        private static List<MtiaeTripletPair> GetMatchingTriplets(PnFeatures t1, PnFeatures t2)
+        private static List<MinutiaTripletPair> GetMatchingTriplets(PartialeFeatures t1, PartialeFeatures t2)
         {
-            var mostSimilar = new List<MtiaeTripletPair>();
+            var mostSimilar = new List<MinutiaTripletPair>();
             foreach (var queryTriplet in t1.MTriplets)
             {
                 var mtpPairs = t2.FindAllSimilar(queryTriplet);
@@ -172,7 +172,7 @@ namespace Fingerprints.Parziale2004
             return mostSimilar;
         }
 
-        private static List<MinutiaPair> GetReferenceMtiae(IEnumerable<MtiaeTripletPair> matchingTriplets)
+        private static List<MinutiaPair> GetReferenceMtiae(IEnumerable<MinutiaTripletPair> matchingTriplets)
         {
             var pairs = new List<MinutiaPair>();
             var matches = new Dictionary<MinutiaPair, byte>(60);
@@ -214,7 +214,7 @@ namespace Fingerprints.Parziale2004
             return pairs;
         }
 
-        private static List<MinutiaPair> GetLocalMatchingMtiae(IEnumerable<MtiaeTripletPair> matchingTriplets)
+        private static List<MinutiaPair> GetLocalMatchingMtiae(IEnumerable<MinutiaTripletPair> matchingTriplets)
         {
             var minutiaMatches = new List<MinutiaPair>();
             var matches = new Dictionary<MinutiaPair, byte>(60);

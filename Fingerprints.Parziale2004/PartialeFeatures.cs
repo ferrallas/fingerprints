@@ -11,26 +11,26 @@ using Fingerprints.Model;
 namespace Fingerprints.Parziale2004
 {
     [Serializable]
-    public class PnFeatures
+    public class PartialeFeatures
     {
-        public List<MtiaTriplet> MTriplets { get; }
+        public List<MinutiaTriplet> MTriplets { get; }
 
         public List<Minutia> Minutiae { get; }
 
-        internal PnFeatures(List<MtiaTriplet> mtList, List<Minutia> mtiaList)
+        internal PartialeFeatures(List<MinutiaTriplet> mtList, List<Minutia> mtiaList)
         {
             Minutiae = mtiaList;
             MTriplets = mtList;
         }
 
-        internal List<MtiaeTripletPair> FindAllSimilar(MtiaTriplet queryMTp)
+        internal List<MinutiaTripletPair> FindAllSimilar(MinutiaTriplet queryMTp)
         {
-            var result = new List<MtiaeTripletPair>();
+            var result = new List<MinutiaTripletPair>();
             for (var j = 0; j < MTriplets.Count; j++)
             {
                 var currMTp = MTriplets[j];
                 if (queryMTp.Match(currMTp))
-                    result.Add(new MtiaeTripletPair
+                    result.Add(new MinutiaTripletPair
                         {
                             QueryMTp = queryMTp,
                             TemplateMTp = currMTp

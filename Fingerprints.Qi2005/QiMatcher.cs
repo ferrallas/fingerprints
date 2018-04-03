@@ -13,7 +13,7 @@ using Fingerprints.Model;
 
 namespace Fingerprints.Qi2005
 {
-    public static class Qi2005Matcher
+    public static class QiMatcher
     {
         private const int GlobalDistThr = 8;
         private const double GAngThr = Math.PI / 6;
@@ -36,10 +36,10 @@ namespace Fingerprints.Qi2005
             var list = new List<Match>();
             foreach (var candidate in storage.Candidates)
             {
-                var retrieved = Serializer.Deserialize<Qi2005Features>(storage.Retrieve(candidate));
+                var retrieved = Serializer.Deserialize<QiFeatures>(storage.Retrieve(candidate));
                 var score = Match(extract, retrieved, out var matchingMtiae);
 
-                if (Math.Abs(score) < Double.Epsilon || matchingMtiae == null)
+                if (Math.Abs(score) < double.Epsilon || matchingMtiae == null)
                     continue;
 
                 if (matchingMtiae.Count > 10)
@@ -54,21 +54,20 @@ namespace Fingerprints.Qi2005
             return list;
         }
 
-        private static Qi2005Features Extract(Bitmap image)
+        private static QiFeatures Extract(Bitmap image)
         {
             var mtiae = MinutiaeExtractor.ExtractFeatures(image);
             var dirImg = ImageOrietantionExtractor.ExtractFeatures(image);
 
-            return new Qi2005Features(mtiae, dirImg);
+            return new QiFeatures(mtiae, dirImg);
         }
 
-        private static double Match(Qi2005Features qQi2005Features, Qi2005Features tQi2005Features, out List<MinutiaPair> matchingMtiae)
+        private static double Match(QiFeatures qQi2005Features, QiFeatures tQi2005Features, out List<MinutiaPair> matchingMtiae)
         {
             try
             {
                 matchingMtiae = null;
-                double[,] simArr;
-                var localMatchingMtiae = GetLocalMatchingMtiae(qQi2005Features, tQi2005Features, out simArr);
+                var localMatchingMtiae = GetLocalMatchingMtiae(qQi2005Features, tQi2005Features, out var simArr);
                 if (localMatchingMtiae.Count == 0)
                     return 0;
 
@@ -76,6 +75,7 @@ namespace Fingerprints.Qi2005
                 var notMatchingCount = int.MaxValue;
 
                 for (var i = 0; i < localMatchingMtiae.Count; i++)
+
                 {
                     var currMatchingMtiae =
                         GetGlobalMatchingMtiae(localMatchingMtiae, localMatchingMtiae[i], ref notMatchingCount);
@@ -94,7 +94,7 @@ namespace Fingerprints.Qi2005
             }
         }
 
-        private static IList<MinutiaPair> GetLocalMatchingMtiae(Qi2005Features query, Qi2005Features template,
+        private static IList<MinutiaPair> GetLocalMatchingMtiae(QiFeatures query, QiFeatures template,
             out double[,] simArr)
         {
             var qIndex = new Dictionary<Minutia, int>(query.Minutiae.Count);
@@ -232,7 +232,7 @@ namespace Fingerprints.Qi2005
             }
         }
 
-        private static double Eval(Qi2005Features query, Qi2005Features template, List<MinutiaPair> matchingPair,
+        private static double Eval(QiFeatures query, QiFeatures template, List<MinutiaPair> matchingPair,
             double[,] simArr)
         {
             if (matchingPair == null)
@@ -308,7 +308,7 @@ namespace Fingerprints.Qi2005
             }
         }
 
-        private static Point[] GetBounds(Qi2005Features features)
+        private static Point[] GetBounds(QiFeatures features)
         {
             var minX = int.MaxValue;
             var minY = int.MaxValue;

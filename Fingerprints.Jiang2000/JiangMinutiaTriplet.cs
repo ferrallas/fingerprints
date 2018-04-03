@@ -9,7 +9,7 @@ using Fingerprints.Model;
 
 namespace Fingerprints.Jiang2000
 {
-    internal class JyTriplet
+    internal class JiangMinutiaTriplet
     {
         public MinutiaPair MainMinutia { set; get; }
         public MinutiaPair NearestMtia { set; get; }
