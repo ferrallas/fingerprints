@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Fingerprints.Storage
 {
-    internal class FileSystemStorage<TFeature> : IStoreProvider<TFeature>
+    public class FileSystemStorage<TFeature> : IStoreProvider<TFeature>
     {
         private readonly string _folder;
         private readonly string _extension;

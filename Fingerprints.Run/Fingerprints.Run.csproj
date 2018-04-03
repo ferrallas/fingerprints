@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Fingerprints.Medina2012\Fingerprints.Medina2012.csproj" />
     <ProjectReference Include="..\Fingerprints\Fingerprints.csproj" />
   </ItemGroup>
 

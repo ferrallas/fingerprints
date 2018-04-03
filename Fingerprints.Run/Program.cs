@@ -1,4 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using Fingerprints.Medina2012;
+using Fingerprints.Storage;
 
 namespace Fingerprints.Run
 {
@@ -10,15 +15,16 @@ namespace Fingerprints.Run
         [STAThread]
         static void Main()
         {
-            /*
-            var fs = new FileSystemStorage(@"D:\IMPRONTE", "dat");
+            var matcher = new Medina2012Matcher();
+
+            var fs = new FileSystemStorage<MtripletsFeature>(@"D:\IMPRONTE", "dat");
 
             foreach (var f in Directory.GetFiles(@"D:\IMPRONTE","*.tif"))
             {
                 var candidateName = Path.GetFileNameWithoutExtension(f);
 
                 if (!fs.ContainsCandidate(candidateName))
-                   FingerPrintMatcher.Store(Algorithm.Medina2012, fs, new Bitmap(f), candidateName);
+                   matcher.Store(fs, new Bitmap(f), candidateName);
             }
 
 
@@ -26,7 +32,7 @@ namespace Fingerprints.Run
 
             var ts = Stopwatch.StartNew();
 
-            var matches = FingerPrintMatcher.Match(Algorithm.Medina2012, fs, new Bitmap(@"D:\IMPRONTE\101_1.tif"));
+            var matches = matcher.Match(fs, new Bitmap(@"D:\IMPRONTE\101_1.tif"), 0, (int) fs.CandidatesCount);
 
             ts.Stop();
 
@@ -35,7 +41,7 @@ namespace Fingerprints.Run
                 Console.WriteLine($"{m.EntryId},");
             }
             
-            Console.WriteLine($"Found in {ts.ElapsedMilliseconds} ms");*/
+            Console.WriteLine($"Found in {ts.ElapsedMilliseconds} ms");
             Console.ReadLine();
         }
     }
