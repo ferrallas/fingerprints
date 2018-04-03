@@ -13,7 +13,7 @@ using Fingerprints.Model;
 
 namespace Fingerprints.Computation
 {
-    internal static class ImageOrietantionExtractor
+    public static class ImageOrietantionExtractor
     {
         private const byte BlockSize = 16;
 

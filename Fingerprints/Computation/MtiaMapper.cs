@@ -3,7 +3,7 @@ using Fingerprints.Model;
 
 namespace Fingerprints.Computation
 {
-    internal class MtiaMapper
+    public class MtiaMapper
     {
         private readonly double _dAngle;
         private readonly Minutia _query;

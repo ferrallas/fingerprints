@@ -4,9 +4,9 @@ using Newtonsoft.Json.Bson;
 
 namespace Fingerprints.Computation
 {
-    static class Serializer
+    public static class Serializer
     {
-        internal static byte[] Serialize<T>(T obj)
+        public static byte[] Serialize<T>(T obj)
         {
             var ms = new MemoryStream();
             using (var writer = new BsonDataWriter(ms))
@@ -18,7 +18,7 @@ namespace Fingerprints.Computation
             return ms.ToArray();
         }
 
-        internal static T Deserialize<T>(byte[] bytes)
+        public static T Deserialize<T>(byte[] bytes)
         {
             var ms = new MemoryStream(bytes);
             using (var writer = new BsonDataReader(ms))

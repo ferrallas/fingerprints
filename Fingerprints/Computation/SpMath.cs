@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace Fingerprints.Computation
 {
-    internal static class SpMath
+    public static class SpMath
     {
         #region Prime numbers
 

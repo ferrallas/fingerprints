@@ -13,7 +13,7 @@ using Fingerprints.Model;
 
 namespace Fingerprints.Computation
 {
-    internal static class SkeletonImageExtractor
+    public static class SkeletonImageExtractor
     {
         #region public
 

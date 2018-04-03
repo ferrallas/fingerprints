@@ -13,7 +13,7 @@ using Fingerprints.Model;
 
 namespace Fingerprints.Computation
 {
-    internal static class MinutiaeExtractor
+    public static class MinutiaeExtractor
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static List<Minutia> ExtractFeatures(Bitmap image)

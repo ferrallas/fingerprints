@@ -10,7 +10,7 @@ using Fingerprints.Model;
 
 namespace Fingerprints.Computation
 {
-    internal static class MtiaEuclideanDistance
+    public static class MtiaEuclideanDistance
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double Compare(Minutia m0, Minutia m1)

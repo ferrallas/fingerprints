@@ -11,7 +11,7 @@ using System.Runtime.CompilerServices;
 
 namespace Fingerprints.Computation
 {
-    internal static class ImageProvider
+    public static class ImageProvider
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Bitmap AdaptImage(byte[] rawImage)

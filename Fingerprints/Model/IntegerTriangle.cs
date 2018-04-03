@@ -1,13 +1,9 @@
-namespace Fingerprints.Computation
+namespace Fingerprints.Model
 {
-    internal struct IntegerTriangle
+    public struct IntegerTriangle
     {
         public int A;
-
-
         public int B;
-
-
         public int C;
     }
 }

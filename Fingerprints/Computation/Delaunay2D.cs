@@ -14,10 +14,10 @@ using Fingerprints.Model;
 
 namespace Fingerprints.Computation
 {
-    internal static class Delaunay2D
+    public static class Delaunay2D
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static IEnumerable<IntegerTriangle> Triangulate(ICollection<Minutia> minutiae)
+        public static IEnumerable<IntegerTriangle> Triangulate(ICollection<Minutia> minutiae)
         {
             ICollection<PointF> pointsCollection = new List<PointF>(minutiae.Count);
             foreach (var minutia in minutiae)
