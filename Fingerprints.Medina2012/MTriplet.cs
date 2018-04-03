@@ -12,7 +12,8 @@ using Fingerprints.Model;
 
 namespace Fingerprints.Medina2012
 {
-    internal class MTriplet
+    [Serializable]
+    public class MTriplet
     {
         private static readonly byte[][] Orders =
         {
@@ -43,7 +44,10 @@ namespace Fingerprints.Medina2012
 
         public Minutia this[int i] => Minutiae[MtiaIdxs[i]];
 
-        public MTriplet() { }
+        public MTriplet()
+        {
+
+        }
 
         public MTriplet(short[] mIdxs, List<Minutia> minutiae)
         {

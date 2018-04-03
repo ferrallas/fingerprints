@@ -13,11 +13,16 @@ namespace Fingerprints.Parziale2004
     [Serializable]
     public class PartialeFeatures
     {
-        public List<MinutiaTriplet> MTriplets { get; }
+        public List<MinutiaTriplet> MTriplets { get; set; }
 
-        public List<Minutia> Minutiae { get; }
+        public List<Minutia> Minutiae { get; set; }
 
-        internal PartialeFeatures(List<MinutiaTriplet> mtList, List<Minutia> mtiaList)
+        public PartialeFeatures()
+        {
+
+        }
+
+        public PartialeFeatures(List<MinutiaTriplet> mtList, List<Minutia> mtiaList)
         {
             Minutiae = mtiaList;
             MTriplets = mtList;
@@ -37,9 +42,7 @@ namespace Fingerprints.Parziale2004
                         }
                     );
             }
-            if (result.Count > 0)
-                return result;
-            return null;
+            return result.Count > 0 ? result : null;
         }
     }
 }

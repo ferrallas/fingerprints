@@ -5,11 +5,13 @@
  */
 
 
+using System;
 using Fingerprints.Model;
 
 namespace Fingerprints.Jiang2000
 {
-    internal class JiangMinutiaTriplet
+    [Serializable]
+    public class JiangMinutiaTriplet
     {
         public MinutiaPair MainMinutia { set; get; }
         public MinutiaPair NearestMtia { set; get; }

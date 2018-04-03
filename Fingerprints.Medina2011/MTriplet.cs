@@ -13,7 +13,7 @@ using Fingerprints.Model;
 namespace Fingerprints.Medina2011
 {
     [Serializable]
-    internal class MTriplet
+    public class MTriplet
     {
         public List<Minutia> Minutiae { get; set; }
 

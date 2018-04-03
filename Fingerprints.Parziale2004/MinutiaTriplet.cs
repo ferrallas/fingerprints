@@ -28,6 +28,11 @@ namespace Fingerprints.Parziale2004
 
         public short[] MtiaIdxs { get; set; }
 
+        public MinutiaTriplet()
+        {
+
+        }
+
         public MinutiaTriplet(short[] mIdxs, List<Minutia> minutiae)
         {
             Minutiae = minutiae;

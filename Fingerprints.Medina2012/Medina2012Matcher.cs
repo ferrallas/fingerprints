@@ -13,7 +13,7 @@ using Fingerprints.Model;
 
 namespace Fingerprints.Medina2012
 {
-    internal static class Medina2012Matcher
+    public static class Medina2012Matcher
     {
         private const double GaThr = Math.PI / 6;
 

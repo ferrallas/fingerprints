@@ -7,11 +7,17 @@ using Fingerprints.Model;
 namespace Fingerprints.Qi2005
 {
     [Serializable]
-    internal class Segment
+    public class Segment
     {
-        internal readonly double[] Directions;
+        [NonSerialized]
+        private const int Interval = 18;
 
-        [NonSerialized] private readonly int _interval = 18;
+        public double[] Directions { get; set; }
+
+        public Segment()
+        {
+
+        }
 
         internal Segment(double ang, Minutia mnt, OrientationImage dImg)
         {
@@ -20,7 +26,7 @@ namespace Fingerprints.Qi2005
             var points = new List<double>();
             while (!endOfPoints)
             {
-                var pnt = SetPosToSPoint(ang, i * _interval, new Point(mnt.X, mnt.Y));
+                var pnt = SetPosToSPoint(ang, i * Interval, new Point(mnt.X, mnt.Y));
                 if (IsInBound(pnt, dImg))
                 {
                     dImg.GetBlockCoordFromPixel(pnt.X, pnt.Y, out var row, out var col);

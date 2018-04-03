@@ -12,11 +12,16 @@ namespace Fingerprints.Jiang2000
     [Serializable]
     public class JiangFeatures
     {
-        internal JiangFeatures(List<JiangMinutiaDescriptor> descriptorsList)
+        public List<JiangMinutiaDescriptor> Minutiae { get; }
+
+        //for serialization purpose
+        public JiangFeatures()
+        {
+        }
+
+        public JiangFeatures(List<JiangMinutiaDescriptor> descriptorsList)
         {
             Minutiae = descriptorsList;
         }
-
-        internal List<JiangMinutiaDescriptor> Minutiae { get; }
     }
 }

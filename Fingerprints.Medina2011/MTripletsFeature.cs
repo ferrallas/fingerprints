@@ -12,11 +12,18 @@ using Fingerprints.Model;
 namespace Fingerprints.Medina2011
 {
     [Serializable]
-    internal class MtripletsFeature
+    public class MtripletsFeature
     {
-        #region public
+        public List<MTriplet> MTriplets { get; set; }
 
-        internal MtripletsFeature(List<MTriplet> mtList, List<Minutia> mtiaList)
+        public List<Minutia> Minutiae { get; set; }
+
+        //for serialization purpose
+        public MtripletsFeature()
+        {
+        }
+
+        public MtripletsFeature(List<MTriplet> mtList, List<Minutia> mtiaList)
         {
             mtiaList.TrimExcess();
             Minutiae = mtiaList;
@@ -44,15 +51,7 @@ namespace Fingerprints.Medina2011
                         }
                     );
             }
-            if (result.Count > 0)
-                return result;
-            return null;
+            return result.Count > 0 ? result : null;
         }
-
-        internal List<MTriplet> MTriplets { get; }
-
-        public List<Minutia> Minutiae { get; }
-
-        #endregion
     }
 }

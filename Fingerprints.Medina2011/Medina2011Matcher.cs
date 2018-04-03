@@ -12,7 +12,7 @@ using Fingerprints.Model;
 
 namespace Fingerprints.Medina2011
 {
-    internal static class Medina2011Matcher
+    public static class Medina2011Matcher
     {
         private const int GlobalDistThr  = 12;
 

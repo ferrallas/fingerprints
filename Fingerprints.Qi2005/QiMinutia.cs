@@ -11,7 +11,7 @@ using Fingerprints.Model;
 namespace Fingerprints.Qi2005
 {
     [Serializable]
-    internal class QiMinutia
+    public class QiMinutia
     {
         [NonSerialized] private const double Threshold = 125 * Math.PI;
 
@@ -19,6 +19,10 @@ namespace Fingerprints.Qi2005
 
         public Segment[] Segments { get; set; }
 
+        public QiMinutia()
+        {
+
+        }
 
         internal QiMinutia(Minutia mnt, OrientationImage dImg)
         {

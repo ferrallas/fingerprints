@@ -1,6 +1,9 @@
-﻿namespace Fingerprints.Medina2011
+﻿using System;
+
+namespace Fingerprints.Medina2011
 {
-    internal class MtripletPair
+    [Serializable]
+    public class MtripletPair
     {
         public double MatchingValue { get; set; }
         public MTriplet QueryMTp { get; set; }

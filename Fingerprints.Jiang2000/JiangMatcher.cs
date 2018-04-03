@@ -14,7 +14,7 @@ namespace Fingerprints.Jiang2000
 {
     public static class JiangMatcher
     {
-        private const double _gAngThr = Math.PI / 6;
+        private const double GAngThr = Math.PI / 6;
 
         private const int GlobalDistThr = 8;
 
@@ -236,12 +236,12 @@ namespace Fingerprints.Jiang2000
             y = tMtiai.Y - tMtiaj.Y;
             var tAngle = Angle.ComputeAngle(x, y);
 
-            return Angle.DifferencePi(qAngle, tAngle) <= _gAngThr;
+            return Angle.DifferencePi(qAngle, tAngle) <= GAngThr;
         }
 
         private static bool MatchDirections(Minutia query, Minutia template)
         {
-            return Angle.DifferencePi(query.Angle, template.Angle) <= _gAngThr;
+            return Angle.DifferencePi(query.Angle, template.Angle) <= GAngThr;
         }
 
         private class MtiaTripletComparer : IComparer<JiangMinutiaTriplet>

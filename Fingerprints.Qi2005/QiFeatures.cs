@@ -14,9 +14,14 @@ namespace Fingerprints.Qi2005
     [Serializable]
     public class QiFeatures
     {
-        internal List<QiMinutia> Minutiae { get; set; }
+        public List<QiMinutia> Minutiae { get; set; }
 
-        internal QiFeatures(IReadOnlyCollection<Minutia> minutiae, OrientationImage dImg)
+        public QiFeatures()
+        {
+
+        }
+
+        public QiFeatures(IReadOnlyCollection<Minutia> minutiae, OrientationImage dImg)
         {
             Minutiae = new List<QiMinutia>(minutiae.Count);
             foreach (var mtia in minutiae)

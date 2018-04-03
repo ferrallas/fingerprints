@@ -52,7 +52,6 @@ namespace Fingerprints.Tico2003
             return Eval(query, template, matchingMtiae);
         }
 
-
         #region private
 
         private static List<MinutiaPair> GetLocalMatchingMtiae(TicoFeatures query, TicoFeatures template)

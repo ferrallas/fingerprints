@@ -12,13 +12,16 @@ using Fingerprints.Model;
 namespace Fingerprints.Medina2012
 {
     [Serializable]
-    internal class MtripletsFeature
+    public class MtripletsFeature
     {
         public List<MTriplet> MTriplets { get; set; }
 
         public List<Minutia> Minutiae { get; set; }
 
-        public MtripletsFeature() { }
+        public MtripletsFeature()
+        {
+
+        }
 
         internal MtripletsFeature(List<MTriplet> mtList, List<Minutia> mtiaList)
         {
