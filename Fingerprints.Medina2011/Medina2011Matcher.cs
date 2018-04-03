@@ -12,58 +12,13 @@ using Fingerprints.Model;
 
 namespace Fingerprints.Medina2011
 {
-    public static class Medina2011Matcher
+    public class Medina2011Matcher : BaseMatcher<MtripletsFeature>
     {
         private const int GlobalDistThr  = 12;
 
         private const double GaThr = Math.PI / 6;
 
-        public static void Store(IStoreProvider storage, Bitmap bitmap, string subjectId)
-        {
-            var extract = Extract(ImageProvider.AdaptImage(bitmap));
-
-            storage.Add(new Candidate
-            {
-                EntryId = subjectId,
-                Feautures = Serializer.Serialize(extract)
-            });
-        }
-
-        public static IEnumerable<Match> Match(IStoreProvider storage, Bitmap bitmap, string subjectId = null)
-        {
-            var extract = Extract(ImageProvider.AdaptImage(bitmap));
-
-            if (subjectId != null)
-            {
-                storage.Add(new Candidate
-                {
-                    EntryId = subjectId,
-                    Feautures = Serializer.Serialize(extract)
-                });
-            }
-
-            var list = new List<Match>();
-            foreach (var candidate in storage.Candidates)
-            {
-                var retrieved = Serializer.Deserialize<MtripletsFeature>(storage.Retrieve(candidate));
-                var score = Match(extract, retrieved, out var matchingMtiae);
-
-                if (Math.Abs(score) < double.Epsilon || matchingMtiae == null)
-                    continue;
-
-                if (matchingMtiae.Count > 10)
-                    list.Add(new Match
-                    {
-                        Confidence = score,
-                        EntryId = candidate,
-                        MatchingPoints = matchingMtiae.Count
-                    });
-            }
-
-            return list;
-        }
-
-        private static MtripletsFeature Extract(Bitmap image)
+        public override MtripletsFeature Extract(Bitmap image)
         {
             var minutiae = MinutiaeExtractor.ExtractFeatures(ImageProvider.AdaptImage(image));
             var mtriplets = new List<MTriplet>();
@@ -90,7 +45,7 @@ namespace Fingerprints.Medina2011
             return new MtripletsFeature(mtriplets, minutiae);
         }
 
-        private static double Match(MtripletsFeature query, MtripletsFeature template, out List<MinutiaPair> matchingMtiae)
+        public override double Match(MtripletsFeature query, MtripletsFeature template, out List<MinutiaPair> matchingMtiae)
         {
             matchingMtiae = new List<MinutiaPair>();
             IList<MtripletPair> matchingTriplets = GetMatchingTriplets(query, template);
@@ -135,7 +90,6 @@ namespace Fingerprints.Medina2011
                 if (mtpPairs != null)
                     mostSimilar.AddRange(mtpPairs);
             }
-            //mostSimilar.Sort(new MtpPairComparer());
             return mostSimilar;
         }
 

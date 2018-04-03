@@ -13,48 +13,12 @@ using Fingerprints.Model;
 
 namespace Fingerprints.Qi2005
 {
-    public static class QiMatcher
+    public class QiMatcher : BaseMatcher<QiFeatures>
     {
         private const int GlobalDistThr = 8;
         private const double GAngThr = Math.PI / 6;
 
-        public static void Store(IStoreProvider storage, Bitmap bitmap, string subjectId)
-        {
-            var extract = Extract(ImageProvider.AdaptImage(bitmap));
-
-            storage.Add(new Candidate
-            {
-                EntryId = subjectId,
-                Feautures = Serializer.Serialize(extract)
-            });
-        }
-
-        public static IEnumerable<Match> Match(IStoreProvider storage, Bitmap bitmap)
-        {
-            var extract = Extract(ImageProvider.AdaptImage(bitmap));
-
-            var list = new List<Match>();
-            foreach (var candidate in storage.Candidates)
-            {
-                var retrieved = Serializer.Deserialize<QiFeatures>(storage.Retrieve(candidate));
-                var score = Match(extract, retrieved, out var matchingMtiae);
-
-                if (Math.Abs(score) < double.Epsilon || matchingMtiae == null)
-                    continue;
-
-                if (matchingMtiae.Count > 10)
-                    list.Add(new Match
-                    {
-                        Confidence = score,
-                        EntryId = candidate,
-                        MatchingPoints = matchingMtiae.Count
-                    });
-            }
-
-            return list;
-        }
-
-        private static QiFeatures Extract(Bitmap image)
+        public override QiFeatures Extract(Bitmap image)
         {
             var mtiae = MinutiaeExtractor.ExtractFeatures(image);
             var dirImg = ImageOrietantionExtractor.ExtractFeatures(image);
@@ -62,7 +26,7 @@ namespace Fingerprints.Qi2005
             return new QiFeatures(mtiae, dirImg);
         }
 
-        private static double Match(QiFeatures qQi2005Features, QiFeatures tQi2005Features, out List<MinutiaPair> matchingMtiae)
+        public override double Match(QiFeatures qQi2005Features, QiFeatures tQi2005Features, out List<MinutiaPair> matchingMtiae)
         {
             try
             {

@@ -12,7 +12,7 @@ using Fingerprints.Model;
 
 namespace Fingerprints.Jiang2000
 {
-    public static class JiangMatcher
+    public class JiangMatcher : BaseMatcher<JiangFeatures>
     {
         private const double GAngThr = Math.PI / 6;
 
@@ -20,51 +20,10 @@ namespace Fingerprints.Jiang2000
 
         private const byte NeighborsCount = 2;
 
-        public static void Store(IStoreProvider storage, Bitmap bitmap, string subjectId)
-        {
-            var extract = Extract(ImageProvider.AdaptImage(bitmap));
-
-            storage.Add(new Candidate
-            {
-                EntryId = subjectId,
-                Feautures = Serializer.Serialize(extract)
-            });
-        }
-
-        public static IEnumerable<Match> Match(IStoreProvider storage, Bitmap bitmap)
-        {
-            var extract = Extract(ImageProvider.AdaptImage(bitmap));
-
-            var list = new List<Match>();
-            foreach (var candidate in storage.Candidates)
-            {
-                var retrieved = Serializer.Deserialize<JiangFeatures>(storage.Retrieve(candidate));
-                var score = Match(extract, retrieved, out var matchingMtiae);
-
-                if (Math.Abs(score) < Double.Epsilon || matchingMtiae == null)
-                    continue;
-
-                if (matchingMtiae.Count > 10)
-                    list.Add(new Match
-                    {
-                        Confidence = score,
-                        EntryId = candidate,
-                        MatchingPoints = matchingMtiae.Count
-                    });
-            }
-
-            return list;
-        }
-
-        private static JiangFeatures Extract(Bitmap image)
+        public override JiangFeatures Extract(Bitmap image)
         {
             var minutiae = MinutiaeExtractor.ExtractFeatures(image);
             var skeletonImg = SkeletonImageExtractor.ExtractFeatures(image);
-            return ExtractFeatures(minutiae, skeletonImg);
-        }
-
-        private static JiangFeatures ExtractFeatures(List<Minutia> minutiae, SkeletonImage skeletonImg)
-        {
             var descriptorsList = new List<JiangMinutiaDescriptor>();
 
             if (minutiae.Count <= 3) return new JiangFeatures(descriptorsList);
@@ -86,6 +45,24 @@ namespace Fingerprints.Jiang2000
             }
             descriptorsList.TrimExcess();
             return new JiangFeatures(descriptorsList);
+        }
+
+        public override double Match(JiangFeatures query, JiangFeatures template, out List<MinutiaPair> matchingMtiae)
+        {
+            matchingMtiae = null;
+            var localMatchingMtiae = GetLocalMatchingMtiae(query, template);
+            if (localMatchingMtiae.Count == 0)
+                return 0;
+            matchingMtiae = GetGlobalMatchingMtiae(localMatchingMtiae, localMatchingMtiae[0]);
+
+            if (matchingMtiae.Count < 6)
+                return 0;
+
+            double sum = 0;
+            foreach (var mtiaPair in matchingMtiae)
+                sum += 0.5 + 0.5 * mtiaPair.MatchingValue;
+
+            return 100.0 * sum / Math.Max(query.Minutiae.Count, template.Minutiae.Count);
         }
 
         private static short[] GetNearest(IReadOnlyList<Minutia> minutiae, Minutia query)
@@ -110,24 +87,6 @@ namespace Fingerprints.Jiang2000
                     }
                 }
             return nearestM;
-        }
-
-        private static double Match(JiangFeatures query, JiangFeatures template, out List<MinutiaPair> matchingMtiae)
-        {
-            matchingMtiae = null;
-            var localMatchingMtiae = GetLocalMatchingMtiae(query, template);
-            if (localMatchingMtiae.Count == 0)
-                return 0;
-            matchingMtiae = GetGlobalMatchingMtiae(localMatchingMtiae, localMatchingMtiae[0]);
-
-            if (matchingMtiae.Count < 6)
-                return 0;
-
-            double sum = 0;
-            foreach (var mtiaPair in matchingMtiae)
-                sum += 0.5 + 0.5 * mtiaPair.MatchingValue;
-
-            return 100.0 * sum / Math.Max(query.Minutiae.Count, template.Minutiae.Count);
         }
 
         private static IList<MinutiaPair> GetLocalMatchingMtiae(JiangFeatures query, JiangFeatures template)

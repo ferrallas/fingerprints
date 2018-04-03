@@ -13,7 +13,7 @@ using Fingerprints.Model;
 
 namespace Fingerprints.Tico2003
 {
-    public class TicoMatcher
+    public class TicoMatcher : BaseMatcher<TicoFeatures>
     {
         private const double GAngThr = Math.PI / 6;
 
@@ -21,7 +21,7 @@ namespace Fingerprints.Tico2003
 
         public int GlobalDistThr { get; set; } = 12;
 
-        public TicoFeatures Extract(Bitmap image)
+        public override TicoFeatures Extract(Bitmap image)
         {
             var mtiae = MinutiaeExtractor.ExtractFeatures(image);
             var dirImg = ImageOrietantionExtractor.ExtractFeatures(image);
@@ -29,7 +29,7 @@ namespace Fingerprints.Tico2003
             return new TicoFeatures(mtiae, dirImg);
         }
 
-        public double Match(TicoFeatures query, TicoFeatures template, out List<MinutiaPair> matchingMtiae)
+        public override double Match(TicoFeatures query, TicoFeatures template, out List<MinutiaPair> matchingMtiae)
         {
             matchingMtiae = null;
             var localMatchingMtiae = GetLocalMatchingMtiae(query, template);

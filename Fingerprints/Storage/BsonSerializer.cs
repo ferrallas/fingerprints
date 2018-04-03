@@ -2,9 +2,9 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
 
-namespace Fingerprints.Computation
+namespace Fingerprints.Storage
 {
-    public static class Serializer
+    public static class BsonSerializer
     {
         public static byte[] Serialize<T>(T obj)
         {

@@ -1,10 +1,10 @@
 ﻿
 namespace Fingerprints
 {
-    public class Candidate
+    public class Candidate<TFeature>
     {
         public string EntryId { get; set; }
 
-        public byte[] Feautures { get; set; }
+        public TFeature Feautures { get; set; }
     }
 }

@@ -13,7 +13,7 @@ using Fingerprints.Model;
 
 namespace Fingerprints.Medina2012
 {
-    public static class Medina2012Matcher
+    public class Medina2012Matcher : BaseMatcher<MtripletsFeature>
     {
         private const double GaThr = Math.PI / 6;
 
@@ -23,43 +23,7 @@ namespace Fingerprints.Medina2012
 
         private const byte NeighborsCount = 4;
 
-        public static void Store(IStoreProvider storage, Bitmap bitmap, string subjectId)
-        {
-            var extract = Extract(ImageProvider.AdaptImage(bitmap));
-
-            storage.Add(new Candidate
-            {
-                EntryId = subjectId,
-                Feautures = Serializer.Serialize(extract)
-            });
-        }
-
-        public static IEnumerable<Match> Match(IStoreProvider storage, Bitmap bitmap)
-        {
-            var extract = Extract(ImageProvider.AdaptImage(bitmap));
-
-            var list = new List<Match>();
-            foreach (var candidate in storage.Candidates)
-            {
-                var retrieved = Serializer.Deserialize<MtripletsFeature>(storage.Retrieve(candidate));
-                var score = Match(extract, retrieved, out var matchingMtiae);
-
-                if (Math.Abs(score) < double.Epsilon || matchingMtiae == null)
-                    continue;
-
-                if (matchingMtiae.Count > 10)
-                    list.Add(new Match
-                    {
-                        Confidence = score,
-                        EntryId = candidate,
-                        MatchingPoints = matchingMtiae.Count
-                    });
-            }
-
-            return list;
-        }
-
-        private static MtripletsFeature Extract(Bitmap image)
+        public override MtripletsFeature Extract(Bitmap image)
         {
             var minutiae = MinutiaeExtractor.ExtractFeatures(image);
             var result = new List<MTriplet>();
@@ -103,6 +67,34 @@ namespace Fingerprints.Medina2012
             return new MtripletsFeature(result, minutiae);
         }
 
+        public override double Match(MtripletsFeature query, MtripletsFeature template, out List<MinutiaPair> matchingMtiae)
+        {
+            matchingMtiae = new List<MinutiaPair>();
+            if (query.Minutiae.Count < MtiaCountThr || template.Minutiae.Count < MtiaCountThr)
+                return 0;
+            IList<MtripletPair> matchingTriplets = GetMatchingTriplets(query, template);
+            if (matchingTriplets.Count == 0)
+                return 0;
+            var localMatchingMtiae = GetLocalMatchingMtiae(matchingTriplets);
+            if (localMatchingMtiae.Count < MtiaCountThr)
+                return 0;
+
+            var max = 0;
+            var notMatchingCount = int.MaxValue;
+            for (var i = 0; i < localMatchingMtiae.Count; i++)
+            {
+                var currMatchingMtiae =
+                    GetGlobalMatchingMtiae(localMatchingMtiae, localMatchingMtiae[i], ref notMatchingCount);
+                if (currMatchingMtiae != null && currMatchingMtiae.Count > max)
+                {
+                    max = currMatchingMtiae.Count;
+                    matchingMtiae = currMatchingMtiae;
+                }
+            }
+
+            return 1.0 * max * max / (query.Minutiae.Count * template.Minutiae.Count);
+        }
+
         private static void UpdateNearest(IList<Minutia> minutiae, int idx, short[,] nearest, double[,] distance)
         {
             for (var i = idx + 1; i < minutiae.Count; i++)
@@ -129,34 +121,6 @@ namespace Fingerprints.Medina2012
                     nearest[i, maxIdx] = Convert.ToInt16(idx);
                 }
             }
-        }
-
-        private static double Match(MtripletsFeature query, MtripletsFeature template, out List<MinutiaPair> matchingMtiae)
-        {
-            matchingMtiae = new List<MinutiaPair>();
-            if (query.Minutiae.Count < MtiaCountThr || template.Minutiae.Count < MtiaCountThr)
-                return 0;
-            IList<MtripletPair> matchingTriplets = GetMatchingTriplets(query, template);
-            if (matchingTriplets.Count == 0)
-                return 0;
-            var localMatchingMtiae = GetLocalMatchingMtiae(matchingTriplets);
-            if (localMatchingMtiae.Count < MtiaCountThr)
-                return 0;
-
-            var max = 0;
-            var notMatchingCount = int.MaxValue;
-            for (var i = 0; i < localMatchingMtiae.Count; i++)
-            {
-                var currMatchingMtiae =
-                    GetGlobalMatchingMtiae(localMatchingMtiae, localMatchingMtiae[i], ref notMatchingCount);
-                if (currMatchingMtiae != null && currMatchingMtiae.Count > max)
-                {
-                    max = currMatchingMtiae.Count;
-                    matchingMtiae = currMatchingMtiae;
-                }
-            }
-
-            return 1.0 * max * max / (query.Minutiae.Count * template.Minutiae.Count);
         }
 
         private static List<MtripletPair> GetMatchingTriplets(MtripletsFeature t1, MtripletsFeature t2)

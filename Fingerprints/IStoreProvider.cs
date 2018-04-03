@@ -2,16 +2,16 @@
 
 namespace Fingerprints
 {
-    public interface IStoreProvider
+    public interface IStoreProvider<TFeature>
     {
         bool ContainsCandidate(string candidate);
 
         long CandidatesCount { get; }
 
-        IEnumerable<string> Candidates { get; }
+        IEnumerable<string> GetCandidates(int skip, int take);
 
-        void Add(Candidate candidate);
+        void Add(Candidate<TFeature> candidate);
 
-        byte[] Retrieve(string candidate);
+        TFeature Retrieve(string candidate);
     }
 }

@@ -12,50 +12,16 @@ using Fingerprints.Model;
 
 namespace Fingerprints.Parziale2004
 {
-    public static class ParzialeMatcher
+    public class ParzialeMatcher : BaseMatcher<PartialeFeatures>
     {
         private const double GaThr = Math.PI / 6;
         private const int GlobalDistThr = 12;
 
-        public static void Store(IStoreProvider storage, Bitmap bitmap, string subjectId)
+        public override PartialeFeatures Extract(Bitmap image)
         {
-            var extract = Extract(MinutiaeExtractor.ExtractFeatures(ImageProvider.AdaptImage(bitmap)));
-
-            storage.Add(new Candidate
-            {
-                EntryId = subjectId,
-                Feautures = Serializer.Serialize(extract)
-            });
-        }
-
-        public static IEnumerable<Match> Match(IStoreProvider storage, Bitmap bitmap)
-        {
-            var extract = Extract(MinutiaeExtractor.ExtractFeatures(ImageProvider.AdaptImage(bitmap)));
-
-            var list = new List<Match>();
-            foreach (var candidate in storage.Candidates)
-            {
-                var retrieved = Serializer.Deserialize<PartialeFeatures>(storage.Retrieve(candidate));
-                var score = Match(extract, retrieved, out var matchingMtiae);
-
-                if (Math.Abs(score) < double.Epsilon || matchingMtiae == null)
-                    continue;
-
-                if (matchingMtiae.Count > 10)
-                    list.Add(new Match
-                    {
-                        Confidence = score,
-                        EntryId = candidate,
-                        MatchingPoints = matchingMtiae.Count
-                    });
-            }
-
-            return list;
-        }
-
-        private static PartialeFeatures Extract(List<Minutia> minutiae)
-        {
+            var minutiae = MinutiaeExtractor.ExtractFeatures(image);
             var result = new List<MinutiaTriplet>();
+
             if (minutiae.Count > 3)
                 foreach (var triangle in Delaunay2D.Triangulate(minutiae))
                 {
@@ -117,7 +83,7 @@ namespace Fingerprints.Parziale2004
             return new PartialeFeatures(result, minutiae);
         }
 
-        private static double Match(PartialeFeatures qPartialeFeatures, PartialeFeatures tPartialeFeatures, out List<MinutiaPair> matchingMtiae)
+        public override double Match(PartialeFeatures qPartialeFeatures, PartialeFeatures tPartialeFeatures, out List<MinutiaPair> matchingMtiae)
         {
             try
             {

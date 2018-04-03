@@ -36,6 +36,8 @@ namespace Fingerprints.Medina2012
 
         public short[] MtiaIdxs { get; set; }
 
+        //TO DO: Make order in this mess
+
         private double MinDistance => D[SortedDistIdxs[0]];
 
         private double MidDistance => D[SortedDistIdxs[1]];
