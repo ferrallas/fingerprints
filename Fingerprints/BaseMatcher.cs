@@ -6,7 +6,7 @@ using Fingerprints.Model;
 
 namespace Fingerprints
 {
-    public abstract class BaseMatcher<TFeature>
+    public abstract class BaseMatcher<TFeature> where TFeature : class
     {
         public abstract TFeature Extract(Bitmap image);
 

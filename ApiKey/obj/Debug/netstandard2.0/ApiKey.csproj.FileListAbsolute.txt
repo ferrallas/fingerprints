@@ -1,0 +1,9 @@
+D:\Maddalena\Fingerprints\ApiKey\obj\Debug\netstandard2.0\ApiKey.csprojResolveAssemblyReference.cache
+D:\Maddalena\Fingerprints\ApiKey\obj\Debug\netstandard2.0\ApiKey.csproj.CoreCompileInputs.cache
+D:\Maddalena\Fingerprints\ApiKey\obj\Debug\netstandard2.0\ApiKey.AssemblyInfoInputs.cache
+D:\Maddalena\Fingerprints\ApiKey\obj\Debug\netstandard2.0\ApiKey.AssemblyInfo.cs
+D:\Maddalena\Fingerprints\ApiKey\bin\Debug\netstandard2.0\ApiKey.deps.json
+D:\Maddalena\Fingerprints\ApiKey\bin\Debug\netstandard2.0\ApiKey.dll
+D:\Maddalena\Fingerprints\ApiKey\bin\Debug\netstandard2.0\ApiKey.pdb
+D:\Maddalena\Fingerprints\ApiKey\obj\Debug\netstandard2.0\ApiKey.dll
+D:\Maddalena\Fingerprints\ApiKey\obj\Debug\netstandard2.0\ApiKey.pdb

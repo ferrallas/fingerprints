@@ -7,19 +7,23 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fingerprints.Run", "Fingerp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fingerprints", "Fingerprints\Fingerprints.csproj", "{1A895B70-7619-4026-8B65-0050235B4BCF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fingerprints.Jiang2000", "Fingerprints.Jiang2000\Fingerprints.Jiang2000.csproj", "{A4028E4B-0239-40FA-8BE8-08A346188DD3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fingerprints.Jiang2000", "Fingerprints.Jiang2000\Fingerprints.Jiang2000.csproj", "{A4028E4B-0239-40FA-8BE8-08A346188DD3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fingerprints.Medina2011", "Fingerprints.Medina2011\Fingerprints.Medina2011.csproj", "{A96FE5A1-E8D9-490D-AD49-F34BB913A050}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fingerprints.Medina2011", "Fingerprints.Medina2011\Fingerprints.Medina2011.csproj", "{A96FE5A1-E8D9-490D-AD49-F34BB913A050}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fingerprints.Medina2012", "Fingerprints.Medina2012\Fingerprints.Medina2012.csproj", "{3645768D-24A2-41CD-B37E-7EE024A2F6F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fingerprints.Medina2012", "Fingerprints.Medina2012\Fingerprints.Medina2012.csproj", "{3645768D-24A2-41CD-B37E-7EE024A2F6F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fingerprints.Parziale2004", "Fingerprints.Parziale2004\Fingerprints.Parziale2004.csproj", "{7B8170DB-722C-45DC-A005-6F724ED3416C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fingerprints.Parziale2004", "Fingerprints.Parziale2004\Fingerprints.Parziale2004.csproj", "{7B8170DB-722C-45DC-A005-6F724ED3416C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fingerprints.Qi2005", "Fingerprints.Qi2005\Fingerprints.Qi2005.csproj", "{D0DA8A2B-4F10-4BAA-A360-39ECF4A94A71}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fingerprints.Qi2005", "Fingerprints.Qi2005\Fingerprints.Qi2005.csproj", "{D0DA8A2B-4F10-4BAA-A360-39ECF4A94A71}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fingerprints.Tico2003", "Fingerprints.Tico2003\Fingerprints.Tico2003.csproj", "{9A884190-0F0F-44A8-9139-4E0106347E9E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fingerprints.Tico2003", "Fingerprints.Tico2003\Fingerprints.Tico2003.csproj", "{9A884190-0F0F-44A8-9139-4E0106347E9E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Matchers", "Matchers", "{34D0D9A0-5F45-442A-BAF5-AD37D47BEDD3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fingerprint.WebApplication", "Fingerprint.WebApplication\Fingerprint.WebApplication.csproj", "{A7529227-3C1E-4DCD-92F8-FC3877872268}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiKey", "ApiKey\ApiKey.csproj", "{7C07AA2D-1B97-4B3A-8C7A-B5874777042A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +63,14 @@ Global
 		{9A884190-0F0F-44A8-9139-4E0106347E9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9A884190-0F0F-44A8-9139-4E0106347E9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9A884190-0F0F-44A8-9139-4E0106347E9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7529227-3C1E-4DCD-92F8-FC3877872268}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7529227-3C1E-4DCD-92F8-FC3877872268}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7529227-3C1E-4DCD-92F8-FC3877872268}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7529227-3C1E-4DCD-92F8-FC3877872268}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C07AA2D-1B97-4B3A-8C7A-B5874777042A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C07AA2D-1B97-4B3A-8C7A-B5874777042A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C07AA2D-1B97-4B3A-8C7A-B5874777042A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C07AA2D-1B97-4B3A-8C7A-B5874777042A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -15,11 +15,13 @@ namespace Fingerprints.Run
         [STAThread]
         static void Main()
         {
+            var dataFolder = "./data";
+
             var matcher = new Medina2012Matcher();
 
-            var fs = new FileSystemStorage<MtripletsFeature>(@"D:\IMPRONTE", "dat");
+            var fs = new FileSystemStorage<MtripletsFeature>(dataFolder, "dat");
 
-            foreach (var f in Directory.GetFiles(@"D:\IMPRONTE","*.tif"))
+            foreach (var f in Directory.GetFiles(dataFolder,"*.tif"))
             {
                 var candidateName = Path.GetFileNameWithoutExtension(f);
 
@@ -32,7 +34,7 @@ namespace Fingerprints.Run
 
             var ts = Stopwatch.StartNew();
 
-            var matches = matcher.Match(fs, new Bitmap(@"D:\IMPRONTE\101_1.tif"), 0, (int) fs.CandidatesCount);
+            var matches = matcher.Match(fs, new Bitmap(Path.Combine(dataFolder,"101_1.tif")), 0, (int) fs.CandidatesCount);
 
             ts.Stop();
 

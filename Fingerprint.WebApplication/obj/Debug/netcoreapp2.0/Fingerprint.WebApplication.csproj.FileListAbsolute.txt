@@ -1,0 +1,12 @@
+D:\Maddalena\Fingerprints\Fingerprint.WebApplication\bin\Debug\netcoreapp2.0\Fingerprint.WebApplication.deps.json
+D:\Maddalena\Fingerprints\Fingerprint.WebApplication\bin\Debug\netcoreapp2.0\Fingerprint.WebApplication.runtimeconfig.json
+D:\Maddalena\Fingerprints\Fingerprint.WebApplication\bin\Debug\netcoreapp2.0\Fingerprint.WebApplication.runtimeconfig.dev.json
+D:\Maddalena\Fingerprints\Fingerprint.WebApplication\bin\Debug\netcoreapp2.0\Fingerprint.WebApplication.dll
+D:\Maddalena\Fingerprints\Fingerprint.WebApplication\obj\Debug\netcoreapp2.0\Fingerprint.WebApplication.csprojResolveAssemblyReference.cache
+D:\Maddalena\Fingerprints\Fingerprint.WebApplication\obj\Debug\netcoreapp2.0\Fingerprint.WebApplication.csproj.CoreCompileInputs.cache
+D:\Maddalena\Fingerprints\Fingerprint.WebApplication\obj\Debug\netcoreapp2.0\Fingerprint.WebApplication.AssemblyInfoInputs.cache
+D:\Maddalena\Fingerprints\Fingerprint.WebApplication\obj\Debug\netcoreapp2.0\Fingerprint.WebApplication.AssemblyInfo.cs
+D:\Maddalena\Fingerprints\Fingerprint.WebApplication\bin\Debug\netcoreapp2.0\Fingerprint.WebApplication.pdb
+D:\Maddalena\Fingerprints\Fingerprint.WebApplication\obj\Debug\netcoreapp2.0\UserSecretsAssemblyInfo.cs
+D:\Maddalena\Fingerprints\Fingerprint.WebApplication\obj\Debug\netcoreapp2.0\Fingerprint.WebApplication.dll
+D:\Maddalena\Fingerprints\Fingerprint.WebApplication\obj\Debug\netcoreapp2.0\Fingerprint.WebApplication.pdb

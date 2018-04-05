@@ -2,7 +2,7 @@
 
 namespace Fingerprints
 {
-    public interface IStoreProvider<TFeature>
+    public interface IStoreProvider<TFeature> where TFeature:class
     {
         bool ContainsCandidate(string candidate);
 
